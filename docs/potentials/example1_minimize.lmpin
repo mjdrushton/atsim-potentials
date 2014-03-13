@@ -1,0 +1,13 @@
+units metal
+boundary p p p
+
+atom_style full
+read_data fcc.lmpstruct
+
+pair_style eam
+pair_coeff 1 1 Ag.eam
+
+fix 1 all box/relax x 0.0 y 0.0 z 0.0
+
+minimize 0.0 1.0e-8 1000 100000 
+
