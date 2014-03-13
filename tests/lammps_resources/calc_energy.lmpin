@@ -1,0 +1,11 @@
+units metal
+boundary p p p
+atom_style full
+read_data structure.lmpstruct
+
+# Define potentials
+include potentials.lmpinc
+
+run 0
+variable E equal etotal
+print ENERGY:${E}

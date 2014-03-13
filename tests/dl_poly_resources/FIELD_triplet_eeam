@@ -1,0 +1,15 @@
+config.cif. Supercell: 1 x 1 x 1
+units eV
+molecules 1
+config.cif. Supercell: 1 x 1 x 1
+nummols 1
+atoms 3
+            Ar     39.948000      0.000000       1    0
+             B     10.811000      0.000000       2    0
+finish
+
+metal 3
+Ar Ar eeam
+B B eeam
+Ar B eeam
+CLOSE
