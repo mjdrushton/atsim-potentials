@@ -2,9 +2,9 @@
 Embedded Atom Method (EAM) Tabulation
 =====================================
 
-An EAM model is defined by constructing instances of  :class:`atomsscripts.potentials.EAMPotential` describing each species within the model. :class:`.EAMPotential` encapsulates the density and embedding functions specific to each species' many bodied interactions. In addition the purely pairwise interactions within the EAM are defined using a list of :class:`atomsscripts.potentials.Potential` objects.
+An EAM model is defined by constructing instances of  :class:`atsim_potentials.EAMPotential` describing each species within the model. :class:`.EAMPotential` encapsulates the density and embedding functions specific to each species' many bodied interactions. In addition the purely pairwise interactions within the EAM are defined using a list of :class:`atsim_potentials.Potential` objects.
 
-Once the EAM model has been described in terms of  :class:`EAMPotential <atomsscripts.potentials.EAMPotential>` and :class:`Potential <atomsscripts.potentials.Potential>` objects it can be tabulated for specific simulation codes. In addition to the differences in table files expected by different simulation codes, there are several variations on the embedded atom method, in order to support this variety, the :mod:`atomsscripts.potentials` module contains several tabulation functions:
+Once the EAM model has been described in terms of  :class:`EAMPotential <atsim_potentials.EAMPotential>` and :class:`Potential <atsim_potentials.Potential>` objects it can be tabulated for specific simulation codes. In addition to the differences in table files expected by different simulation codes, there are several variations on the embedded atom method, in order to support this variety, the :mod:`atsim_potentials` module contains several tabulation functions:
 
 =========================================  ===========  ===============  =================================================================
 Function                                   File-Format  Simulation Code  Example
@@ -26,7 +26,7 @@ Examples
 Example 1: Using :func:`.writeFuncFL` to Tabulate Ag Potential for LAMMPS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This example shows how to use :func:`.writeFuncFL` function to tabulate an EAM model for the simulation of Ag metal. How to use this tabulation within `LAMMPS`_ will then be demonstrated.
+This example shows how to use :func:`.writeFuncFL` function to tabulate an EAM model for the simulation of Ag metal. How to use this tabulation within `LAMMPS`_ will then be demonstrated. The final tabulation script can be found in :download:`eam_tabulate_example1.py <eam_tabulate_example1.py>`.
 
 .. _eam_example_1_model_description:
 
@@ -80,48 +80,28 @@ Define the Model
 
 It is now necessary to describe the model in python code. Hard-coding the model parameters from the previous table, ``embed()`` and ``density()`` functions can be defined for :math:`F_{\text{Ag}} (\rho)` and :math:`\rho_{\text{Ag}}` respectively:
 
-.. code:: python
 
-  import math
-
-  def embed(rho):
-    return -math.sqrt(rho)
-
-  def density(rij):
-    if rij == 0:
-      return 0.0
-    return (2.928323832 / rij) ** 6.0
-
+.. literalinclude:: eam_example_1.py
+  :lines: 2-13
 
 
 The embedding and density functions should then be wrapped in an :class:`.EAMPotential` object to create a single item list:
 
-.. code:: python
-
-  # Create EAMPotential
-  from atomsscripts.potentials import EAMPotential
-  eamPotentials = [ EAMPotential("Ag", 47, 107.8682, embed, density) ]
-
+.. literalinclude:: eam_example_1.py
+  :lines: 23-24
 
 
 Similarly the pair potential component, :math:`\phi_{\text{Ag}-\text{Ag}} (r_{ij}`, of the model can easily be defined as: 
 
-.. code:: python
 
-  def pair_AgAg(rij):
-      if rij == 0:
-        return 0.0
-      return (2.485883762/rij) ** 12
-
+.. literalinclude:: eam_example_1.py
+  :pyobject: pair_AgAg
       
 
-This can then be wrapped in a :class:`atomsscripts.potentials.Potential` object to create a list of pair potentials. 
+This can then be wrapped in a :class:`atsim_potentials.Potential` object to create a list of pair potentials. 
 
-.. code:: python
-
-  from atomsscripts.potentials import Potential
-  pairPotentials = [ Potential('Ag', 'Ag', pair_AgAg) ]
-
+.. literalinclude:: eam_example_1.py
+  :lines: 25
 
 
 .. note:: 
@@ -553,7 +533,7 @@ Reference
 :class:`.EAMPotential`
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. autoclass:: atomsscripts.potentials.EAMPotential
+.. autoclass:: atsim_potentials.EAMPotential
     :members:
     :undoc-members:
 
@@ -561,15 +541,15 @@ Tabulation Functions
 ^^^^^^^^^^^^^^^^^^^^
 
 
-.. autofunction:: atomsscripts.potentials.writeFuncFL
+.. autofunction:: atsim_potentials.writeFuncFL
 
-.. autofunction:: atomsscripts.potentials.writeSetFL
+.. autofunction:: atsim_potentials.writeSetFL
 
-.. autofunction:: atomsscripts.potentials.writeSetFLFinnisSinclair
+.. autofunction:: atsim_potentials.writeSetFLFinnisSinclair
 
-.. autofunction:: atomsscripts.potentials.writeTABEAM 
+.. autofunction:: atsim_potentials.writeTABEAM 
 
-.. autofunction:: atomsscripts.potentials.writeTABEAMFinnisSinclair 
+.. autofunction:: atsim_potentials.writeTABEAMFinnisSinclair 
 
 
 .. rubric:: Footnotes

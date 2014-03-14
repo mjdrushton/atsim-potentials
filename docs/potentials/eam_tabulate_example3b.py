@@ -1,8 +1,8 @@
 import math
 
-from atomsscripts.potentials import Potential
-from atomsscripts.potentials import EAMPotential
-from atomsscripts.potentials import writeTABEAMFinnisSinclair
+from atsim_potentials import Potential
+from atsim_potentials import EAMPotential
+from atsim_potentials import writeTABEAMFinnisSinclair
 
 
 #Embedding functions

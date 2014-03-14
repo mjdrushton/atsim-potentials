@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-from atomsscripts.potentials import writeTABEAM
-from atomsscripts.potentials import Potential
-from atomsscripts.potentials import EAMPotential
+from atsim_potentials import writeTABEAM
+from atsim_potentials import Potential
+from atsim_potentials import EAMPotential
 
 import math
 
@@ -117,7 +117,7 @@ def main():
 
 
   # Perform tabulation
-  # Make atomsscripts tabulation
+  # Make tabulation
   nrho = 2000
   drho = 0.05
 

@@ -10,10 +10,6 @@ import shutil
 from atsim_potentials import Potential, EAMPotential, buck, TableReader
 import atsim_potentials
 
-# from atomsscripts import simplecrystal
-# from atomsscripts import simplevector as sv
-# from atomsscripts import parse
-
 from _tempfiletestcase import TempfileTestCase
 
 def _getResourceDirectory():
@@ -787,8 +783,9 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     self.assertAlmostEquals(-2.75841139984064, embed_Al(30.0))
     self.assertAlmostEquals(-2.47821972143384, embed_Al(40.0))
 
+  @unittest.skipIf(not LAMMPS_FOUND, "LAMMPS not available")
   def testCompareZhouTabulation(self):
-    """Compare Zhou tabulation with that produced by atomsscripts for documentation example 2"""
+    """Compare Zhou tabulation with that produced by atsim_potentials for documentation example 2"""
 
     oldpwd = os.getcwd()
     os.chdir(self.tempdir)
@@ -810,7 +807,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
         self.assertTrue(energy != None)
         expect.append(energy)
 
-      # Make atomsscripts tabulation
+      # Make  tabulation
       nrho = 50000
       drho = 0.001
 

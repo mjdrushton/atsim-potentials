@@ -6,12 +6,12 @@ import _tablereaders
 from _common import * # noqa
 from _spline import SplinePotential # noqa
 from _util import gradient # noqa
-from _writeTABEAM import writeTABEAM # noqa
-from _writeTABEAM import writeTABEAMFinnisSinclair # noqa
+from _dlpoly_writeTABEAM import writeTABEAM # noqa
+from _dlpoly_writeTABEAM import writeTABEAMFinnisSinclair # noqa
 
-from _lammpsEAM import writeFuncFL # noqa
-from _lammpsEAM import writeSetFL # noqa
-from _lammpsEAM import writeSetFLFinnisSinclair # noqa
+from _lammpsWriteEAM import writeFuncFL # noqa
+from _lammpsWriteEAM import writeSetFL # noqa
+from _lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
 
 from potentialforms import * # noqa
 

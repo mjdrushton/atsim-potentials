@@ -4,7 +4,7 @@ Pair Potential Tabulation
 Tabulation Using a Python Script
 --------------------------------
 
-Pair potentials are tabulated using the convenience function :func:`atomsscripts.potentials.writePotentials`. This function is supplied with a list of :ref:`Potential <potential_objects>` objects, which have :meth:`energy() <Potential.energy>` and :meth:`force() <Potential.force>` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
+Pair potentials are tabulated using the convenience function :func:`atsim_potentials.writePotentials`. This function is supplied with a list of :ref:`Potential <potential_objects>` objects, which have :meth:`energy() <Potential.energy>` and :meth:`force() <Potential.force>` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
 
 .. _quick_start:
 
@@ -13,68 +13,21 @@ Quick-Start
 
 The following example gives a complete python script showing how the potential API can be used to tabulate potentials for `DL_POLY`_ .
 
-The example shows how the UO\ :sub:`2` potential model of Basak [#basak03]_ can be tabulated:
+The following example (:download:`basak_tabulate.py`) shows how the UO\ :sub:`2` potential model of Basak [#basak03]_ can be tabulated:
     
     * the U + O interaction within this model combines Buckingham and Morse potential forms. Although `DL_POLY`_ natively supports both potential forms they cannot be combined with the code itself. By creating a ``TABLE`` file the Basak model can be described to `DL_POLY`_.
     * when executed from the command line this script will write tabulated potentials into a file named ``TABLE``.
 
-.. code:: python
+.. literalinclude:: basak_tabulate.py
     
-    #! /usr/bin/env python
-
-    from atomsscripts import potentials
-    from atomsscripts.potentials import potentialforms
-
-    def main():
-        # O-O Interaction:
-        # Buckingham
-        # A = 1633.00510, rho = 0.327022, C = 3.948790
-        f_OO = potentialforms.buck(1633.00510, 0.327022, 3.948790)
-
-        # U-U Interaction:
-        # Buckingham
-        # A = 294.640000, rho = 0.327022, C = 0.0
-        f_UU = potentialforms.buck(294.640000, 0.327022, 0.0)
-
-        # O-U Interaction
-        # Buckingham + Morse.
-        # Buckingham:
-        # A = 693.648700, rho = 693.648700, C = 0.0
-        # Morse:
-        # D0 = 0.577190, alpha = 1.6500, r0 = 2.36900
-        buck_OU = potentialforms.buck(693.648700, 0.327022, 0.0)
-        morse_OU = potentialforms.morse(0.577190, 1.6500, 2.36900)
-
-        # Compose the buckingham and morse functions into a single function
-        # using the atomsscripts.potentials.plus() function
-        f_OU = potentials.plus(buck_OU, morse_OU)
-
-        # Construct list of Potential objects
-        potential_objects = [
-            potentials.Potential('O', 'O', f_OO),
-            potentials.Potential('U', 'U', f_UU),
-            potentials.Potential('O', 'U', f_OU)
-        ]
-
-        # Tabulate into file called TABLE
-        # using short-range cutoff of 6.5 Angs with grid
-        # increment of 1e-3 Angs (6500 grid points)
-        with open('TABLE', 'wb') as outfile:
-            potentials.writePotentials(
-               'DL_POLY',
-               potential_objects,
-               6.5, 6500,
-               out = outfile)
-
-    if __name__ == '__main__':
-        main()
 
 
-``atomsscripts.potentials.writePotentials()``
+
+``atsim_potentials.writePotentials()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The :func:`atomsscripts.potentials.writePotentials` function is used to tabulate pair-potentials for the supported simulation codes. It provides a unifying interface to various functions distributed throughout ``atomsscripts`` (see :func:`atomsscripts.lammps.writeTable` and :func:`atomsscripts.dlpoly.writeTABLE`), please consult these other modules for code specific tabulation options.
+The :func:`atsim_potentials.writePotentials` function is used to tabulate pair-potentials for the supported simulation codes.
 
-The process by which :func:`writePotentials() <atomsscripts.potentials.writePotentials>` is used can be summmarised as follows:
+The process by which :func:`writePotentials() <atsim_potentials.writePotentials>` is used can be summmarised as follows:
     
     1.  Define python functions describing energy of interactions (see :ref:`instantiate_potential_object` and :ref:`predefined_potential_forms`)
     2.  Wrap these functions in :class:`.Potential` objects.
@@ -85,7 +38,7 @@ The process by which :func:`writePotentials() <atomsscripts.potentials.writePote
         *   Number of  rows in tabulation
         *   Python file like object into which data should be written.
             
-.. autofunction:: atomsscripts.potentials.writePotentials
+.. autofunction:: atsim_potentials.writePotentials
 
 .. _potential_objects:
 
@@ -126,9 +79,9 @@ Potential objects should implement the following interface:
         :rtype: float
     	
 
-In most cases the :class:`Potential <atomsscripts.potentials.Potential>` class provided in :mod:`atomsscripts.potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`Potential.energy() <atomsscripts.potentials.Potential.energy>` method. The forces calculated by the :meth:`Potential.force() <atomsscripts.potentials.Potential.force>` method are obtained by taking the numerical derivative of the wrapped function. 
+In most cases the :class:`Potential <atsim_potentials.Potential>` class provided in :mod:`atsim_potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`Potential.energy() <atsim_potentials.Potential.energy>` method. The forces calculated by the :meth:`Potential.force() <atsim_potentials.Potential.force>` method are obtained by taking the numerical derivative of the wrapped function. 
 
-.. autoclass:: atomsscripts.potentials.Potential
+.. autoclass:: atsim_potentials.Potential
     :members:
     :undoc-members:
 
@@ -151,7 +104,7 @@ The Gd-O potential function can be defined as:
 .. code-block:: python
 
     import math
-    from atomsscripts.potentials import Potential
+    from atsim_potentials import Potential
 
     def bornMayer_Gd_O(rij):
         energy = 1000.0 * math.exp(-rij/0.212)
@@ -180,7 +133,7 @@ The energy and force at a separation of 1Å can then be obtained by calling the
 Predefined Potential Forms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the previous example (`Example: Instantiating Potential Object`_), a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atomsscripts.potentials.potentialsforms`` module.
+In the previous example (`Example: Instantiating Potential Object`_), a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atsim_potentials.potentialsforms`` module.
 
 Using the ``potentialsforms`` module, the function:
 
@@ -196,12 +149,12 @@ can be rewritten as:
 
     .. code:: python
 
-        from atomsscripts.potentials import potentialforms
+        from atsim_potentials import potentialforms
         bornMayer_Gd_O = potentialsforms.bornmayer(1000.0, 0.212)
 
-The ``atomsscripts.potentials.potentialsforms`` module contains the following:
+The ``atsim_potentials.potentialsforms`` module contains the following:
 
-.. automodule:: atomsscripts.potentials.potentialforms
+.. automodule:: atsim_potentials.potentialforms
     :members:
     :undoc-members:
 
@@ -211,9 +164,9 @@ Combining Potential Forms
 
 Pair interactions are often described using a combination of standard potential forms. This was seen for the Basak potentials used within the :ref:`quick_start` example, where the oxygen-uranium pair potential was the combination of a Buckingham and Morse potential forms. 
 
-Such potential combinations can be made using the ``plus()`` function from the ``atomsscripts.potentials`` module:
+Such potential combinations can be made using the ``plus()`` function from the ``atsim_potentials`` module:
 
-..  autofunction:: atomsscripts.potentials.plus
+..  autofunction:: atsim_potentials.plus
 
 Spline Interpolation
 ^^^^^^^^^^^^^^^^^^^^
@@ -232,7 +185,7 @@ The :class:`.SplinePotential` has a number of applications, for example:
     *   similarly different potential forms may be better able to express certain separations than others. For instance the zbl potential is often used to describe the high energy interactions found in radiation damage cascades but must be combined with another potential to describe equilibrium properties.
 
 
-.. autoclass:: atomsscripts.potentials.SplinePotential
+.. autoclass:: atsim_potentials.SplinePotential
     :members:
     :undoc-members:
 
@@ -258,32 +211,32 @@ The following plot shows the combined coulomb and short-range contributions for 
     Plot of BKS Si-O potential showing the short-range (bks_buck) component, electrostatic (bks_coul) and the effective Si-O interaction (bks_buck + bks_coul). This shows that this potential turns over at small separations making it unsuitable for use where high energies may be experienced such as high-temperature or radiation damage cascade simulations.
 
 
-The first step to using :class:`.SplinePotential` is to choose appropriate detachment and attachment points. This is perhaps best done plotting the two potential functions to be splined. The :mod:`.potentials` module contains the convenience functions :func:`atomsscripts.potentials.plot` and :func:`atomsscripts.potentials.plotToFile` to make this task easier. The following piece of code first defines the ZBL and Buckingham potentials before plotting them into the files ``zbl.dat`` and ``bks_buck.dat``. These files each contain two, space delimited, columns giving :math:`r_{ij}` and energy, and may be easily plotted in Excel or GNU Plot. 
+The first step to using :class:`.SplinePotential` is to choose appropriate detachment and attachment points. This is perhaps best done plotting the two potential functions to be splined. The :mod:`.potentials` module contains the convenience functions :func:`atsim_potentials.plot` and :func:`atsim_potentials.plotToFile` to make this task easier. The following piece of code first defines the ZBL and Buckingham potentials before plotting them into the files ``zbl.dat`` and ``bks_buck.dat``. These files each contain two, space delimited, columns giving :math:`r_{ij}` and energy, and may be easily plotted in Excel or GNU Plot. 
 
 .. code-block:: python
     
-    from atomsscripts.potentials import potentialforms
-    from atomsscripts import potentials
+    from atsim_potentials import potentialforms
+    import atsim_potentials
 
     zbl = potentialforms.zbl(14, 8)
     bks_buck = potentialforms.buck(18003.7572, 1.0/4.87318, 133.5381)
 
-    potentials.plot( 'bks_buck.dat', 0.1, 10.0, bks_buck, 5000)
-    potentials.plot( 'zbl.dat', 0.1, 10.0, zbl, 5000)
+    atsim_potentials.plot( 'bks_buck.dat', 0.1, 10.0, bks_buck, 5000)
+    atsim_potentials.plot( 'zbl.dat', 0.1, 10.0, zbl, 5000)
 
 
 Plotting these files show that ``detachmentX`` and ``attachmentX`` values of 0.8 and 1.4 may be appropriate. The ``zbl`` and ``bks_buck`` functions can then be splined between these points as follows:
 
 .. code-block:: python
     
-    spline = potentials.SplinePotential(zbl, bks_buck, 0.8, 1.4)
+    spline = atsim_potentials.SplinePotential(zbl, bks_buck, 0.8, 1.4)
  
 
 Plot data can then be created for the combined functions with the interpolating spline:
 
 .. code-block:: python
 
-    potentials.plot( 'spline.dat', 0.1, 10.0, spline, 5000)
+    atsim_potentials.plot( 'spline.dat', 0.1, 10.0, spline, 5000)
 
 
 Plotting the splined Si-O potential together with the original ``buck`` and ``zbl`` functions allows the smooth transition between the two functions to be observed, as shown in the following function:
@@ -296,26 +249,26 @@ Plotting the splined Si-O potential together with the original ``buck`` and ``zb
     Plot of BKS Si-O interaction showing the short-range (buck) and ZBL functions plotted with the curve generated by ``SplinePotential`` (spline). This joins them with a an interpolating spline acting between the detachment point at :math:`r_{ij} = 0.8` and re-attachment point at :math:`r_{ij} = 1.4` shown by dashed lines. 
 
 
-Finally, the potential can be tabulated in a format suitable for LAMMPS using :func:`atomsscripts.potentials.writePotentials` :
+Finally, the potential can be tabulated in a format suitable for LAMMPS using :func:`atsim_potentials.writePotentials` :
 
 .. code-block:: python
 
-    bks_SiO = potentials.Potential('Si', 'O', spline)
+    bks_SiO = atsim_potentials.Potential('Si', 'O', spline)
     with open('bks_SiO.lmptab', 'wb') as outfile:
-        potentials.writePotentials('LAMMPS', [bks_SiO], 10.0, 5000, out = outfile)
+        atsim_potentials.writePotentials('LAMMPS', [bks_SiO], 10.0, 5000, out = outfile)
 
 
 
 Miscellaneous Functions
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: atomsscripts.potentials.plot
+.. autofunction:: atsim_potentials.plot
 
 
-.. autofunction:: atomsscripts.potentials.plotToFile
+.. autofunction:: atsim_potentials.plotToFile
 
 
-.. autoclass:: atomsscripts.potentials.TableReader
+.. autoclass:: atsim_potentials.TableReader
     :members:
     :undoc-members:
 

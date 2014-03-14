@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import math
-from atomsscripts.potentials import EAMPotential
-from atomsscripts.potentials import Potential
+from atsim_potentials import EAMPotential
+from atsim_potentials import Potential
 
 def embed(rho):
   return -math.sqrt(rho)
@@ -30,7 +30,7 @@ def main():
   nr = 12000
   dr = 0.001
 
-  from atomsscripts.potentials import writeFuncFL
+  from atsim_potentials import writeFuncFL
 
   with open("Ag.eam", 'wb') as outfile:
     writeFuncFL(

@@ -7,7 +7,7 @@
 atsim_potentials
 ****************
 
-Classical simulation codes typically contain a good selection of analytical forms for describing atomic interactions. Sometimes however, you may need to use a potential form not directly supported by the code. Luckily, most simulation codes allow you to provide tabulated potentials in which energies and forces, for a range of interatomic separations, are pre-calculated and specified as rows within a text file. AtomsScripts provides python modules to make the specification and tabulation of pair- and many-body potentials straightforward.
+Classical simulation codes typically contain a good selection of analytical forms for describing atomic interactions. Sometimes however, you may need to use a potential form not directly supported by the code. Luckily, most simulation codes allow you to provide tabulated potentials in which energies and forces, for a range of interatomic separations, are pre-calculated and specified as rows within a text file. The ``atsim_potentials`` package provides python modules to make the specification and tabulation of pair- and many-body potentials straightforward and consistent.
 
 The following codes are supported for pair-potential tabulation:
 

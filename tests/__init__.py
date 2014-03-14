@@ -4,9 +4,10 @@ import os
 
 import atsim_potentials
 
-import test_lammpsWriteTable
-import test_writeTABEAM
-import test_writeTABLE
+import test_lammpsWriteTABLE
+import test_lammpsWriteEAM
+import test_dlpoly_writeTABEAM
+import test_dlpoly_writeTABLE
 
 class TestPotentialFunctions(unittest.TestCase):
   """Tests for the potential function factories defined in atsim_potentials"""

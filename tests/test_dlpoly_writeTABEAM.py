@@ -1,7 +1,6 @@
 import unittest
 
 import atsim_potentials
-# from atomsscripts import testutil
 from atsim_potentials import _dlpoly_writeTABEAM
 
 import math
