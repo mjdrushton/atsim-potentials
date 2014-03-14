@@ -1,7 +1,7 @@
 """A collection of classes and functions related to defining potentials"""
 import contextlib
 
-from atomsscripts import tablereaders
+import _tablereaders
 
 from _common import * # noqa
 from _spline import SplinePotential # noqa
@@ -55,11 +55,11 @@ class TableReader(object):
     a space.
 
     :param fileobject: Python file object from which separation, energy pairs should be read"""
-    self._tablereader = tablereaders.DatReader(fileobject)
+    self._tablereader = _tablereaders.DatReader(fileobject)
 
   @property
   def datReader(self):
-    """:return: tablereaders.DatReader associated with this callable"""
+    """:return: _tablereaders.DatReader associated with this callable"""
     return self._tablereader
 
   def __call__(self, separation):
@@ -105,7 +105,7 @@ def _LAMMPS_writePotentials(potentialList, cutoff, gridPoints, out):
   """Wrapper function that adapts lammps.writeTABLE.writePotentials() to the API
   expected by potentials.writePotentials"""
   minr = cutoff/float(gridPoints)
-  from atomsscripts.lammps.writeTABLE import writePotentials
+  from _lammps_writeTABLE import writePotentials
   writePotentials(potentialList,minr, cutoff, gridPoints, out)
 
 class UnsupportedTabulationType(Exception):
@@ -130,7 +130,7 @@ def writePotentials(outputType, potentialList, cutoff, gridPoints, out = sys.std
   :param out: Python file like object to which tabulation should be written
   :type out: file"""
 
-  from atomsscripts.dlpoly.writeTABLE import writePotentials as DLPOLY_writePotentials
+  from _dlpoly_writeTABLE import writePotentials as DLPOLY_writePotentials
   supportedTabulations = {
     'DL_POLY' : DLPOLY_writePotentials,
     'LAMMPS'  : _LAMMPS_writePotentials

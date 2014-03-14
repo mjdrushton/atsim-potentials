@@ -1,18 +1,17 @@
-"""Module containing tests for the lammps.writeTABLE module"""
+"""Module containing tests for the _lammps_writeTABLE module"""
 
 import unittest
 import StringIO
 import os
 
-from atomsscripts import potentials
-from atomsscripts import lammps
-
+import atsim_potentials
+from atsim_potentials import _lammps_writeTABLE
 
 class LammpsWriteTABLETestCase(unittest.TestCase):
   """Test case for lammps.writeTABLE module"""
-  
+
   def testWriteSinglePotential(self):
-    """Test that lammps._writeSinglePotential() works correctly"""
+    """Test that atsim_potentials._lammps_writeTABLE._writeSinglePotential() works correctly"""
 
     expect=["A-B",
             "N 6 R 0.10000000 5.10000000",
@@ -25,15 +24,15 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
             "6 5.10000000 -0.10000000 1.00000000"]
 
     energyfunc = lambda x: 5.0-x
-    pot = potentials.Potential("A", "B", energyfunc)
-    
+    pot =atsim_potentials.Potential("A", "B", energyfunc)
+
     sbuild = StringIO.StringIO()
-    lammps.writeTABLE._writeSinglePotential(pot, 0.1, 5.1, 6, sbuild)
+    _lammps_writeTABLE._writeSinglePotential(pot, 0.1, 5.1, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()
 
     msg = "%s != %s" % (expect, actual)
-  
+
     self.assertEquals(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, actual):
       self.assertEquals(os.linesep, a[-1])
@@ -41,10 +40,10 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
       self.assertEquals(e,a)
 
   def testWritePotentials(self):
-    """Test lammps.writeTABLE.writePotentials() function"""
-    
-    pota = potentials.Potential("A", "B", lambda x: x)
-    potb = potentials.Potential("C", "D", lambda x: 5.0-x)
+    """Test _lammps_writeTABLE.writePotentials() function"""
+
+    pota =atsim_potentials.Potential("A", "B", lambda x: x)
+    potb =atsim_potentials.Potential("C", "D", lambda x: 5.0-x)
 
     expect=["A-B",
             "N 6 R 0.10000000 5.10000000",
@@ -67,12 +66,12 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
             "6 5.10000000 -0.10000000 1.00000000"]
 
     sbuild = StringIO.StringIO()
-    lammps.writeTABLE.writePotentials([pota,potb], 0.1, 5.1, 6, sbuild)
+    _lammps_writeTABLE.writePotentials([pota,potb], 0.1, 5.1, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()
 
     msg = "%s != %s" % (expect, actual)
-  
+
     self.assertEquals(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, actual):
       self.assertEquals(os.linesep, a[-1])

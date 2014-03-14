@@ -6,14 +6,13 @@ import math
 import subprocess
 import shutil
 
-from atomsscripts.lammps import writeEAMTable
-from atomsscripts.potentials import Potential, EAMPotential, buck, TableReader
 
-from atomsscripts import testutil
-from atomsscripts import potentials
-from atomsscripts import simplecrystal
-from atomsscripts import simplevector as sv
-from atomsscripts import parse
+from atsim_potentials import Potential, EAMPotential, buck, TableReader
+import atsim_potentials
+
+# from atomsscripts import simplecrystal
+# from atomsscripts import simplevector as sv
+# from atomsscripts import parse
 
 from _tempfiletestcase import TempfileTestCase
 
@@ -249,16 +248,16 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
         a=106.855913747 #tmpa #55,100//0.00002,0.0001
         return (a/(r**m))*0.5*(1+erf(20*(r-1.5)))
 
-      functionO_Ce = zw(potentials.plus(potentials.buck(351.341192796, 0.380516580733, 0.0), morse(1.86874578949, 2.35603812582, 0.719250701502)))
-      functionO_O = zw(potentials.buck(830.283447557, 0.352856254215, 3.88437209048))
-      functionCe_Ce = zw(potentials.buck(18600.0, 0.26644, 0.0))
+      functionO_Ce = zw(atsim_potentials.plus(atsim_potentials.buck(351.341192796, 0.380516580733, 0.0), morse(1.86874578949, 2.35603812582, 0.719250701502)))
+      functionO_O = zw(atsim_potentials.buck(830.283447557, 0.352856254215, 3.88437209048))
+      functionCe_Ce = zw(atsim_potentials.buck(18600.0, 0.26644, 0.0))
 
-      potO_O = potentials.Potential('O', 'O', functionO_O)
-      potO_Ce = potentials.Potential('O', 'Ce', functionO_Ce)
-      potCe_Ce = potentials.Potential('Ce', 'Ce', functionCe_Ce)
+      potO_O = atsim_potentials.Potential('O', 'O', functionO_O)
+      potO_Ce = atsim_potentials.Potential('O', 'Ce', functionO_Ce)
+      potCe_Ce = atsim_potentials.Potential('Ce', 'Ce', functionCe_Ce)
 
-      eampotCe = potentials.EAMPotential('Ce', 92, 238, embedCe, {'Ce': zw(densityCe), 'O' : zw(densityCe)})
-      eampotO = potentials.EAMPotential('O', 8, 16, embedO, {'Ce': zw(densityO), 'O' : zw(densityO)})
+      eampotCe = atsim_potentials.EAMPotential('Ce', 92, 238, embedCe, {'Ce': zw(densityCe), 'O' : zw(densityCe)})
+      eampotO = atsim_potentials.EAMPotential('O', 8, 16, embedO, {'Ce': zw(densityO), 'O' : zw(densityO)})
 
       eampots = [eampotCe, eampotO]
       pairpots = [potO_O, potO_Ce, potCe_Ce]
@@ -271,7 +270,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = int(cutoff/dr)
 
       with open('eam.fs', 'wb') as outfile:
-        writeEAMTable.writeSetFLFinnisSinclair(
+        atsim_potentials.writeSetFLFinnisSinclair(
             nrho, drho,
             nr, dr,
             eampots,
@@ -322,7 +321,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = 12000
       dr = 0.001
 
-      from atomsscripts.potentials import writeFuncFL
+      from atsim_potentials import writeFuncFL
 
       with open("Ag.eam", 'wb') as outfile:
         writeFuncFL(
@@ -374,7 +373,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = 5000
       dr = 0.001
 
-      from atomsscripts.potentials import writeFuncFL
+      from atsim_potentials import writeFuncFL
 
       with open("Ag.eam", 'wb') as outfile:
         writeFuncFL(
@@ -424,7 +423,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = 5000
       dr = 0.001
 
-      from atomsscripts.potentials import writeFuncFL
+      from atsim_potentials import writeFuncFL
 
       with open("Ag.eam", 'wb') as outfile:
         writeFuncFL(
@@ -471,7 +470,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
           return 0.0
         return (2.485883762/rij) ** 12
 
-      from atomsscripts.potentials import Potential, EAMPotential
+      from atsim_potentials import Potential, EAMPotential
 
       pairPotentials = [ Potential('Ag', 'Ag', pair_AgAg) ]
 
@@ -484,7 +483,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = 12000
       dr = 0.001
 
-      from atomsscripts.potentials import writeFuncFL
+      from atsim_potentials import writeFuncFL
 
       with open("Ag.eam", 'wb') as outfile:
         writeFuncFL(
@@ -660,7 +659,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = 12000
       dr = 0.001
 
-      from atomsscripts.potentials import writeSetFL
+      from atsim_potentials import writeSetFL
 
       with open("table.set", 'wb') as outfile:
         writeSetFL(
@@ -716,7 +715,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = 12000
       dr = 0.001
 
-      from atomsscripts.potentials import writeSetFL
+      from atsim_potentials import writeSetFL
 
       with open("table.set", 'wb') as outfile:
         writeSetFL(
@@ -818,7 +817,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       nr = 12000
       dr = 0.001
 
-      from atomsscripts.potentials import writeSetFL
+      from atsim_potentials import writeSetFL
       pairPotentials = self.createSetFlPairPots()
       eamPotentials  = self.createSetFLEAMPots()
 
@@ -856,8 +855,8 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
       expectTable = _parseEAMTable(infile)
 
     #Create the potential callables to be passed into writeEAMTable()
-    embeddingFunction = potentials.TableReader( open(os.path.join(_getResourceDirectory(), 'AgU3embedding.table'), 'r'))
-    effectiveChargeFunction = potentials.TableReader( open(os.path.join(_getResourceDirectory(), 'AgU3effectivecharge.table'), 'r'))
+    embeddingFunction = atsim_potentials.TableReader( open(os.path.join(_getResourceDirectory(), 'AgU3embedding.table'), 'r'))
+    effectiveChargeFunction = atsim_potentials.TableReader( open(os.path.join(_getResourceDirectory(), 'AgU3effectivecharge.table'), 'r'))
 
     def effectiveChargeFunction_eV(rij):
       v = effectiveChargeFunction(rij)
@@ -867,7 +866,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
         v /= rij
       return v
 
-    densityFunction = potentials.TableReader(
+    densityFunction = atsim_potentials.TableReader(
       open(os.path.join(_getResourceDirectory(), 'AgU3density.table'), 'r'))
 
     title = "Ag functions (universal 3), SM Foiles et al, PRB, 33, 7983 (1986)"
@@ -886,7 +885,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     potlist = [Potential("Ag", "Ag", effectiveChargeFunction_eV)]
 
     actualTable = StringIO.StringIO()
-    writeEAMTable.writeFuncFL(
+    atsim_potentials.writeFuncFL(
       nrho, drho,
       nr, dr,
       eampotlist,
@@ -895,11 +894,12 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
       out = actualTable)
     actualTable.seek(0)
     actualTable = _parseEAMTable(actualTable)
-    testutil.compareCollection(self, expectTable, actualTable, places = 3)
+    import testutil
+    testutil.compareCollection(self,expectTable, actualTable, places = 3)
 
 
   def testWriteSetFLFromParameters(self):
-    """Test that lammps.writeEAMTable.writeSetFL() can generate the Al_zhou.eam.alloy file from LAMMPS distribution"""
+    """Test that lammps.atsim_potentials.writeSetFL() can generate the Al_zhou.eam.alloy file from LAMMPS distribution"""
 
     with contextlib.closing(open( os.path.join(_getResourceDirectory(), 'Al_zhou.eam.alloy'), 'r')) as infile:
       expectEAMTable = _parseSetFL(infile)
@@ -952,7 +952,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
       lamb = 0.790264
       return ((A * math.exp( -alpha* ( (r/r_e) - 1.0) ))/ (1.0 + ( (r/r_e - kappa)**20))) - \
              ((B * math.exp( -beta * ( (r/r_e) - 1.0) ))/ (1.0 + ( (r/r_e - lamb)**20)))
-    alpp = potentials.Potential('Al', 'Al', ppotfunc)
+    alpp = atsim_potentials.Potential('Al', 'Al', ppotfunc)
 
     nrho =  10001
     drho =  0.00559521603477821424
@@ -960,12 +960,12 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     dr   =  0.00101014898510148996
     cutoff = 10.10250000000000092371
     eampots = [
-      potentials.EAMPotential('Al', 1, 26.982,  embeddingFunction, densityFunction, latticeConstant = 4.05,  latticeType = 'FCC')]
+      atsim_potentials.EAMPotential('Al', 1, 26.982,  embeddingFunction, densityFunction, latticeConstant = 4.05,  latticeType = 'FCC')]
 
     pairpots = [ alpp ]
 
     actualEAMTable = StringIO.StringIO()
-    writeEAMTable.writeSetFL(
+    atsim_potentials.writeSetFL(
       nrho, drho,
       nr, dr,
       eampots,
@@ -976,7 +976,8 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actualEAMTable.seek(0)
     actualEAMTable = _parseSetFL(actualEAMTable)
 
-    testutil.compareCollection(self, expectEAMTable, actualEAMTable, places = 3, percenttolerance = 7.0)
+    import testutil
+    testutil.compareCollection(self,expectEAMTable, actualEAMTable, places = 3, percenttolerance = 7.0)
 
   def testWriteSetFL(self):
     """Test creation of DYNAMO setfl formatted file for use with lammps pair_style eam/alloy"""
@@ -998,8 +999,8 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     pairpot_Cu_Cu = TableReader(_openResource('setfl_CuCuPair.table'))
 
     eampots = [
-      potentials.EAMPotential('Al', 13, 26.982,  alEmbedFunc, alElectronDensity, latticeConstant = 4.05,  latticeType = 'FCC'),
-      potentials.EAMPotential('Cu', 29, 63.546, cuEmbedFunc, cuElectronDensity, latticeConstant = 3.615, latticeType = 'FCC')]
+      atsim_potentials.EAMPotential('Al', 13, 26.982,  alEmbedFunc, alElectronDensity, latticeConstant = 4.05,  latticeType = 'FCC'),
+      atsim_potentials.EAMPotential('Cu', 29, 63.546, cuEmbedFunc, cuElectronDensity, latticeConstant = 3.615, latticeType = 'FCC')]
 
     pairpots = [
       Potential('Al', 'Al', pairpot_Al_Al),
@@ -1015,7 +1016,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     cutoff = 6.6825000000e+00
 
     actualEAMTable = StringIO.StringIO()
-    writeEAMTable.writeSetFL(
+    atsim_potentials.writeSetFL(
       nrho, drho,
       nr, dr,
       eampots,
@@ -1026,10 +1027,11 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actualEAMTable.seek(0)
     actualEAMTable = _parseSetFL(actualEAMTable)
 
-    testutil.compareCollection(self, expectEAMTable, actualEAMTable, places = 3)
+    import testutil
+    testutil.compareCollection(self,expectEAMTable, actualEAMTable, places = 3)
 
   def testWriteSetFLFinnisSinclair(self):
-    """Test that lammps.writeEAMTable.writeSetFLFinnisSinclair() (suitable for use with pair_style eam/fs) can re-create AlFe_mm.eam.fs file from lammps distribution"""
+    """Test that lammps.atsim_potentials.writeSetFLFinnisSinclair() (suitable for use with pair_style eam/fs) can re-create AlFe_mm.eam.fs file from lammps distribution"""
 
     #Open the expected output
     with contextlib.closing(_openResource('AlFe_mm.eam.fs')) as infile:
@@ -1137,7 +1139,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
       vals = [ func(r) for ((lowcut, highcut), func) in funcs if lowcut <= r < highcut ]
       return sum(vals)
 
-    class ErrorPotential(potentials.Potential):
+    class ErrorPotential(atsim_potentials.Potential):
 
       def energy(self, r):
         #There seems to be an error in the way that the lammps potential is tabulated (there is a step function at the start of each pair potential"
@@ -1147,7 +1149,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
             return 1e12/r
           else:
             return 1e12
-        return potentials.Potential.energy(self, r)
+        return atsim_potentials.Potential.energy(self, r)
 
     pairpots = [ ErrorPotential('Al', 'Al', ppfuncAlAl),
                  ErrorPotential('Al', 'Fe', ppfuncAlFe),
@@ -1163,13 +1165,13 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     #Assemble the EAMPotential objects
     eampots = [
       #Al
-      potentials.EAMPotential('Al', 13, 26.98154, alEmbedFunction,
+      atsim_potentials.EAMPotential('Al', 13, 26.98154, alEmbedFunction,
         { 'Al' : alAlDensFunction,
           'Fe' : feAlDensFunction },
         latticeConstant = 4.04527,
         latticeType = 'fcc'),
       #Fe
-      potentials.EAMPotential('Fe', 26, 55.845, feEmbedFunction,
+      atsim_potentials.EAMPotential('Fe', 26, 55.845, feEmbedFunction,
         { 'Al': feAlDensFunction,
           'Fe' : feFeDensFunction},
         latticeConstant = 2.855312,
@@ -1178,7 +1180,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     #Now actually generate the actual tabulated potential
 
     actualEAMTable = StringIO.StringIO()
-    writeEAMTable.writeSetFLFinnisSinclair(
+    atsim_potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
       eampots,
@@ -1189,7 +1191,8 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actualEAMTable.seek(0)
     actualEAMTable = _parseSetFL(actualEAMTable, finnisSinclair = True)
 
-    testutil.compareCollection(self, expectEAMTable, actualEAMTable, places = 3, percenttolerance = 7.0)
+    import testutil
+    testutil.compareCollection(self,expectEAMTable, actualEAMTable, places = 3, percenttolerance = 7.0)
 
   def testWriteSetFLFinnisSinclair_PairPotentialOrder(self):
     """Check that pair potentials are written in the correct order"""
@@ -1204,20 +1207,20 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     defaultdict = collections.defaultdict(defaultdens)
 
-    eampot1 = potentials.EAMPotential('A', 1, 1.0, lambda x: 0.1, defaultdict)
-    eampot2 = potentials.EAMPotential('B', 2, 2.0, lambda x: 0.2, defaultdict)
-    eampot3 = potentials.EAMPotential('C', 3, 3.0, lambda x: 0.3, defaultdict)
+    eampot1 =atsim_potentials.EAMPotential('A', 1, 1.0, lambda x: 0.1, defaultdict)
+    eampot2 =atsim_potentials.EAMPotential('B', 2, 2.0, lambda x: 0.2, defaultdict)
+    eampot3 =atsim_potentials.EAMPotential('C', 3, 3.0, lambda x: 0.3, defaultdict)
 
-    pairpot_aa = potentials.Potential('A', 'A', lambda r: 1.0)
-    pairpot_bb = potentials.Potential('B', 'B', lambda r: 2.0)
-    pairpot_cc = potentials.Potential('C', 'C', lambda r: 3.0)
-    pairpot_ba = potentials.Potential('B', 'A', lambda r: 5.0)
-    pairpot_ac = potentials.Potential('A', 'C', lambda r: 6.0)
-    pairpot_bc = potentials.Potential('B', 'C', lambda r: 7.0)
+    pairpot_aa =atsim_potentials.Potential('A', 'A', lambda r: 1.0)
+    pairpot_bb =atsim_potentials.Potential('B', 'B', lambda r: 2.0)
+    pairpot_cc =atsim_potentials.Potential('C', 'C', lambda r: 3.0)
+    pairpot_ba =atsim_potentials.Potential('B', 'A', lambda r: 5.0)
+    pairpot_ac =atsim_potentials.Potential('A', 'C', lambda r: 6.0)
+    pairpot_bc =atsim_potentials.Potential('B', 'C', lambda r: 7.0)
 
     # Define two species
     sio = StringIO.StringIO()
-    writeEAMTable.writeSetFLFinnisSinclair(
+    atsim_potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
       [eampot2, eampot1],
@@ -1237,12 +1240,13 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actual = actual[37:]
     actual = [float(v) for v in actual]
 
+    import testutil
     testutil.compareCollection(self,expect, actual)
 
     # Try a ternary system
     # Define two species
     sio = StringIO.StringIO()
-    writeEAMTable.writeSetFLFinnisSinclair(
+    atsim_potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
       [eampot2, eampot1, eampot3],
@@ -1266,4 +1270,3 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actual = [float(v) for v in actual]
 
     testutil.compareCollection(self,expect, actual)
-
