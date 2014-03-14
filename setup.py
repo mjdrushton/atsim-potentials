@@ -2,13 +2,11 @@
 from setuptools import setup, find_packages
 
 setup(name="atsim_potentials",
-  version = "0.0.0",
+  use_hg_version=True,
 
   packages = find_packages(exclude=["tests"]),
   test_suite = "tests",
-  extras_require = {
-    'docs' : ['sphinx>=1.1.3'],
-  },
+  setup_requires = ["hgtools", "sphinx>=1.1.3"],
 
   # Meta-data for PyPI
   description = "atsim_potentials provides tools for working with pair and embedded atom method potential models including tabulation routines for DL_POLY and LAMMPS",
