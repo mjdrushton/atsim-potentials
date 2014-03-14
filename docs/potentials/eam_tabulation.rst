@@ -81,26 +81,26 @@ Define the Model
 It is now necessary to describe the model in python code. Hard-coding the model parameters from the previous table, ``embed()`` and ``density()`` functions can be defined for :math:`F_{\text{Ag}} (\rho)` and :math:`\rho_{\text{Ag}}` respectively:
 
 
-.. literalinclude:: eam_example_1.py
+.. literalinclude:: eam_tabulate_example1.py
   :lines: 2-13
 
 
 The embedding and density functions should then be wrapped in an :class:`.EAMPotential` object to create a single item list:
 
-.. literalinclude:: eam_example_1.py
+.. literalinclude:: eam_tabulate_example1.py
   :lines: 23-24
 
 
 Similarly the pair potential component, :math:`\phi_{\text{Ag}-\text{Ag}} (r_{ij}`, of the model can easily be defined as: 
 
 
-.. literalinclude:: eam_example_1.py
+.. literalinclude:: eam_tabulate_example1.py
   :pyobject: pair_AgAg
       
 
 This can then be wrapped in a :class:`atsim_potentials.Potential` object to create a list of pair potentials. 
 
-.. literalinclude:: eam_example_1.py
+.. literalinclude:: eam_tabulate_example1.py
   :lines: 25
 
 
@@ -137,7 +137,7 @@ Putting this together the following script is obtained (this script can also be 
   
 Running this script will produce a table file named ``Ag.eam`` in the same directory as the script:
 
-.. code:: shell
+.. code:: sh
 
   python eam_tabulate_example1.py
 
@@ -170,7 +170,7 @@ The following ``pair_coeff`` directive indicates that the interaction between at
 
 The example can then be run by invoking LAMMPS:
 
-.. code:: shell
+.. code:: sh
 
   lammps -in example1_minimize.lmpin
 

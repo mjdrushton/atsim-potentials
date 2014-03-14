@@ -4,7 +4,7 @@ Pair Potential Tabulation
 Tabulation Using a Python Script
 --------------------------------
 
-Pair potentials are tabulated using the convenience function :func:`atsim_potentials.writePotentials`. This function is supplied with a list of :ref:`Potential <potential_objects>` objects, which have :meth:`energy() <Potential.energy>` and :meth:`force() <Potential.force>` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
+Pair potentials are tabulated using the convenience function :func:`atsim_potentials.writePotentials`. This function is supplied with a list of :meth:`Potential <potential_objects>` objects, which have :meth:`PotentialInterface.energy` and :meth:`PotentialInterface.force` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
 
 .. _quick_start:
 
@@ -47,7 +47,7 @@ Potential Objects
 
 Potential objects should implement the following interface:
 
-.. class:: Potential
+.. class:: PotentialInterface
     
     .. attribute:: speciesA
 
@@ -57,6 +57,7 @@ Potential objects should implement the following interface:
     .. attribute:: speciesB
         
         (str): Attribute giving second species in pair described by pair-potential
+
 
 
     .. method:: energy(self, r)
@@ -69,6 +70,7 @@ Potential objects should implement the following interface:
         :rtype: float
 
 
+
     .. method:: force(self, r)
 
         Calculate force (-dU/dr) for interaction at a given separation.
@@ -79,7 +81,7 @@ Potential objects should implement the following interface:
         :rtype: float
     	
 
-In most cases the :class:`Potential <atsim_potentials.Potential>` class provided in :mod:`atsim_potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`Potential.energy() <atsim_potentials.Potential.energy>` method. The forces calculated by the :meth:`Potential.force() <atsim_potentials.Potential.force>` method are obtained by taking the numerical derivative of the wrapped function. 
+In most cases the :class:`atsim_potentials.Potential` class provided in :mod:`atsim_potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`atsim_potentials.Potential.energy` method. The forces calculated by the :meth:`atsim_potentials.Potential.force` method are obtained by taking the numerical derivative of the wrapped function. 
 
 .. autoclass:: atsim_potentials.Potential
     :members:

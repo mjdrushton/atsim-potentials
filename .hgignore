@@ -5,3 +5,9 @@ venv/*
 atsim_potentials.egg-info
 build
 dist
+Jinja2-*.egg
+MarkupSafe-*.egg
+Pygments-*.egg
+Sphinx-*.egg
+docutils-*.egg
+hgtools-*.egg

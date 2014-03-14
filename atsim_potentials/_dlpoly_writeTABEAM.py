@@ -132,7 +132,7 @@ def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.s
   """Create Exended EAM variant of DL_POLY ``TABEAM`` file.
 
   The :class:`.EAMPotential` instances within the ``eampots`` list are expected to provide individual density functions
-  for each species pair in the species being tabulated. See :method:`.EAMPotential.__init__` for how these are specified
+  for each species pair in the species being tabulated. See :meth:`.EAMPotential.__init__` for how these are specified
   to the :class:`.EAMPotential` constructors.
 
   .. note :: The Extended EAM variant for which this function creates ``TABEAM`` files (i.e. metal potential type = eeam) is only supported in DL_POLY versions >= 4.05.

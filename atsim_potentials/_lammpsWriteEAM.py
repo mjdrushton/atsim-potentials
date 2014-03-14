@@ -297,7 +297,7 @@ def writeSetFLFinnisSinclair(
   ``LAMMPS`` `eam/fs pair_style <http://lammps.sandia.gov/doc/pair_eam.html>`_.
 
   The :class:`.EAMPotential` instances within the ``eampots`` list are expected to provide individual density functions
-  for each species pair in the species being tabulated. See :method:`.EAMPotential.__init__` for how these are specified
+  for each species pair in the species being tabulated. See :meth:`.EAMPotential.__init__` for how these are specified
   to the :class:`.EAMPotential` constructors.
 
   .. seealso ::
