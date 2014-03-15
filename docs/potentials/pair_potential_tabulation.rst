@@ -4,7 +4,7 @@ Pair Potential Tabulation
 Tabulation Using a Python Script
 --------------------------------
 
-Pair potentials are tabulated using the convenience function :func:`atsim_potentials.writePotentials`. This function is supplied with a list of :meth:`Potential <potential_objects>` objects, which have :meth:`PotentialInterface.energy` and :meth:`PotentialInterface.force` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
+Pair potentials are tabulated using the convenience function :func:`atsim.potentials.writePotentials`. This function is supplied with a list of :meth:`Potential <potential_objects>` objects, which have :meth:`PotentialInterface.energy` and :meth:`PotentialInterface.force` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
 
 .. _quick_start:
 
@@ -23,11 +23,11 @@ The following example (:download:`basak_tabulate.py`) shows how the UO\ :sub:`2`
 
 
 
-``atsim_potentials.writePotentials()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The :func:`atsim_potentials.writePotentials` function is used to tabulate pair-potentials for the supported simulation codes.
+``atsim.potentials.writePotentials()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The :func:`atsim.potentials.writePotentials` function is used to tabulate pair-potentials for the supported simulation codes.
 
-The process by which :func:`writePotentials() <atsim_potentials.writePotentials>` is used can be summmarised as follows:
+The process by which :func:`writePotentials() <atsim.potentials.writePotentials>` is used can be summmarised as follows:
     
     1.  Define python functions describing energy of interactions (see :ref:`instantiate_potential_object` and :ref:`predefined_potential_forms`)
     2.  Wrap these functions in :class:`.Potential` objects.
@@ -38,7 +38,7 @@ The process by which :func:`writePotentials() <atsim_potentials.writePotentials>
         *   Number of  rows in tabulation
         *   Python file like object into which data should be written.
             
-.. autofunction:: atsim_potentials.writePotentials
+.. autofunction:: atsim.potentials.writePotentials
 
 .. _potential_objects:
 
@@ -81,9 +81,9 @@ Potential objects should implement the following interface:
         :rtype: float
     	
 
-In most cases the :class:`atsim_potentials.Potential` class provided in :mod:`atsim_potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`atsim_potentials.Potential.energy` method. The forces calculated by the :meth:`atsim_potentials.Potential.force` method are obtained by taking the numerical derivative of the wrapped function. 
+In most cases the :class:`atsim.potentials.Potential` class provided in :mod:`atsim_potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`atsim_potentials.Potential.energy` method. The forces calculated by the :meth:`atsim_potentials.Potential.force` method are obtained by taking the numerical derivative of the wrapped function. 
 
-.. autoclass:: atsim_potentials.Potential
+.. autoclass:: atsim.potentials.Potential
     :members:
     :undoc-members:
 
@@ -106,7 +106,7 @@ The Gd-O potential function can be defined as:
 .. code-block:: python
 
     import math
-    from atsim_potentials import Potential
+    from atsim.potentials import Potential
 
     def bornMayer_Gd_O(rij):
         energy = 1000.0 * math.exp(-rij/0.212)
@@ -135,7 +135,7 @@ The energy and force at a separation of 1Å can then be obtained by calling the
 Predefined Potential Forms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the previous example (`Example: Instantiating Potential Object`_), a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atsim_potentials.potentialsforms`` module.
+In the previous example (`Example: Instantiating Potential Object`_), a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atsim.potentials.potentialsforms`` module.
 
 Using the ``potentialsforms`` module, the function:
 
@@ -151,12 +151,12 @@ can be rewritten as:
 
     .. code:: python
 
-        from atsim_potentials import potentialforms
+        from atsim.potentials import potentialforms
         bornMayer_Gd_O = potentialsforms.bornmayer(1000.0, 0.212)
 
-The ``atsim_potentials.potentialsforms`` module contains the following:
+The ``atsim.potentials.potentialsforms`` module contains the following:
 
-.. automodule:: atsim_potentials.potentialforms
+.. automodule:: atsim.potentials.potentialforms
     :members:
     :undoc-members:
 
@@ -166,9 +166,9 @@ Combining Potential Forms
 
 Pair interactions are often described using a combination of standard potential forms. This was seen for the Basak potentials used within the :ref:`quick_start` example, where the oxygen-uranium pair potential was the combination of a Buckingham and Morse potential forms. 
 
-Such potential combinations can be made using the ``plus()`` function from the ``atsim_potentials`` module:
+Such potential combinations can be made using the ``plus()`` function from the ``atsim.potentials`` module:
 
-..  autofunction:: atsim_potentials.plus
+..  autofunction:: atsim.potentials.plus
 
 Spline Interpolation
 ^^^^^^^^^^^^^^^^^^^^
@@ -187,7 +187,7 @@ The :class:`.SplinePotential` has a number of applications, for example:
     *   similarly different potential forms may be better able to express certain separations than others. For instance the zbl potential is often used to describe the high energy interactions found in radiation damage cascades but must be combined with another potential to describe equilibrium properties.
 
 
-.. autoclass:: atsim_potentials.SplinePotential
+.. autoclass:: atsim.potentials.SplinePotential
     :members:
     :undoc-members:
 
@@ -213,32 +213,32 @@ The following plot shows the combined coulomb and short-range contributions for 
     Plot of BKS Si-O potential showing the short-range (bks_buck) component, electrostatic (bks_coul) and the effective Si-O interaction (bks_buck + bks_coul). This shows that this potential turns over at small separations making it unsuitable for use where high energies may be experienced such as high-temperature or radiation damage cascade simulations.
 
 
-The first step to using :class:`.SplinePotential` is to choose appropriate detachment and attachment points. This is perhaps best done plotting the two potential functions to be splined. The :mod:`.potentials` module contains the convenience functions :func:`atsim_potentials.plot` and :func:`atsim_potentials.plotToFile` to make this task easier. The following piece of code first defines the ZBL and Buckingham potentials before plotting them into the files ``zbl.dat`` and ``bks_buck.dat``. These files each contain two, space delimited, columns giving :math:`r_{ij}` and energy, and may be easily plotted in Excel or GNU Plot. 
+The first step to using :class:`.SplinePotential` is to choose appropriate detachment and attachment points. This is perhaps best done plotting the two potential functions to be splined. The :mod:`.potentials` module contains the convenience functions :func:`atsim.potentials.plot` and :func:`atsim.potentials.plotToFile` to make this task easier. The following piece of code first defines the ZBL and Buckingham potentials before plotting them into the files ``zbl.dat`` and ``bks_buck.dat``. These files each contain two, space delimited, columns giving :math:`r_{ij}` and energy, and may be easily plotted in Excel or GNU Plot. 
 
 .. code-block:: python
     
-    from atsim_potentials import potentialforms
-    import atsim_potentials
+    from atsim.potentials import potentialforms
+    import atsim.potentials
 
     zbl = potentialforms.zbl(14, 8)
     bks_buck = potentialforms.buck(18003.7572, 1.0/4.87318, 133.5381)
 
-    atsim_potentials.plot( 'bks_buck.dat', 0.1, 10.0, bks_buck, 5000)
-    atsim_potentials.plot( 'zbl.dat', 0.1, 10.0, zbl, 5000)
+    atsim.potentials.plot( 'bks_buck.dat', 0.1, 10.0, bks_buck, 5000)
+    atsim.potentials.plot( 'zbl.dat', 0.1, 10.0, zbl, 5000)
 
 
 Plotting these files show that ``detachmentX`` and ``attachmentX`` values of 0.8 and 1.4 may be appropriate. The ``zbl`` and ``bks_buck`` functions can then be splined between these points as follows:
 
 .. code-block:: python
     
-    spline = atsim_potentials.SplinePotential(zbl, bks_buck, 0.8, 1.4)
+    spline = atsim.potentials.SplinePotential(zbl, bks_buck, 0.8, 1.4)
  
 
 Plot data can then be created for the combined functions with the interpolating spline:
 
 .. code-block:: python
 
-    atsim_potentials.plot( 'spline.dat', 0.1, 10.0, spline, 5000)
+    atsim.potentials.plot( 'spline.dat', 0.1, 10.0, spline, 5000)
 
 
 Plotting the splined Si-O potential together with the original ``buck`` and ``zbl`` functions allows the smooth transition between the two functions to be observed, as shown in the following function:
@@ -251,26 +251,26 @@ Plotting the splined Si-O potential together with the original ``buck`` and ``zb
     Plot of BKS Si-O interaction showing the short-range (buck) and ZBL functions plotted with the curve generated by ``SplinePotential`` (spline). This joins them with a an interpolating spline acting between the detachment point at :math:`r_{ij} = 0.8` and re-attachment point at :math:`r_{ij} = 1.4` shown by dashed lines. 
 
 
-Finally, the potential can be tabulated in a format suitable for LAMMPS using :func:`atsim_potentials.writePotentials` :
+Finally, the potential can be tabulated in a format suitable for LAMMPS using :func:`atsim.potentials.writePotentials` :
 
 .. code-block:: python
 
-    bks_SiO = atsim_potentials.Potential('Si', 'O', spline)
+    bks_SiO = atsim.potentials.Potential('Si', 'O', spline)
     with open('bks_SiO.lmptab', 'wb') as outfile:
-        atsim_potentials.writePotentials('LAMMPS', [bks_SiO], 10.0, 5000, out = outfile)
+        atsim.potentials.writePotentials('LAMMPS', [bks_SiO], 10.0, 5000, out = outfile)
 
 
 
 Miscellaneous Functions
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: atsim_potentials.plot
+.. autofunction:: atsim.potentials.plot
 
 
-.. autofunction:: atsim_potentials.plotToFile
+.. autofunction:: atsim.potentials.plotToFile
 
 
-.. autoclass:: atsim_potentials.TableReader
+.. autoclass:: atsim.potentials.TableReader
     :members:
     :undoc-members:
 

@@ -1,8 +1,8 @@
 import math
 
-from atsim_potentials import Potential
-from atsim_potentials import EAMPotential
-from atsim_potentials import writeSetFLFinnisSinclair
+from atsim.potentials import Potential
+from atsim.potentials import EAMPotential
+from atsim.potentials import writeSetFLFinnisSinclair
 
 
 #Embedding functions

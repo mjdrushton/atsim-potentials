@@ -2,9 +2,9 @@
 Embedded Atom Method (EAM) Tabulation
 =====================================
 
-An EAM model is defined by constructing instances of  :class:`atsim_potentials.EAMPotential` describing each species within the model. :class:`.EAMPotential` encapsulates the density and embedding functions specific to each species' many bodied interactions. In addition the purely pairwise interactions within the EAM are defined using a list of :class:`atsim_potentials.Potential` objects.
+An EAM model is defined by constructing instances of  :class:`atsim.potentials.EAMPotential` describing each species within the model. :class:`.EAMPotential` encapsulates the density and embedding functions specific to each species' many bodied interactions. In addition the purely pairwise interactions within the EAM are defined using a list of :class:`atsim_potentials.Potential` objects.
 
-Once the EAM model has been described in terms of  :class:`EAMPotential <atsim_potentials.EAMPotential>` and :class:`Potential <atsim_potentials.Potential>` objects it can be tabulated for specific simulation codes. In addition to the differences in table files expected by different simulation codes, there are several variations on the embedded atom method, in order to support this variety, the :mod:`atsim_potentials` module contains several tabulation functions:
+Once the EAM model has been described in terms of  :class:`EAMPotential <atsim.potentials.EAMPotential>` and :class:`Potential <atsim.potentials.Potential>` objects it can be tabulated for specific simulation codes. In addition to the differences in table files expected by different simulation codes, there are several variations on the embedded atom method, in order to support this variety, the :mod:`atsim_potentials` module contains several tabulation functions:
 
 =========================================  ===========  ===============  =================================================================
 Function                                   File-Format  Simulation Code  Example
@@ -98,7 +98,7 @@ Similarly the pair potential component, :math:`\phi_{\text{Ag}-\text{Ag}} (r_{ij
   :pyobject: pair_AgAg
       
 
-This can then be wrapped in a :class:`atsim_potentials.Potential` object to create a list of pair potentials. 
+This can then be wrapped in a :class:`atsim.potentials.Potential` object to create a list of pair potentials. 
 
 .. literalinclude:: eam_tabulate_example1.py
   :lines: 25
@@ -533,7 +533,7 @@ Reference
 :class:`.EAMPotential`
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. autoclass:: atsim_potentials.EAMPotential
+.. autoclass:: atsim.potentials.EAMPotential
     :members:
     :undoc-members:
 
@@ -541,15 +541,15 @@ Tabulation Functions
 ^^^^^^^^^^^^^^^^^^^^
 
 
-.. autofunction:: atsim_potentials.writeFuncFL
+.. autofunction:: atsim.potentials.writeFuncFL
 
-.. autofunction:: atsim_potentials.writeSetFL
+.. autofunction:: atsim.potentials.writeSetFL
 
-.. autofunction:: atsim_potentials.writeSetFLFinnisSinclair
+.. autofunction:: atsim.potentials.writeSetFLFinnisSinclair
 
-.. autofunction:: atsim_potentials.writeTABEAM 
+.. autofunction:: atsim.potentials.writeTABEAM 
 
-.. autofunction:: atsim_potentials.writeTABEAMFinnisSinclair 
+.. autofunction:: atsim.potentials.writeTABEAMFinnisSinclair 
 
 
 .. rubric:: Footnotes

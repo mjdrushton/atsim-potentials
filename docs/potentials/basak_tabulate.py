@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
-import atsim_potentials
-from atsim_potentials import potentialforms
+import atsim.potentials
+from atsim.potentials import potentialforms
 
 def main():
     # O-O Interaction:
@@ -24,21 +24,21 @@ def main():
     morse_OU = potentialforms.morse(0.577190, 1.6500, 2.36900)
 
     # Compose the buckingham and morse functions into a single function
-    # using the atsim_potentials.plus() function
-    f_OU = atsim_potentials.plus(buck_OU, morse_OU)
+    # using the atsim.potentials.plus() function
+    f_OU = atsim.potentials.plus(buck_OU, morse_OU)
 
     # Construct list of Potential objects
     potential_objects = [
-        atsim_potentials.Potential('O', 'O', f_OO),
-        atsim_potentials.Potential('U', 'U', f_UU),
-        atsim_potentials.Potential('O', 'U', f_OU)
+        atsim.potentials.Potential('O', 'O', f_OO),
+        atsim.potentials.Potential('U', 'U', f_UU),
+        atsim.potentials.Potential('O', 'U', f_OU)
     ]
 
     # Tabulate into file called TABLE
     # using short-range cutoff of 6.5 Angs with grid
     # increment of 1e-3 Angs (6500 grid points)
     with open('TABLE', 'wb') as outfile:
-        atsim_potentials.writePotentials(
+        atsim.potentials.writePotentials(
            'DL_POLY',
            potential_objects,
            6.5, 6500,

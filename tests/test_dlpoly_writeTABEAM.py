@@ -1,7 +1,7 @@
 import unittest
 
-import atsim_potentials
-from atsim_potentials import _dlpoly_writeTABEAM
+from atsim import potentials
+from atsim.potentials import _dlpoly_writeTABEAM
 
 import math
 import shutil
@@ -75,15 +75,15 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
     import StringIO
 
     #Define potentials
-    ppbucku  =atsim_potentials.Potential('U', 'U', _zerowrap(atsim_potentials.buck(668.546808, 0.408333, 0.0)))
-    ppbuckuc = atsim_potentials.Potential('U', 'C', _zerowrap(atsim_potentials.buck(30.885011, 0.814952, 0.0)))
-    ppswcc   = atsim_potentials.Potential('C', 'C', _zerowrap(_stillingerWeber(1.1, 2.078, 1.368, 2.5257)))
+    ppbucku  = potentials.Potential('U', 'U', _zerowrap(potentials.buck(668.546808, 0.408333, 0.0)))
+    ppbuckuc = potentials.Potential('U', 'C', _zerowrap(potentials.buck(30.885011, 0.814952, 0.0)))
+    ppswcc   = potentials.Potential('C', 'C', _zerowrap(_stillingerWeber(1.1, 2.078, 1.368, 2.5257)))
 
     densU = _densityFunction( 1.301894, 2.0, 0.668659, 1.862363, 2.0)
     densC = _densityFunction(33.446287, 2.0, 1.318078, 1.512686, 2.0)
 
-    UEAMPot = atsim_potentials.EAMPotential('U', 92, 19.05, embeddingFunction, densU )
-    CEAMPot = atsim_potentials.EAMPotential('C',  6,  2.267,embeddingFunction, densC )
+    UEAMPot = potentials.EAMPotential('U', 92, 19.05, embeddingFunction, densU )
+    CEAMPot = potentials.EAMPotential('C',  6,  2.267,embeddingFunction, densC )
 
     maxrho = 410.0
     cutoff = 12.0
@@ -115,7 +115,7 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
     def testFunction(r):
       return 2.0*r + 3.0
 
-    from atsim_potentials._dlpoly_writeTABEAM import _tabulateFunction
+    from atsim.potentials._dlpoly_writeTABEAM import _tabulateFunction
     _tabulateFunction(testfile, testFunction, 5, 1.0)
     testfile.flush()
     testfile.seek(0)
@@ -191,16 +191,16 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
       a=106.855913747 #tmpa #55,100//0.00002,0.0001
       return (a/(r**m))#*0.5*(1+erf(20*(r-1.5)))
 
-    functionO_Ce = zw(atsim_potentials.plus(atsim_potentials.buck(351.341192796, 0.380516580733, 0.0), morse(1.86874578949, 2.35603812582, 0.719250701502)))
-    functionO_O = zw(atsim_potentials.buck(830.283447557, 0.352856254215, 3.88437209048))
-    functionCe_Ce = zw(atsim_potentials.buck(18600.0, 0.26644, 0.0))
+    functionO_Ce = zw(potentials.plus(potentials.buck(351.341192796, 0.380516580733, 0.0), morse(1.86874578949, 2.35603812582, 0.719250701502)))
+    functionO_O = zw(potentials.buck(830.283447557, 0.352856254215, 3.88437209048))
+    functionCe_Ce = zw(potentials.buck(18600.0, 0.26644, 0.0))
 
-    potO_O = atsim_potentials.Potential('O', 'O', functionO_O)
-    potO_Ce = atsim_potentials.Potential('O', 'Ce', functionO_Ce)
-    potCe_Ce = atsim_potentials.Potential('Ce', 'Ce', functionCe_Ce)
+    potO_O = potentials.Potential('O', 'O', functionO_O)
+    potO_Ce = potentials.Potential('O', 'Ce', functionO_Ce)
+    potCe_Ce = potentials.Potential('Ce', 'Ce', functionCe_Ce)
 
-    eampotCe = atsim_potentials.EAMPotential('Ce', 92, 238, embedCe, zw(densityCe))
-    eampotO = atsim_potentials.EAMPotential('O', 8, 16, embedO, zw(densityO))
+    eampotCe = potentials.EAMPotential('Ce', 92, 238, embedCe, zw(densityCe))
+    eampotO = potentials.EAMPotential('O', 8, 16, embedO, zw(densityO))
 
     self.eampots = [eampotCe, eampotO]
     self.pairpots = [potO_O, potO_Ce, potCe_Ce]
@@ -301,8 +301,8 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
     def ppBB(r):
       return 9.0 * r
 
-    Potential = atsim_potentials.Potential
-    EAMPotential = atsim_potentials.EAMPotential
+    Potential = potentials.Potential
+    EAMPotential = potentials.EAMPotential
     pairPotentials = [
       Potential("Ar", "Ar", ppAA),
       Potential("Ar", "B", ppAB),
@@ -321,7 +321,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       os.chdir(self.tempdir)
 
       with open("TABEAM", "wb") as outfile:
-        atsim_potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile, "")
+        potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile, "")
 
       _runDLPoly()
       # import pdb;pdb.set_trace()
@@ -348,8 +348,8 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
     def zero(r):
       return 0.0
 
-    Potential = atsim_potentials.Potential
-    EAMPotential = atsim_potentials.EAMPotential
+    Potential = potentials.Potential
+    EAMPotential = potentials.EAMPotential
     pairPotentials = [
       Potential("Ar", "Ar", zero),
       Potential("Ar", "B", zero),
@@ -368,7 +368,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       os.chdir(self.tempdir)
 
       with open("TABEAM", "wb") as outfile:
-        atsim_potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
+        potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
 
       _runDLPoly()
       energy = _extractEnergy()
@@ -402,8 +402,8 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
     def zero(r):
       return 0.0
 
-    Potential = atsim_potentials.Potential
-    EAMPotential = atsim_potentials.EAMPotential
+    Potential = potentials.Potential
+    EAMPotential = potentials.EAMPotential
     pairPotentials = [
       Potential("Ar", "Ar", zero),
       Potential("Ar", "B", zero),
@@ -422,7 +422,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       os.chdir(self.tempdir)
 
       with open("TABEAM", "wb") as outfile:
-        atsim_potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
+        potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
 
       _runDLPoly()
       energy = _extractEnergy()

@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-from atsim_potentials import writeTABEAM
-from atsim_potentials import Potential
-from atsim_potentials import EAMPotential
+from atsim.potentials import writeTABEAM
+from atsim.potentials import Potential
+from atsim.potentials import EAMPotential
 
 import math
 

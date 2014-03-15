@@ -4,14 +4,14 @@ import unittest
 import StringIO
 import os
 
-import atsim_potentials
-from atsim_potentials import _lammps_writeTABLE
+from atsim import potentials
+from atsim.potentials import _lammps_writeTABLE
 
 class LammpsWriteTABLETestCase(unittest.TestCase):
   """Test case for lammps.writeTABLE module"""
 
   def testWriteSinglePotential(self):
-    """Test that atsim_potentials._lammps_writeTABLE._writeSinglePotential() works correctly"""
+    """Test that atsim.potentials._lammps_writeTABLE._writeSinglePotential() works correctly"""
 
     expect=["A-B",
             "N 6 R 0.10000000 5.10000000",
@@ -24,7 +24,7 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
             "6 5.10000000 -0.10000000 1.00000000"]
 
     energyfunc = lambda x: 5.0-x
-    pot =atsim_potentials.Potential("A", "B", energyfunc)
+    pot =potentials.Potential("A", "B", energyfunc)
 
     sbuild = StringIO.StringIO()
     _lammps_writeTABLE._writeSinglePotential(pot, 0.1, 5.1, 6, sbuild)
@@ -42,8 +42,8 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
   def testWritePotentials(self):
     """Test _lammps_writeTABLE.writePotentials() function"""
 
-    pota =atsim_potentials.Potential("A", "B", lambda x: x)
-    potb =atsim_potentials.Potential("C", "D", lambda x: 5.0-x)
+    pota =potentials.Potential("A", "B", lambda x: x)
+    potb =potentials.Potential("C", "D", lambda x: 5.0-x)
 
     expect=["A-B",
             "N 6 R 0.10000000 5.10000000",
