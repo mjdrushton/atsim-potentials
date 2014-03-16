@@ -1,0 +1,19 @@
+Control Template
+
+temperature   0
+pressure     0.0
+
+steps  0
+
+no index 
+
+timestep 0.0002
+
+cutoff    6.5
+rvdw cutoff 6.5
+ewald precision 1E-8
+
+job time 250000.0
+close time 500.0
+
+finish

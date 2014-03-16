@@ -6,17 +6,17 @@ from atsim.potentials import EAMPotential
 
 import math
 
-# Creates functions of the form used for density function.
-# Functional form also forms components of pair potential.
 def makeFunc(a, b, r_e, c):
+  # Creates functions of the form used for density function.
+  # Functional form also forms components of pair potential.
   def func(r):
     return (a * math.exp(-b*(r/r_e -1)))/(1+(r/r_e - c)**20.0)
   return func
 
 
-# Function factory that returns functions parameterised for homogeneous pair interactions
 def makePairPotAA(A, gamma, r_e, kappa,
                   B, omega, lamda):
+  # Function factory that returns functions parameterised for homogeneous pair interactions
   f1 = makeFunc(A, gamma, r_e, kappa)
   f2 = makeFunc(B, omega, r_e, lamda)
   def func(r):
@@ -24,14 +24,14 @@ def makePairPotAA(A, gamma, r_e, kappa,
   return func
 
 
-# Function factory that returns functions parameterised for heterogeneous pair interactions
 def makePairPotAB(dens_a, phi_aa, dens_b, phi_bb):
+  # Function factory that returns functions parameterised for heterogeneous pair interactions
   def func(r):
     return 0.5 * ( (dens_b(r)/dens_a(r) * phi_aa(r)) + (dens_a(r)/dens_b(r) * phi_bb(r)) )
   return func
 
-# Function factory returning parameterised embedding function.
 def makeEmbed(rho_e, rho_s, F_ni, F_i, F_e, eta):
+  # Function factory returning parameterised embedding function.
   rho_n = 0.85*rho_e
   rho_0 = 1.15*rho_e
 
@@ -52,7 +52,7 @@ def makeEmbed(rho_e, rho_s, F_ni, F_i, F_e, eta):
     return e3(rho)
   return func
 
-def main():
+def makePotentialObjects():
   # Potential parameters
   r_eCu     = 2.556162
   f_eCu     = 1.554485
@@ -115,6 +115,10 @@ def main():
       Potential('Cu', 'Cu', pair_CuCu),
       Potential('Al', 'Cu', pair_AlCu)]
 
+  return eamPotentials, pairPotentials
+
+def main():
+  eamPotentials, pairPotentials = makePotentialObjects()
 
   # Perform tabulation
   # Make tabulation

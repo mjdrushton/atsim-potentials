@@ -1,0 +1,15 @@
+FIELD for: ab.cif. Supercell: 2 x 2 x 2                                                             
+units eV                                      
+
+molecule 1
+Molecule_1
+nummols 1
+atoms 30
+Al       26.981538 0.000000 25 0
+Cu       63.546000 0.000000 5 0
+finish
+metal 3
+Al Al eam
+Al Cu eam
+Cu Cu eam
+close

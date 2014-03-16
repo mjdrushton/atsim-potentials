@@ -8,25 +8,8 @@ import shutil
 import os
 
 from _tempfiletestcase import TempfileTestCase
+from _rundlpoly import needsDLPOLY, extractDLPOLYEnergy, runDLPoly
 
-import distutils
-DLPOLY_FOUND = distutils.spawn.find_executable('DLPOLY.Z')
-
-
-def _runDLPoly():
-  import commands
-  commands.getoutput('DLPOLY.Z')
-
-def _extractEnergy():
-  with open('STATIS') as infile:
-    # import pdb;pdb.set_trace()
-    infile.next()
-    infile.next()
-    infile.next()
-    line = infile.next()
-    tokens = line.split()
-    engcfg = float(tokens[2])
-  return engcfg
 
 def _getResourceDirectory():
   """Returns path to resources used by this test module (currently assumed to be sub-directory
@@ -206,9 +189,7 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
     self.pairpots = [potO_O, potO_Ce, potCe_Ce]
 
 
-
-
-  @unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
+  @needsDLPOLY
   def testFluorite_NoPair(self):
     # Set-up the temporary directory
     oldpwd = os.getcwd()
@@ -232,15 +213,15 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
             outfile,
             "Title")
 
-      _runDLPoly()
+      runDLPoly()
       # import pdb;pdb.set_trace()
-      engcfg = _extractEnergy()
+      engcfg = extractDLPOLYEnergy()
       expect = -998.811
       self.assertAlmostEquals(expect, engcfg, places = 3)
     finally:
       os.chdir(oldpwd)
 
-  @unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
+  @needsDLPOLY
   def testFluorite_WithPair(self):
     # Set-up the temporary directory
     oldpwd = os.getcwd()
@@ -264,8 +245,8 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
             outfile,
             "Title")
 
-      _runDLPoly()
-      engcfg = _extractEnergy()
+      runDLPoly()
+      engcfg = extractDLPOLYEnergy()
       expect =-585.4435
       self.assertAlmostEquals(expect, engcfg, places = 3)
     finally:
@@ -282,7 +263,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
     shutil.copyfile(os.path.join(_getResourceDirectory(),"CONTROL_triplet_eeam"), os.path.join(self.tempdir,"CONTROL"))
     shutil.copyfile(os.path.join(_getResourceDirectory(),"FIELD_triplet_eeam"), os.path.join(self.tempdir,"FIELD"))
 
-  @unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
+  @needsDLPOLY
   def testPairPotentials(self):
     """Test tabulation of pair potentials"""
 
@@ -323,16 +304,16 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       with open("TABEAM", "wb") as outfile:
         potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile, "")
 
-      _runDLPoly()
+      runDLPoly()
       # import pdb;pdb.set_trace()
-      energy = _extractEnergy()
+      energy = extractDLPOLYEnergy()
       self.assertAlmostEquals(65.31152, energy, places=4)
 
     finally:
       os.chdir(oldpwd)
 
 
-  @unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
+  @needsDLPOLY
   def testEmbeddingFunction(self):
     """Test tabulation of embedding functions"""
 
@@ -370,8 +351,8 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       with open("TABEAM", "wb") as outfile:
         potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
 
-      _runDLPoly()
-      energy = _extractEnergy()
+      runDLPoly()
+      energy = extractDLPOLYEnergy()
       self.assertAlmostEquals(14.72, energy, places=4)
 
     finally:
@@ -379,7 +360,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
 
 
 
-  @unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
+  @needsDLPOLY
   def testDensityFunctions(self):
     """Test tabulation of  density functions"""
 
@@ -424,8 +405,8 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       with open("TABEAM", "wb") as outfile:
         potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
 
-      _runDLPoly()
-      energy = _extractEnergy()
+      runDLPoly()
+      energy = extractDLPOLYEnergy()
 
       expect = 0.11*5 + 0.11*2.5
       expect += 0.567*5.0 + 0.98*5.590169

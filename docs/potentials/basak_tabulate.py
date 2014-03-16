@@ -3,7 +3,7 @@
 import atsim.potentials
 from atsim.potentials import potentialforms
 
-def main():
+def makePotentialObjects():
     # O-O Interaction:
     # Buckingham
     # A = 1633.00510, rho = 0.327022, C = 3.948790
@@ -33,7 +33,10 @@ def main():
         atsim.potentials.Potential('U', 'U', f_UU),
         atsim.potentials.Potential('O', 'U', f_OU)
     ]
+    return potential_objects
 
+def main():
+    potential_objects = makePotentialObjects()
     # Tabulate into file called TABLE
     # using short-range cutoff of 6.5 Angs with grid
     # increment of 1e-3 Angs (6500 grid points)

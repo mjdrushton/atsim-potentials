@@ -179,8 +179,9 @@ The example can then be run by invoking LAMMPS:
 .. _eam_example_2a:
 
 Example 2a: Tabulate Al-Cu Alloy Potentials Using :func:`.writeSetFL` for LAMMPS
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Within the following example the process required to generate and use a ``setfl`` file that tabulates the Al-Cu alloy model of Zhou et al [#Zhou2004]_.  By comparison to the ``funcfl`` format, ``setfl`` allows multiple elements to be given in the same file and additionally pair-potentials for particular pairs of interacting species can be specified (``funcfl`` relies on the simulation code to 'mix' pair-potentials within alloy systems).
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Within the following example the process required to generate and use a ``setfl`` file that tabulates the Al-Cu alloy model of Zhou et al [#Zhou2004]_.  By comparison to the ``funcfl`` format, ``setfl`` allows multiple elements to be given in the same file and additionally pair-potentials for particular pairs of interacting species can be specified (``funcfl`` relies on the simulation code to 'mix' pair-potentials within alloy systems). The :download:`eam_tabulate_example2a.py` gives a complete example of how the Zhou model can be tabulated.
 
 Model Description
 """""""""""""""""
@@ -278,10 +279,10 @@ The ``makeEmbed()`` function describes the embedding function:
   :pyobject: makeEmbed
 
 
-Before invoking the factory functions we just defined, it is useful to assign the model parameters to easily identifiable variables within the script's ``main()`` function:
+Lists of :class:`.EAMPotential` and :class:`.Potential` objects are created and returned as a tuple by the ``makePotentialObjects()`` function within :download:`eam_tabulate_example2a.py`. Before invoking the factory functions we just defined, the model parameters are assigned to easily identifiable variables within this function:
 
 .. literalinclude:: eam_tabulate_example2a.py
-  :lines: 57-88
+  :lines: 55-88
 
 
 Now the functions required by the :class:`.EAMPotential` instances for Al and Cu can be created:
@@ -302,11 +303,10 @@ Similarly, using the ``makePairPotAA()`` and ``makePairPotAB()`` function factor
   :lines: 103-116
 
 
-Now we have all the objects required for  :func:`.writeSetFL`. The next excerpt invokes tabulation function, writing the data into a file called ``Zhou_AlCu.setfl``:
-
+Now we have all the objects required for  :func:`.writeSetFL`. The next excerpt call ``makeObjects()`` to get the EAM and pair-potential objects before invoking the tabulation function, writing the data into a file called ``Zhou_AlCu.setfl``:
 
 .. literalinclude:: eam_tabulate_example2a.py
-  :lines: 121-135
+  :pyobject: main
 
 
 Putting this all together gives the following script (which can also be downloaded using the following link :download:`eam_tabulate_example2a.py <eam_tabulate_example2a.py>`:). Running this (``python eam_tabulate_example2a.py``) produces the ``Zhou_AlCu.setfl`` file in current working directory.
@@ -363,10 +363,10 @@ Example 2b: Tabulate Al-Cu Alloy Potentials Using :func:`.writeTABEAM` for DL_PO
 
 The tabulation script used with :ref:`Example 2a <eam_example_2a>` can be easily modified to produce the ``TABEAM`` format expected by the `DL_POLY`_ simulation code. See the tabulation script for this example: :download:`eam_tabulate_example2b.py`.
 
-The :class:`.EAMPotential` and :class:`.Potential` lists are created in exactly the same way as :ref:`Example 2a <eam_example_2a>`, however rather than calling :func:`.writeSetFL` the ``main()`` function is modified to use the DL_POLY specific :func:`.writeTABEAM` function instead and to write into a file named ``TABEAM``. The pertinent section of the :download:`eam_tabulate_example2b.py` ``main()`` function is now given:
+The :class:`.EAMPotential` and :class:`.Potential` lists are created in exactly the same way as :ref:`Example 2a <eam_example_2a>`, however rather than calling :func:`.writeSetFL` the ``main()`` function is modified to use the DL_POLY specific :func:`.writeTABEAM` function instead and to write into a file named ``TABEAM``. The ``main()`` function of :download:`eam_tabulate_example2b.py` is now given:
 
 .. literalinclude:: eam_tabulate_example2b.py
-  :lines: 127-133 
+  :pyobject: main
 
 
 Using the ``TABEAM`` file with `DL_POLY`_
@@ -501,7 +501,7 @@ The ``main()`` function is given below:
 .. literalinclude:: eam_tabulate_example3b.py
   :pyobject: main
 
-Excluding the changed import statement at the top of the file, only two lines have been changed (highlighted). The first changes the filename to ``TABEAM`` whilst the second tells python to call :func:`.writeTABEAMFinnisSinclair` instead of :func:`.writeSetFLFinnisSinclair`\ :
+Excluding the import statement at the top of the file, only two lines have been changed (highlighted). The first changes the filename to ``TABEAM`` whilst the second tells python to call :func:`.writeTABEAMFinnisSinclair` instead of :func:`.writeSetFLFinnisSinclair`\ :
 
 .. literalinclude:: eam_tabulate_example3b.py
   :lines: 129-136

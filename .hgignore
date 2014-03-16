@@ -2,7 +2,7 @@ syntax:glob
 .*
 *.pyc
 venv/*
-atsim_potentials.egg-info
+atsim.potentials.egg-info
 build
 dist
 Jinja2-*.egg
