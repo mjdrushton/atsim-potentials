@@ -269,6 +269,9 @@ Miscellaneous Functions
 
 .. autofunction:: atsim.potentials.plotToFile
 
+.. autofunction:: atsim.potentials.plotPotentialObject
+
+.. autofunction:: atsim.potentials.plotPotentialObjectToFile
 
 .. autoclass:: atsim.potentials.TableReader
     :members:

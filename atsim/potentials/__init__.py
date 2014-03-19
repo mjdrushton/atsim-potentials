@@ -1,5 +1,4 @@
 """A collection of classes and functions related to defining potentials"""
-import contextlib
 
 import _tablereaders
 
@@ -69,7 +68,8 @@ class TableReader(object):
 def plotToFile(fileobj,lowx, highx, func, steps=10000):
   """Convenience function for plotting the potential functions contained herein.
 
-  Data is written to a text file as two columns (r and E) separated by spaces.
+  Data is written to a text file as two columns (r and E) separated by spaces
+  with no header.
 
   :param fileobj: Python file object into which data should be plotted
   :param lowx: X-axis lower value
@@ -89,7 +89,8 @@ def plotToFile(fileobj,lowx, highx, func, steps=10000):
 def plot(filename, lowx, highx, func, steps=10000):
   """Convenience function for plotting the potential functions contained herein.
 
-  Data is written to a text file as two columns (r and E) separated by spaces.
+  Data is written to a text file as two columns (r and E) separated by spaces
+  with no header.
 
   :param filename: File into which data should be plotted
   :param lowx: X-axis lower value
@@ -97,8 +98,45 @@ def plot(filename, lowx, highx, func, steps=10000):
   :param func: Function to be plotted
   :param steps: Number of data points to be plotted"""
 
-  with contextlib.closing(open(filename, 'wb')) as outfile:
+  with open(filename, 'wb') as outfile:
     plotToFile(outfile, lowx, highx, func, steps)
+
+
+def plotPotentialObject(filename, lowx, highx, potentialObject, steps=10000):
+  """Convenience function for plotting energy of pair interactions
+  given by instances of :class:`atsim.potentials.Potential` obtained by calling
+  `potential` `.energy()` method.
+
+  Data is written to a text file as two columns (r and E) separated by spaces
+  with no header.
+
+  :param filename: File into which data should be plotted
+  :param lowx: X-axis lower value
+  :param highx: X-axis upper value
+  :param func: :class:`atsim.potentials.Potential` object.
+  :param steps: Number of data points to be plotted"""
+
+  with open(filename, 'wb') as outfile:
+    plotPotentialObjectToFile(outfile, lowx, highx, potentialObject, steps)
+
+
+def plotPotentialObjectToFile(fileobj, lowx, highx, potentialObject, steps=10000):
+  """Convenience function for plotting energy of pair interactions
+  given by instances of :class:`atsim.potentials.Potential` obtained by calling
+  `potential` `.energy()` method.
+
+  Data is written to a text file as two columns (r and E) separated by spaces
+  with no header.
+
+  :param fileobj: Python file object into which data should be plotted
+  :param lowx: X-axis lower value
+  :param highx: X-axis upper value
+  :param func: :class:`atsim.potentials.Potential` object.
+  :param steps: Number of data points to be plotted"""
+
+  def f(r):
+    return potentialObject.energy(r)
+  plotToFile(fileobj, lowx, highx, f, steps)
 
 
 def _LAMMPS_writePotentials(potentialList, cutoff, gridPoints, out):
