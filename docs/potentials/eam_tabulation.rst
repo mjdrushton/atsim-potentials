@@ -527,30 +527,6 @@ Running :download:`eam_tabulate_example3b.py` produces a file names ``TABEAM`` w
 .. note :: The Extended EAM (eeam) variant of the ``TABEAM`` file  generated here is only supported in DL_POLY versions >= 4.05.
 
 
-Reference
----------
-
-:class:`.EAMPotential`
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: atsim.potentials.EAMPotential
-    :members:
-    :undoc-members:
-
-Tabulation Functions
-^^^^^^^^^^^^^^^^^^^^
-
-
-.. autofunction:: atsim.potentials.writeFuncFL
-
-.. autofunction:: atsim.potentials.writeSetFL
-
-.. autofunction:: atsim.potentials.writeSetFLFinnisSinclair
-
-.. autofunction:: atsim.potentials.writeTABEAM 
-
-.. autofunction:: atsim.potentials.writeTABEAMFinnisSinclair 
-
 
 .. rubric:: Footnotes
 

@@ -9,11 +9,11 @@ setup(name="atsim.potentials",
   test_suite = "tests",
   setup_requires = ["hgtools", "sphinx>=1.1.3"],
   install_requires = ["setuptools"],
-    
-  zip_safe = True,
+
+  #zip_safe = True,
 
   # Meta-data for PyPI
-  description = "atsim_potentials provides tools for working with pair and embedded atom method potential models including tabulation routines for DL_POLY and LAMMPS",
+  description = "atsim.potentials provides tools for working with pair and embedded atom method potential models including tabulation routines for DL_POLY and LAMMPS",
   long_description = open('README.rst').read(),
   author = "M.J.D. Rushton",
   author_email = "m.rushton@imperial.ac.uk",

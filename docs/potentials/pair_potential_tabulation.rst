@@ -1,30 +1,10 @@
 Pair Potential Tabulation 
 ==========================
 
-Tabulation Using a Python Script
---------------------------------
-
 Pair potentials are tabulated using the convenience function :func:`atsim.potentials.writePotentials`. This function is supplied with a list of :meth:`Potential <potential_objects>` objects, which have :meth:`PotentialInterface.energy` and :meth:`PotentialInterface.force` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
 
-.. _quick_start:
-
-Quick-Start
-^^^^^^^^^^^
-
-The following example gives a complete python script showing how the potential API can be used to tabulate potentials for `DL_POLY`_ .
-
-The following example (:download:`basak_tabulate.py`) shows how the UO\ :sub:`2` potential model of Basak [#basak03]_ can be tabulated:
-    
-    * the U + O interaction within this model combines Buckingham and Morse potential forms. Although `DL_POLY`_ natively supports both potential forms they cannot be combined with the code itself. By creating a ``TABLE`` file the Basak model can be described to `DL_POLY`_.
-    * when executed from the command line this script will write tabulated potentials into a file named ``TABLE``.
-
-.. literalinclude:: basak_tabulate.py
-    
-
-
-
 ``atsim.potentials.writePotentials()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------------
 The :func:`atsim.potentials.writePotentials` function is used to tabulate pair-potentials for the supported simulation codes.
 
 The process by which :func:`writePotentials() <atsim.potentials.writePotentials>` is used can be summmarised as follows:
@@ -38,12 +18,11 @@ The process by which :func:`writePotentials() <atsim.potentials.writePotentials>
         *   Number of  rows in tabulation
         *   Python file like object into which data should be written.
             
-.. autofunction:: atsim.potentials.writePotentials
 
 .. _potential_objects:
 
 Potential Objects
-^^^^^^^^^^^^^^^^^
+-----------------
 
 Potential objects should implement the following interface:
 
@@ -81,17 +60,14 @@ Potential objects should implement the following interface:
         :rtype: float
     	
 
-In most cases the :class:`atsim.potentials.Potential` class provided in :mod:`atsim_potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`atsim_potentials.Potential.energy` method. The forces calculated by the :meth:`atsim_potentials.Potential.force` method are obtained by taking the numerical derivative of the wrapped function. 
+In most cases the :class:`atsim.potentials.Potential` class provided in :mod:`atsim.potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`atsim.potentials.Potential.energy` method. The forces calculated by the :meth:`atsim.potentials.Potential.force` method are obtained by taking the numerical derivative of the wrapped function. 
 
-.. autoclass:: atsim.potentials.Potential
-    :members:
-    :undoc-members:
 
 
 .. _instantiate_potential_object:
 
-Example: Instantiating Potential Object
-"""""""""""""""""""""""""""""""""""""""
+Example: Instantiating :class:`atsim.potentials.Potential` Objects
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following example shows how a Born-Mayer potential function can be described and used to create a Potential object for the interaction between Gd and O. The Born-Mayer potential is given by:
 
@@ -133,9 +109,9 @@ The energy and force at a separation of 1Å can then be obtained by calling the
 .. _predefined_potential_forms:
 
 Predefined Potential Forms
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 
-In the previous example (`Example: Instantiating Potential Object`_), a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atsim.potentials.potentialsforms`` module.
+In the previous example (`instantiate_potential_object`_), a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atsim.potentials.potentialsforms`` module.
 
 Using the ``potentialsforms`` module, the function:
 
@@ -154,24 +130,23 @@ can be rewritten as:
         from atsim.potentials import potentialforms
         bornMayer_Gd_O = potentialsforms.bornmayer(1000.0, 0.212)
 
-The ``atsim.potentials.potentialsforms`` module contains the following:
+See API reference for list of available potential forms: :ref:`atsim_potentials_potentialforms`
 
-.. automodule:: atsim.potentials.potentialforms
-    :members:
-    :undoc-members:
 
+.. _combining_potential_forms:
 
 Combining Potential Forms
-"""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Pair interactions are often described using a combination of standard potential forms. This was seen for the Basak potentials used within the :ref:`quick_start` example, where the oxygen-uranium pair potential was the combination of a Buckingham and Morse potential forms. 
 
 Such potential combinations can be made using the ``plus()`` function from the ``atsim.potentials`` module:
 
-..  autofunction:: atsim.potentials.plus
+
+.. _spline_interpolation :
 
 Spline Interpolation
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 The :class:`.SplinePotential` class can be used to smoothly interpolate between two different potential forms within the same potential curve: one potential function acts below a given cutoff (referred to as the detachment point) and the other potential function takes over at larger separations (acting above a second cutoff called the attachment point). An exponential interpolating spline acts between the detachment and attachment points to provide a smooth transition between the two potential curves. 
 
@@ -184,16 +159,13 @@ The :class:`.SplinePotential` class aims to automatically determine spline coeff
 The :class:`.SplinePotential` has a number of applications, for example:
 
     *   certain potential forms can become attractive in an unphysical manner at small separations (an example is the so-called Buckingham catastrophe); :class:`.SplinePotential` can be used to combine an appropriate repulsive potential at short separations whilst still using the other form for equilibrium and larger separations.
-    *   similarly different potential forms may be better able to express certain separations than others. For instance the zbl potential is often used to describe the high energy interactions found in radiation damage cascades but must be combined with another potential to describe equilibrium properties.
+    *   similarly different potential forms may be better able to express certain separations than others. For instance the :func:`~atsim.potentials.potentialforms.zbl` potential is often used to describe the high energy interactions found in radiation damage cascades but must be combined with another potential to describe equilibrium properties.
 
 
-.. autoclass:: atsim.potentials.SplinePotential
-    :members:
-    :undoc-members:
-
+.. _example_spline:
 
 Example: Splining ZBL Potential onto Buckingham Potential
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As mentioned above, for certain parameterisations, popular potential forms can exhibit unphysical behaviour for some interatomic separations. A popular model for the description of silicate and phosphate systems is that due to van Beest, Kramer and van Santen (the BKS potential set) [#bks]_. In the current example, the Si-O interaction from this model will be considered. This uses the Buckingham potential form with the following parameters:
     
@@ -261,28 +233,4 @@ Finally, the potential can be tabulated in a format suitable for LAMMPS using :f
 
 
 
-Miscellaneous Functions
-^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autofunction:: atsim.potentials.plot
-
-
-.. autofunction:: atsim.potentials.plotToFile
-
-.. autofunction:: atsim.potentials.plotPotentialObject
-
-.. autofunction:: atsim.potentials.plotPotentialObjectToFile
-
-.. autoclass:: atsim.potentials.TableReader
-    :members:
-    :undoc-members:
-
-
-
-.. rubric:: Footnotes
-
-.. [#basak03] Basak, C. (2003). Classical molecular dynamics simulation of UO2 to predict thermophysical properties. *Journal of Alloys and Compounds*, **360** (1-2), 210–216. <`doi:10.1016/S0925-8388(03)00350-5 <http://dx.doi.org/doi:10.1016/S0925-8388(03)00350-5>`
-
-.. [#bks] Van Beest, B. W. H., Kramer, G. J., & van Santen, R. A. (1990). Force fields for silicas and aluminophosphates based on ab initio calculations.  *Physical Review Letters* , **64** (16), 1955–1958. `doi:10.1103/PhysRevLett.64.1955 <http://dx.doi.org/doi:10.1103/PhysRevLett.64.1955>`
-
-.. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx
+.. [#bks] Van Beest, B. W. H., Kramer, G. J., & van Santen, R. A. (1990). Force fields for silicas and aluminophosphates based on ab initio calculations.  *Physical Review Letters* , **64** (16), 1955–1958. http://dx.doi.org/doi:10.1103/PhysRevLett.64.1955

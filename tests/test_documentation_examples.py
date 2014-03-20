@@ -35,7 +35,7 @@ def _loadModule(scriptname):
 #basak_tabulate.py
 class basak_tabulateTestCase(TempfileTestCase):
   """Test docs/potentials/basak_tabulate.py"""
-  test_name = os.path.join(_getDocsDirectory(), "basak_tabulate.py")
+  test_name = os.path.join(_getDocsDirectory(), os.pardir, "basak_tabulate.py")
 
   def testExample(self):
     """Test example basak_tabulate.py"""

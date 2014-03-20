@@ -63,6 +63,12 @@ class SplinePotential(object):
 
     The spline coefficients :math:`B_{0...5}` can be obtained using the :meth:`.splineCoefficients` property.
 
+    .. seealso::
+
+      * :ref:`spline_interpolation`
+      * :ref:`example_spline`
+
+
     :param startPotential: Function defining potential for rij <= detachmentX
     :param endPotential: Function defining potential for rij => attachmentX
     :param detachmentX: rij value at which startPotential should end
