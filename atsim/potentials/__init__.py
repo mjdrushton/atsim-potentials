@@ -22,8 +22,7 @@ def plus(a,b):
 
   This function is useful for combining existing potentials.
 
-  Example::
-
+  **Example:**
 
     To combine :func:`.buck` and :func:`.hbnd` functions from the :mod:`.potentialsforms` module to give:
 
