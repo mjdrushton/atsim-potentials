@@ -54,3 +54,5 @@ please see LICENSE and NOTICE file.
 .. _LAMMPS: http://lammps.sandia.gov
 .. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx
 .. _homepage: http://abulafia.mt.ic.ac.uk/groupmembers/michael
+.. _bitbucket: http://https://bitbucket.org/mjdr/atsim_potentials/
+.. _mercurial: http://mercurial.selenic.com
