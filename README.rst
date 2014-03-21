@@ -1,6 +1,6 @@
-******************************************************************************************
-``atsim.potentials`` - python modules for working potential models in atomistic simulation
-******************************************************************************************
+***********************************************************************************************
+``atsim.potentials`` - python modules for working with potential models in atomistic simulation
+***********************************************************************************************
 
 Python modules and scripts to support atomistic simulation; ``atsim.potentials`` provides tools for working with pair and embedded atom method potential models. 
 

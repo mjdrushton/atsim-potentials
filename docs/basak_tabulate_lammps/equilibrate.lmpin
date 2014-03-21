@@ -1,0 +1,35 @@
+boundary p p p
+atom_style full
+units metal
+
+read_data UO2.lmpstruct
+
+replicate 4 4 4
+
+variable SR_CUTOFF equal 6.5
+variable THERMO_DAMP equal 0.1
+variable BARO_DAMP equal 0.5
+variable T equal 300.0
+
+variable O equal 1
+variable U equal 2
+
+set type $O charge -1.2
+set type $U charge 2.4
+
+kspace_style pppm 1.0e-6
+
+pair_style hybrid/overlay coul/long ${SR_CUTOFF} table linear 6500 pppm
+pair_coeff * * coul/long
+pair_coeff $O $O table Basak.lmptab O-O
+pair_coeff $O $U table Basak.lmptab O-U
+pair_coeff $U $U table Basak.lmptab U-U
+
+timestep 0.001
+fix thermostat_fix all npt temp ${T} ${T} ${THERMO_DAMP} aniso 0.0 0.0 ${BARO_DAMP}
+
+thermo 10
+thermo_style custom step time epair ecoul etotal cella vol
+
+velocity all create ${T} 391461872356
+run 10000

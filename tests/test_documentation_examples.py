@@ -119,7 +119,7 @@ class basak_tabulateTestCase(TempfileTestCase):
                Ax = 0.0, Ay = 0.0, Az = 0.0,
                Bx = 0.0, By = 0.0, Bz = 0.0)
       buck_OU = potentialforms.buck(693.648700, 0.327022, 0.0)
-      morse_OU = potentialforms.morse(0.577190, 1.6500, 2.36900)
+      morse_OU = potentialforms.morse( 1.6500, 2.36900, 0.577190)
       testfunc = atsim.potentials.plus(buck_OU, morse_OU)
 
       dotest(d, testfunc)
