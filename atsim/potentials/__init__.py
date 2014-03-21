@@ -152,6 +152,36 @@ class UnsupportedTabulationType(Exception):
 def writePotentials(outputType, potentialList, cutoff, gridPoints, out = sys.stdout):
   """Tabulates pair-potentials in formats suitable for multiple simulation codes.
 
+  * The ``outputType`` parameter can be one of the following:
+
+    * ``DL_POLY``:
+
+      * This function creates output that can be written to a ``TABLE`` and used
+        within DL_POLY.
+      * for a working example see :ref:`Quick-Start: DL_POLY <quick_start>`.
+
+    * ``LAMMPS``:
+
+      * Creates files readable by LAMMPS `pair_style table <http://lammps.sandia.gov/doc/pair_table.html>`_
+      * Each file can contain multiple potentials:
+
+        * the block representing each potential has a title formed from the ``speciesA``
+          and ``speciesB`` attributes of the :class:`~atsim.potentials.Potential`
+          instance represented by the block. These are sorted into their natural
+          order and separated by a hyphen to form the title.
+        *  **Example:**
+
+            * For a :class:`~atsim.potentials.Potential` where ``speciesA`` = Xe
+              and ``speciesB`` = O the block title would be: ``O-Xe``.
+            * If ``speciesA`` = B
+              and ``speciesB`` = O the block title would be: ``B-O``.
+
+        * within LAMMPSthe block title is used as the ``keyword`` argument to the
+          `pair_style table <http://lammps.sandia.gov/doc/pair_table.html>`_
+          ``pair_coeff`` directive.
+      * For a working example see :ref:`quick_start_lammps`
+
+
   :param outputType: The type of output that should be created can be one of: ``DL_POLY`` or ``LAMMPS``
   :type outputType: str
 

@@ -37,6 +37,7 @@ class basak_tabulateTestCase(TempfileTestCase):
   """Test docs/potentials/basak_tabulate.py"""
   test_name = os.path.join(_getDocsDirectory(), os.pardir, "basak_tabulate.py")
 
+  @needsDLPOLY
   def testExample(self):
     """Test example basak_tabulate.py"""
     from atsim.potentials import potentialforms
@@ -125,6 +126,20 @@ class basak_tabulateTestCase(TempfileTestCase):
 
     finally:
       os.chdir(oldpwd)
+
+  def testLAMMPSExample(self):
+    """Test doumentation example Quick-Start: LAMMPS."""
+
+    test_name = os.path.join(_getDocsDirectory(), os.pardir, "basak_tabulate_lammps.py")
+
+    oldpwd = os.getcwd()
+    try:
+      os.chdir(self.tempdir)
+      exampleModule = _loadModule(test_name)
+      exampleModule.main()
+    finally:
+      os.chdir(oldpwd)
+
 
 
 #eam_tabulate_example1.py

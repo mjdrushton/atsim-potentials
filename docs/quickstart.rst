@@ -60,7 +60,7 @@ The table file is written from the ``main()`` function of :download:`basak_tabul
 
 
 Using the ``TABLE`` File in DL_POLY
-===================================
+-----------------------------------
 
 A set of DL_POLY files are provided allowing a simple NPT molecular dynamics equilibration simulation to be run against the ``TABLE`` file created in the previous step using :class:`~atsim.potentials.writePotentials`. Copy the files linked from the following table into the same directory as the ``TABLE`` file:
 
@@ -94,5 +94,35 @@ A set of DL_POLY files are provided allowing a simple NPT molecular dynamics equ
     		DLPOLY.Z
 
 
+.. _quick_start_lammps:
+
+Quick-Start: LAMMPS
+===================
+
+Once the potential model has been defined as a series of :class:`~atsim.potentials.Potential` creating tabulations for different codes in different formats is fairly simple. The script described in this example is given in :download:`basak_tabulate_lammps.py`. This contains the same potential definition as the :ref:`previous example <quick_start>`, however the ``main()`` function has been modified to create a table suitable for `LAMMPS`_ :
+
+.. literalinclude:: basak_tabulate_lammps.py
+	:pyobject: main
+
+The two highlighted lines have been changed. The first changes the output filename to ``Basak.lmptab`` whilst the second has been changed from ``DL_POLY`` to ``LAMMPS`` in order to select the desired tabulation format.
+
+Running the file creates the ``Basak.lmptab`` file:
+
+	.. code:: sh
+
+		python basak_tabulate_lammps.py
+
+Using ``Basak.lmptab`` in LAMMPS
+--------------------------------
+
+
+
+
+
+
+
+
+
 .. [#basak03] Basak, C. (2003). Classical molecular dynamics simulation of UO2 to predict thermophysical properties. *Journal of Alloys and Compounds*, **360** (1-2), 210–216. http://dx.doi.org/doi:10.1016/S0925-8388(03)00350-5
 .. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx
+.. _LAMMPS: http://lammps.sandia.gov
