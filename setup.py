@@ -7,7 +7,7 @@ setup(name="atsim.potentials",
   packages = find_packages(exclude=["tests"]),
   namespace_packages = ["atsim"],
   test_suite = "tests",
-  setup_requires = ["hgtools", "sphinx>=1.1.3"],
+  setup_requires = ["hgtools"],
   install_requires = ["setuptools"],
 
   #zip_safe = True,
