@@ -6,6 +6,10 @@ Python modules and scripts to support atomistic simulation; ``atsim.potentials``
 
 In particular includes functions for tabulation of pair and EAM models for `LAMMPS`_ and `DL_POLY`_.
 
+Documentation
+=============
+
+Documentation, containing examples, API reference etc is hosted at http://atsimpotentials.readathedocs.org
 
 Installation
 ============

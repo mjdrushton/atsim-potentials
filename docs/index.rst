@@ -34,6 +34,7 @@ Contents
     examples
     reference
     credits
+    changes
     license
 
 Contact
