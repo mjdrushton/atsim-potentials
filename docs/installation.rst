@@ -36,7 +36,7 @@ From the source directory install ``atsim.potentials`` using the following comma
 Build the Documentation
 -----------------------
 
-The documentation (which you are currently reading) can be built from source using:
+The documentation (which you are currently reading) can be built from source using (assuming sphinx is installed):
 
 .. code:: sh
 
@@ -45,6 +45,7 @@ The documentation (which you are currently reading) can be built from source usi
 
 This will place documents in ``build/sphinx/html`` within the source tree. 
 
+Alternatively this documentation is hosted at http://atsimpotentials.readthedocs.org
 
 
 .. _bitbucket: http://https://bitbucket.org/mjdr/atsim_potentials/
