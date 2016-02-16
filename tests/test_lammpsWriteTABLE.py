@@ -1,13 +1,15 @@
 """Module containing tests for the _lammps_writeTABLE module"""
+from builtins import zip
 
 import unittest
 
-from io import StringIO
+from io import BytesIO,StringIO
 
 import os
 
 from atsim import potentials
 from atsim.potentials import _lammps_writeTABLE
+
 
 class LammpsWriteTABLETestCase(unittest.TestCase):
   """Test case for lammps.writeTABLE module"""
@@ -37,6 +39,7 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
 
     self.assertEquals(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, actual):
+      # a = a.decode()
       self.assertEquals(os.linesep, a[-1])
       a = a[:-1]
       self.assertEquals(e,a)
@@ -47,7 +50,8 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
     pota =potentials.Potential("A", "B", lambda x: x)
     potb =potentials.Potential("C", "D", lambda x: 5.0-x)
 
-    expect=["A-B",
+    expect=[
+            "A-B",
             "N 6 R 0.10000000 5.10000000",
             "",
             "1 0.10000000 0.10000000 -1.00000000",
@@ -67,15 +71,16 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
             "5 4.10000000 0.90000000 1.00000000",
             "6 5.10000000 -0.10000000 1.00000000"]
 
-    sbuild = StringIO()
+    sbuild = BytesIO()
     _lammps_writeTABLE.writePotentials([pota,potb], 0.1, 5.1, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()
+    sbuild.seek(0)
 
     msg = "%s != %s" % (expect, actual)
-
     self.assertEquals(len(expect), len(actual), msg = msg)
-    for e,a in zip(expect, actual):
+    for e,a in zip(expect, sbuild):
+      a = a.decode()
       self.assertEquals(os.linesep, a[-1])
       a = a[:-1]
       self.assertEquals(e,a)

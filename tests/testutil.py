@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import zip
+from builtins import str
+
 import math
 
 import types
@@ -46,12 +50,12 @@ def _compareCollection(path, testCase, expect, actual, places, percenttolerance)
       _compareCollection(path+'[%d]'% i, testCase, e,a, places, percenttolerance)
   elif expectType == dict:
     #Compare dictionaries
-    ekeys = expect.keys()
-    akeys = actual.keys()
+    ekeys = list(expect.keys())
+    akeys = list(actual.keys())
     ekeys.sort()
     akeys.sort()
     testCase.assertEquals(ekeys, akeys)
-    for k,v in expect.iteritems():
+    for k,v in expect.items():
       _compareCollection(path+'[%s]'% (k,), testCase, v, actual[k], places, percenttolerance)
   elif expectType == float:
     #Compare float type in a fuzzy manner

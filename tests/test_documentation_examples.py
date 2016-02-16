@@ -1,6 +1,9 @@
 """Tests to make sure tests given in the documentation work"""
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import zip
+from builtins import range
+from builtins import str
 
 import os
 import unittest
@@ -57,7 +60,6 @@ class basak_tabulateTestCase(TempfileTestCase):
       exampleModule.main()
 
       def dotest(d, testfunc):
-
         # exampleModule.main()
 
         pobjs = exampleModule.makePotentialObjects()
@@ -82,21 +84,21 @@ class basak_tabulateTestCase(TempfileTestCase):
 
           d['Ax'] = r
 
-          with open(os.path.join(dldir, "CONFIG_pair.in")) as infile:
-            with open("CONFIG", "wb") as outfile:
+          with open(os.path.join(dldir, "CONFIG_pair.in"), 'r') as infile:
+            with open("CONFIG", "w") as outfile:
               outfile.write(infile.read() % d)
 
 
           from io import StringIO
 
           sio = StringIO()
-          print("vdw %d" % len(pobjs), file=sio)
+          print(u"vdw %d" % len(pobjs), file=sio)
           for p in pobjs:
-            print("%s %s tab" % (p.speciesA, p.speciesB), file=sio)
+            print(u"%s %s tab" % (p.speciesA, p.speciesB), file=sio)
           d["potDef"] = sio.getvalue()
 
-          with open(os.path.join(dldir, "FIELD_pair.in")) as infile:
-            with open("FIELD", "wb") as outfile:
+          with open(os.path.join(dldir, "FIELD_pair.in"),'r') as infile:
+            with open("FIELD", "w") as outfile:
               outfile.write(infile.read() % d)
 
           runDLPoly()
@@ -162,8 +164,8 @@ class eam_tabulate_example1TestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print("pair_style eam", file=potfile)
-        print("pair_coeff 1 1 Ag.eam", file=potfile)
+        potfile.write(b"pair_style eam\n")
+        potfile.write(b"pair_coeff 1 1 Ag.eam\n")
 
       # Run the main method
       exampleModule.main()
@@ -190,9 +192,9 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
     shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "calc_energy.lmpin"), os.path.join(self.tempdir,"calc_energy.lmpin"))
 
     inputExpect = [
-      (1.24246478E-02, "Al Al"), # Al Al
-      (-0.121863537, "Al Cu"),  # Al Cu
-      (-0.179150283, "Cu Cu") # Cu Cu
+      (1.24246478E-02, b"Al Al"), # Al Al
+      (-0.121863537, b"Al Cu"),  # Al Cu
+      (-0.179150283, b"Cu Cu") # Cu Cu
     ]
 
     oldpwd = os.getcwd()
@@ -230,8 +232,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
 
       for expect, potmap in inputExpect:
         with open("potentials.lmpinc", "wb") as potfile:
-          print("pair_style eam/alloy", file=potfile)
-          print("pair_coeff * * table.set "+potmap, file=potfile)
+          potfile.write(b"pair_style eam/alloy\n")
+          potfile.write(b"pair_coeff * * table.set "+potmap+b"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expect, energy, msg = potmap)
@@ -285,18 +287,17 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
           pairPotentials,
           comments = ['Zhou Al Cu', "", ""],
           out= outfile)
-      # import pdb;pdb.set_trace()
 
       inputExpect = [
-        ( 2.0*1.218017211, "Cu Cu"),  # Cu Cu
-        ( 2.0*1.716990097, "Al Al"), # Al Al
-        ( 1.218017211+1.716990097, "Al Cu")  # Al Cu
+        ( 2.0*1.218017211, b"Cu Cu"),  # Cu Cu
+        ( 2.0*1.716990097, b"Al Al"), # Al Al
+        ( 1.218017211+1.716990097, b"Al Cu")  # Al Cu
       ]
 
       for expect, potmap in inputExpect:
         with open("potentials.lmpinc", "wb") as potfile:
-          print("pair_style eam/alloy", file=potfile)
-          print("pair_coeff * * table.set "+potmap, file=potfile)
+          potfile.write(b"pair_style eam/alloy\n")
+          potfile.write(b"pair_coeff * * table.set "+potmap+b"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expect, energy, msg = potmap)
@@ -307,15 +308,15 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       dens_Al = [p.electronDensityFunction for p in eamPotentials if p.species == "Al"][0]
       hyp = 3.818376618407357
       inputExpect = [
-        ( 4* dens_Cu(2.7) + 2* dens_Cu(hyp), "Cu Cu"),  # Cu Cu
-        ( 4* dens_Al(2.7) + 2* dens_Al(hyp), "Al Al"), # Al Al
-        ( 2* dens_Cu(2.7) + 2* dens_Cu(hyp) + 2*dens_Al(2.7), "Al Cu"),  # Al Cu
-        ( 2* dens_Al(2.7) + 2* dens_Al(hyp) + 2*dens_Cu(2.7), "Cu Al")  # Cu Al
+        ( 4* dens_Cu(2.7) + 2* dens_Cu(hyp), b"Cu Cu"),  # Cu Cu
+        ( 4* dens_Al(2.7) + 2* dens_Al(hyp), b"Al Al"), # Al Al
+        ( 2* dens_Cu(2.7) + 2* dens_Cu(hyp) + 2*dens_Al(2.7), b"Al Cu"),  # Al Cu
+        ( 2* dens_Al(2.7) + 2* dens_Al(hyp) + 2*dens_Cu(2.7), b"Cu Al")  # Cu Al
       ]
       for expect, potmap in inputExpect:
         with open("potentials.lmpinc", "wb") as potfile:
-          print("pair_style eam/alloy", file=potfile)
-          print("pair_coeff * * table.set "+potmap, file=potfile)
+          potfile.write(b"pair_style eam/alloy\n")
+          potfile.write(b"pair_coeff * * table.set "+potmap+b"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expect, energy, msg = potmap)
@@ -362,14 +363,14 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "setfl_triplet.lmpstruct"), os.path.join(self.tempdir,"structure.lmpstruct"))
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "Zhou_AlCu.setfl"), os.path.join(self.tempdir, "table.setfl"))
 
-      potmaps = ["Cu Cu","Al Al", "Al Cu", "Cu Al"]
+      potmaps = [b"Cu Cu",b"Al Al", b"Al Cu", b"Cu Al"]
       expect = []
 
       # Run the Zhou tabulation created using tools from http://www.ctcms.nist.gov/potentials/Zhou04.html
       for potmap in potmaps:
         with open("potentials.lmpinc", "wb") as potfile:
-          print("pair_style eam/alloy", file=potfile)
-          print("pair_coeff * * table.setfl "+potmap, file=potfile)
+          potfile.write(b"pair_style eam/alloy\n")
+          potfile.write(b"pair_coeff * * table.setfl "+potmap+b"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertTrue(energy != None)
@@ -382,25 +383,12 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       nr = 12000
       dr = 0.001
 
-      # from atsim.potentials import writeSetFL
-      # pairPotentials = self.createSetFlPairPots()
-      # eamPotentials  = self.createSetFLEAMPots()
-
-      # with open("table.set", 'wb') as outfile:
-      #   writeSetFL(
-      #     nrho, drho,
-      #     nr, dr,
-      #     eamPotentials,
-      #     pairPotentials,
-      #     comments = ['Zhou Al Cu', "", ""],
-      #     out= outfile)
-
       exampleModule.main()
 
       for potmap,expectEnergy in zip(potmaps,expect):
         with open("potentials.lmpinc", "wb") as potfile:
-          print("pair_style eam/alloy", file=potfile)
-          print("pair_coeff * * Zhou_AlCu.setfl "+potmap, file=potfile)
+          potfile.write(b"pair_style eam/alloy\n")
+          potfile.write(b"pair_coeff * * Zhou_AlCu.setfl "+potmap+b"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expectEnergy, energy, places = 4, msg = potmap)
@@ -434,8 +422,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "calc_energy.lmpin"), os.path.join(self.tempdir,"calc_energy.lmpin"))
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "random_Al_Cu.lmpstruct"), os.path.join(self.tempdir,"structure.lmpstruct"))
       with open("potentials.lmpinc", "wb") as potfile:
-        print("pair_style eam/alloy", file=potfile)
-        print("pair_coeff * * Zhou_AlCu.setfl Al Cu", file=potfile)
+        potfile.write(b"pair_style eam/alloy\n")
+        potfile.write(b"pair_coeff * * Zhou_AlCu.setfl Al Cu\n")
 
       # Create the table files
       exampleModuleA.main()
@@ -498,7 +486,6 @@ class eam_tabulate_example3TestCase(TempfileTestCase):
       # Create TABEAM
       exampleModuleB.main()
 
-      # import pdb;pdb.set_trace()
       runDLPoly()
       dlpolyenergy = extractDLPOLYEnergy()
 
@@ -506,8 +493,8 @@ class eam_tabulate_example3TestCase(TempfileTestCase):
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "calc_energy.lmpin"), os.path.join(self.tempdir,"calc_energy.lmpin"))
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "random_Al_Fe.lmpstruct"), os.path.join(self.tempdir,"structure.lmpstruct"))
       with open("potentials.lmpinc", "wb") as potfile:
-        print("pair_style eam/fs", file=potfile)
-        print("pair_coeff * * Mendelev_Al_Fe.eam.fs Al Fe", file=potfile)
+        potfile.write(b"pair_style eam/fs\n")
+        potfile.write(b"pair_coeff * * Mendelev_Al_Fe.eam.fs Al Fe\n")
 
       # Create the table files
       exampleModuleA.main()

@@ -1,4 +1,6 @@
 """Module for creating DL_POLY TABLE files"""
+from __future__ import division
+from builtins import range
 
 import sys
 
@@ -27,17 +29,17 @@ def _writePotential(potential, cutoff, gridPoints, meshResolution, out ):
 
   #Generate output
   #Write the potential's header
-  outputbuilder.write("%(atom1)8s%(atom2)8s\n" % { 'atom1' : potential.speciesA, 'atom2' : potential.speciesB})
+  outputbuilder.write(u"%(atom1)8s%(atom2)8s\n" % { 'atom1' : potential.speciesA, 'atom2' : potential.speciesB})
 
   #Write the data records
-  dataTemplate = " % 14.7e"
-  dataTemplate = dataTemplate+ " % 14.7e" * 3
-  dataTemplate = dataTemplate + "\n"
+  dataTemplate = u" % 14.7e"
+  dataTemplate = dataTemplate+ u" % 14.7e" * 3
+  dataTemplate = dataTemplate + u"\n"
 
   #First, do the energies
   l = []
   r=0.0
-  for i in xrange(gridPoints):
+  for i in range(gridPoints):
     r += meshResolution
     l.append(potential.energy(r))
 
@@ -50,7 +52,7 @@ def _writePotential(potential, cutoff, gridPoints, meshResolution, out ):
   #Now, do the forces
   l = []
   r = 0.0
-  for i in xrange(gridPoints):
+  for i in range(gridPoints):
     r += meshResolution
     l.append(_calculateForce(potential, r))
 
@@ -83,9 +85,9 @@ def _writeTableHeader(delpot, cutpot, ngrid, out):
   @param ngrid Number of grid points
   @param out Python stream object (supporting write()) to which output is sent"""
   outputbuilder = StringIO()
-  outputbuilder.write(" "*80 + '\n')
+  outputbuilder.write(u" "*80 + u"\n")
   templParams = dict(delpot = delpot, cutpot = cutpot, ngrid = ngrid)
-  outputbuilder.write("%(delpot)15.8e%(cutpot)15.8e%(ngrid)10d\n" % templParams)
+  outputbuilder.write(u"%(delpot)15.8e%(cutpot)15.8e%(ngrid)10d\n" % templParams)
   out.write(outputbuilder.getvalue())
 
 
@@ -97,12 +99,12 @@ def writePotentials(potentials, cutoff, gridPoints, out = sys.stdout):
   @param gridPoints Number of grid points used to tabulate potential
   @param out Python stream object (supporting write()) to which output is sent"""
 
-  meshResolution = float(cutoff)/(float(gridPoints)-4.0)
+  meshResolution = cutoff / (gridPoints-4.0)
   outputbuilder = StringIO()
-  _writeTableHeader(meshResolution, cutoff, gridPoints, out)
+  _writeTableHeader(meshResolution, cutoff, gridPoints, outputbuilder)
 
   for potential in potentials:
-    _writePotential(potential, cutoff, gridPoints, meshResolution, out)
+    _writePotential(potential, cutoff, gridPoints, meshResolution, outputbuilder)
 
   #Write the contents of outputbuilder to the final destination
-  out.write(outputbuilder.getvalue())
+  out.write(outputbuilder.getvalue().encode())

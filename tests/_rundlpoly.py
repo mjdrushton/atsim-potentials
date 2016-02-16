@@ -1,3 +1,6 @@
+from future import standard_library
+standard_library.install_aliases()
+from builtins import next
 import unittest
 
 import distutils
@@ -7,8 +10,8 @@ needsDLPOLY = unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
 
 
 def runDLPoly():
-  import commands
-  commands.getoutput('DLPOLY.Z')
+  import subprocess
+  subprocess.getoutput('DLPOLY.Z')
 
 def extractDLPOLYEnergy():
   with open('STATIS') as infile:

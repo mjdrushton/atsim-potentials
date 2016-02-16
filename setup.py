@@ -7,7 +7,7 @@ setup(name="atsim.potentials",
   packages = find_packages(exclude=["tests"]),
   namespace_packages = ["atsim"],
   test_suite = "tests",
-  setup_requires = ["hgtools"],
+  setup_requires = ["future", "hgtools"],
   install_requires = ["setuptools"],
 
   #zip_safe = True,

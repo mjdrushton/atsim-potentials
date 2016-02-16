@@ -1,3 +1,5 @@
+from __future__ import division
+
 def gradient(func, h = 0.1e-5):
   """Function wrapper that returns derivative of func.
 

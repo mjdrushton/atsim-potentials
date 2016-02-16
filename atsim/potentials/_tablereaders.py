@@ -1,3 +1,6 @@
+from __future__ import division
+
+from builtins import object,str
 import re
 import bisect
 
@@ -93,7 +96,7 @@ class DatReader(TableReaderBase):
     for line in fileobj:
       line = line[:-1]
       line = line.strip()
-      if len(line) == 0 or line.startswith('#'):
+      if len(line) == 0 or line[0] == '#':
         continue
       (x,y) = splitre.split(line)[:2]
 

@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import object
+
 class Potential(object):
   """Class used to describe a potential to the :func:`.writePotentials()` function.
 
@@ -43,13 +46,13 @@ class Potential(object):
        :type h: float
        :return: -dU/dr at given separation
        :rtype: float"""
-    r1 = r-(h/2.0)
-    r2 = r+(h/2.0)
+    r1 = r - (h / 2.0)
+    r2 = r + (h / 2.0)
 
     dr = r2 -r1
     dU = self.energy(r2) - self.energy(r1)
 
-    dUdr = -dU/dr
+    dUdr = -dU / dr
     return dUdr
 
 class EAMPotential(object):

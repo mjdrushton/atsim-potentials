@@ -2,6 +2,8 @@
 
 The functions contained herein are function factories returning
 a function that takes separation as its sole argument."""
+from __future__ import division
+
 import math
 
 def buck(A, rho, C):
@@ -17,7 +19,7 @@ def buck(A, rho, C):
   :return: Function that will evaulate Buckingham potential for given A, rho and C"""
 
   def potential(r):
-    return A * math.exp(-r/rho) - C/r**6
+    return A * math.exp(-r/rho) - (C/r**6)
   return potential
 
 def bornmayer(A, rho):
@@ -64,7 +66,7 @@ def hbnd(A,B):
   :return: Function that will evaulate energy for potential of hbnd form for given A and B parameters"""
 
   def potential(r):
-    return A/r**12 - B/r**10
+    return (A/r**12) - (B/r**10)
   return potential
 
 def lj(epsilon, sigma):

@@ -36,10 +36,10 @@ def makeEmbed(rho_e, rho_s, F_ni, F_i, F_e, eta):
   rho_0 = 1.15*rho_e
 
   def e1(rho):
-    return sum([F_ni[i] * (rho/rho_n - 1)**float(i) for i in xrange(4)])
+    return sum([F_ni[i] * (rho/rho_n - 1)**float(i) for i in range(4)])
 
   def e2(rho):
-    return sum([F_i[i] * (rho/rho_e - 1)**float(i) for i in xrange(4)])
+    return sum([F_i[i] * (rho/rho_e - 1)**float(i) for i in range(4)])
 
   def e3(rho):
     return F_e * (1.0 - eta*math.log(rho/rho_s)) * (rho/rho_s)**eta

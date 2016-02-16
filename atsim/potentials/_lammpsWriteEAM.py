@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import range
+from builtins import object
+from builtins import str as text
 import math
 import os
 
@@ -13,12 +16,12 @@ from ._common import EAMPotential # noqa
 
 
 def _writeHeader(outfile, nrho, drho, nr, dr, cutoff, title, atomicNumber, mass, latticeConstant, latticeType):
-  print(title, file=outfile)
-  print("%d %f %f %s" % (atomicNumber, mass, latticeConstant, latticeType), file=outfile)
-  print("%d %f %d %f %f" % (nrho, drho, nr, dr, cutoff), file=outfile)
+  print(text(title), file=outfile)
+  print(u"%d %f %f %s" % (atomicNumber, mass, latticeConstant, latticeType), file=outfile)
+  print(u"%d %f %d %f %f" % (nrho, drho, nr, dr, cutoff), file=outfile)
 
 def _writeValueBlock(outfile, values):
-  numbertemplate = " % 20.16e"
+  numbertemplate = u" % 20.16e"
   i = 0
   for value in values:
     i +=1
@@ -32,7 +35,7 @@ def _writeValueBlock(outfile, values):
 
     if i % 5 == 0:
       i = 0
-      outfile.write(os.linesep)
+      outfile.write(text(os.linesep))
       continue
 
 
@@ -45,19 +48,19 @@ def _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, out):
   newcomments.extend(['', '', ''])
   newcomments = newcomments[:3]
 
-  print(os.linesep.join(newcomments), file=workout)
+  print(text(os.linesep).join(newcomments), file=workout)
 
   #Line 4: ntypes
-  ntypes = ["%d" % len(eampots)]
+  ntypes = [u"%d" % len(eampots)]
   typestrings = [ eampot.species for eampot in eampots ]
   ntypes.extend(typestrings)
-  ntypes = " ".join(ntypes)
+  ntypes = u" ".join(ntypes)
 
   print(ntypes, file=workout)
 
   #Line 5: nrho drho nr dr rcutoff
-  numbertemplate = " %20.16e"
-  templ = "%%d %s %%d %s %s" % ((numbertemplate,)*3)
+  numbertemplate = u" %20.16e"
+  templ = u"%%d %s %%d %s %s" % ((numbertemplate,)*3)
   print(templ % (nrho, drho, nr, dr, cutoff), file=workout)
 
   #Dump everything into out
@@ -66,23 +69,23 @@ def _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, out):
 #Writes elementblock header
 def _writeSetFLElementHeader(eampot, out):
   workout = StringIO()
-  print("%d %20.16e %20.16e %s" % (eampot.atomicNumber, eampot.mass, eampot.latticeConstant, eampot.latticeType), file=workout)
+  print(u"%d %20.16e %20.16e %s" % (eampot.atomicNumber, eampot.mass, eampot.latticeConstant, eampot.latticeType), file=workout)
   out.write(workout.getvalue())
 
 #Writes element block embedding function
 def _writeSetFLEmbeddingFunction(nrho, drho, eampot, out):
   workout = StringIO()
-  for i in xrange(nrho):
+  for i in range(nrho):
     rho = float(i)*drho
     val = eampot.embeddingFunction(rho)
-    print("% 20.16e" % val, file=workout)
+    print(u"% 20.16e" % val, file=workout)
   out.write(workout.getvalue())
 
 def _writeDensityFunction(func, nr, dr, out):
-  for i in xrange(nr):
+  for i in range(nr):
     r = float(i)*dr
     val = func(r)
-    print("% 20.16e" % val, file=out)
+    print(u"% 20.16e" % val, file=out)
 
 #Writes single density function to element block
 def _writeSetFLDensityFunction(eampot, eampots, nr, dr, out):
@@ -110,7 +113,7 @@ def _writeSetFLPairPots(nr, dr, eampots, pairpots, out):
     k.sort()
     return tuple(k)
 
-  class ZeroPair():
+  class ZeroPair(object):
     def energy(self, rij):
       return 0.0
   zeroPair = ZeroPair()
@@ -120,15 +123,15 @@ def _writeSetFLPairPots(nr, dr, eampots, pairpots, out):
     pairpotsdict[pairkey(pp.speciesA,pp.speciesB)] = pp
 
   #Make list of required pots
-  for i in xrange(len(eampots)):
-    for j in xrange(i+1):
+  for i in range(len(eampots)):
+    for j in range(i+1):
       k = pairkey(eampots[i].species, eampots[j].species)
       pp = pairpotsdict.get(k, zeroPair)
 
-      for k in xrange(nr):
+      for k in range(nr):
         r = float(k) * dr
         val = r * pp.energy(r)
-        print("% 20.16e" % val, file=workout)
+        print(u"% 20.16e" % val, file=workout)
   out.write(workout.getvalue())
 
 def _writeSetFL(
@@ -156,7 +159,7 @@ def _writeSetFL(
   _writeSetFLPairPots(nr, dr, eampots, pairpots, workout)
 
   #Dump working output file into out
-  out.write(workout.getvalue())
+  out.write(workout.getvalue().encode())
 
 def writeFuncFL(
     nrho, drho,
@@ -212,9 +215,9 @@ def writeFuncFL(
                eampot.latticeType)
 
   #Build a combined list of values
-  rhos = [ float(x) * drho for x in xrange(nrho) ]
+  rhos = [ float(x) * drho for x in range(nrho) ]
   embeds = [ eampot.embeddingFunction(rho) for rho in rhos]
-  separations = [ float(x) * dr for x in xrange(nr) ]
+  separations = [ float(x) * dr for x in range(nr) ]
   densities = [ eampot.electronDensityFunction(sep) for sep in separations]
 
   # Use pair potential to calculate energy * separation in ev Å
@@ -238,7 +241,7 @@ def writeFuncFL(
   _writeValueBlock(workingfile, valuelist)
 
   #Dump working file into out
-  out.write(workingfile.getvalue())
+  out.write(workingfile.getvalue().encode())
 
 def writeSetFL(
   nrho, drho,

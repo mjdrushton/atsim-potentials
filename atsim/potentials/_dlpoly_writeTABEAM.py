@@ -1,6 +1,7 @@
 """Module containing functions for creating DL_POLY TABEAM files"""
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import range
 
 import sys
 
@@ -12,18 +13,18 @@ from io import StringIO
 def _tabulateFunction(outputfile, func, numpoints, step):
   outputbuilder = StringIO()
   row = []
-  for i in xrange(numpoints):
-    row.append("%f" % (func( float(i) * step)))
+  for i in range(numpoints):
+    row.append(u"%f" % (func( float(i) * step)))
     if len(row) == 4:
       print(" ".join(row), file=outputbuilder)
       row = []
   if row:
-    print(" ".join(row), file=outputbuilder)
+    print(u" ".join(row), file=outputbuilder)
   outputfile.write(outputbuilder.getvalue())
 
 def _writeEmbeddingFunction(eampotential, nrho, drho, outfile):
   outputbuilder = StringIO()
-  print("embe %s %d 0.0 %f" % (eampotential.species, nrho, (nrho-1) * float(drho)), file=outputbuilder)
+  print(u"embe %s %d 0.0 %f" % (eampotential.species, nrho, (nrho-1) * float(drho)), file=outputbuilder)
 
   _tabulateFunction(outputbuilder, eampotential.embeddingFunction, nrho, drho)
   outfile.write(outputbuilder.getvalue())
@@ -32,15 +33,15 @@ def _writeEmbeddingFunction(eampotential, nrho, drho, outfile):
 def _writeDensityFunction(speciesA, speciesB, electronDensityFunction, nr, dr, outfile):
   outputbuilder = StringIO()
   if speciesA and speciesB:
-    print("dens %s %s %d 0.0 %f" % (speciesA, speciesB, nr, (nr-1) * float(dr)), file=outputbuilder)
+    print(u"dens %s %s %d 0.0 %f" % (speciesA, speciesB, nr, (nr-1) * float(dr)), file=outputbuilder)
   else:
-    print("dens %s %d 0.0 %f" % (speciesA, nr, (nr-1) * float(dr)), file=outputbuilder)
+    print(u"dens %s %d 0.0 %f" % (speciesA, nr, (nr-1) * float(dr)), file=outputbuilder)
   _tabulateFunction(outputbuilder, electronDensityFunction, nr, dr)
   outfile.write(outputbuilder.getvalue())
 
 def _writePairPotential(pairPotential, nr, dr, outfile):
   outputbuilder = StringIO()
-  print("pair %s %s %d 0.0 %f" % (pairPotential.speciesA, pairPotential.speciesB, nr, ((nr-1) * float(dr))), file=outputbuilder)
+  print(u"pair %s %s %d 0.0 %f" % (pairPotential.speciesA, pairPotential.speciesB, nr, ((nr-1) * float(dr))), file=outputbuilder)
 
   def potentialCallable(r):
     return pairPotential.energy(r)
@@ -72,7 +73,7 @@ def _writePairPotentials(eamPotentials, pairPotentials, nr, dr, outfile):
 
 
 def _writeTitle(title, out):
-  title = "%s%s" % (title, 100*' ')[:100]
+  title = u"%s%s" % (title, 100*' ')[:100]
   print(title, file=out)
 
 
@@ -80,7 +81,7 @@ def _writeTABEAM_exceptDensity(nrho, drho, nr, dr, eamPotentials, pairPotentials
   _writeTitle(title, outputbuilder)
 
 
-  print("%d" % (numpots,), file=outputbuilder)
+  print(u"%d" % (numpots,), file=outputbuilder)
 
   #Write the pair potentials
   _writePairPotentials(eamPotentials, pairPotentials, nr, dr, outputbuilder)
@@ -125,7 +126,7 @@ def writeTABEAM(nrho, drho, nr, dr, eampots, pairpots, out = sys.stdout, title =
   for eampotential in eampots:
     _writeDensityFunction(eampotential.species, None, eampotential.electronDensityFunction, nr, dr, outputbuilder)
 
-  out.write(outputbuilder.getvalue())
+  out.write(outputbuilder.getvalue().encode())
 
 
 def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.stdout, title = ""):
@@ -177,4 +178,4 @@ def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.s
       except KeyError:
         raise KeyError("Density function for '%s-%s' pair not specified in '%s' EAMPotential, density dictionary." % (speciesA, speciesB, speciesA))
       _writeDensityFunction(speciesA, speciesB, densityFunction, nr, dr, outputbuilder)
-  out.write(outputbuilder.getvalue())
+  out.write(outputbuilder.getvalue().encode())

@@ -1,8 +1,13 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
+from builtins import next
+from builtins import range
+from builtins import str as text
+
 import unittest
 
-from io import StringIO
+from io import BytesIO, StringIO
 
 import contextlib
 import os
@@ -40,16 +45,16 @@ def _parseEAMTable(infile):
   @return A dictionary containing parsed tokens from the table"""
 
   outDict = {}
-  outDict['title'] = infile.next()[:-1]
+  outDict['title'] = next(infile)[:-1]
 
-  line = infile.next()[:-1]
+  line = next(infile)[:-1]
   atomicNumber, mass, latticeConstant, latticeType = line.split()
   outDict['atomicNumber'] = int(atomicNumber)
   outDict['mass'] = float(mass)
   outDict['latticeConstant'] = float(latticeConstant)
   outDict['latticeType'] = latticeType
 
-  line = infile.next()[:-1]
+  line = next(infile)[:-1]
   nrho, drho, nr, dr, cutoff = line.split()
   outDict['nRho'] = nrho = int(nrho)
   outDict['dRho'] = drho = float(drho)
@@ -59,15 +64,15 @@ def _parseEAMTable(infile):
 
   #Read the embedding function values
   iter = _floatiterator(infile)
-  for i in xrange(nrho):
+  for i in range(nrho):
     outDict.setdefault('embeddingFunction', []).append(next(iter))
 
   #Read the effective charge function values
-  for i in xrange(nr):
+  for i in range(nr):
     outDict.setdefault('effectiveChargeFunction', []).append(next(iter))
 
   #Read the density function values
-  for i in xrange(nr):
+  for i in range(nr):
     outDict.setdefault('densityFunction', []).append(next(iter))
   return outDict
 
@@ -81,18 +86,18 @@ def _parseSetFL(infile, finnisSinclair = False):
 
   #Read comments
   outdict['comments'] = []
-  outdict['comments'].append(infile.next()[:-1])
-  outdict['comments'].append(infile.next()[:-1])
-  outdict['comments'].append(infile.next()[:-1])
+  outdict['comments'].append(next(infile)[:-1])
+  outdict['comments'].append(next(infile)[:-1])
+  outdict['comments'].append(next(infile)[:-1])
 
   #Read types line
-  line = infile.next()[:-1]
+  line = next(infile)[:-1]
   tokens= line.split()
   outdict['ntypes'] = int(tokens[0])
   outdict['types'] = tokens[1:]
 
   #Read numsteps and cutoffs
-  line = infile.next()[:-1]
+  line = next(infile)[:-1]
   tokens = line.split()
   nrho,drho,nr,dr,rcutoff = tokens
   outdict['nrho'] = int(nrho)
@@ -104,7 +109,7 @@ def _parseSetFL(infile, finnisSinclair = False):
   #Set-up function used to read the density blocks (depending on whether we're processing a finnis sinclair file or not)
   readDensityFunction = None
   def readSetFLDensityFunction(floatit, outdict, workingdict):
-    for i in xrange(outdict['nrho']):
+    for i in range(outdict['nrho']):
       workingdict.setdefault('densityfunction', []).append(next(floatit))
 
   #... this version of the function creates 'densityfunctions' list and creates NumElements^2 lists for density functions
@@ -112,9 +117,9 @@ def _parseSetFL(infile, finnisSinclair = False):
     nrho = outdict['nrho']
     numelements = outdict['ntypes']
     workinglist = []
-    for n in xrange(numelements):
+    for n in range(numelements):
       workingdenslist = []
-      for i in xrange(nrho):
+      for i in range(nrho):
         workingdenslist.append(next(floatit))
       workinglist.append(workingdenslist)
     workingdict['densityfunctions'] = workinglist
@@ -127,32 +132,32 @@ def _parseSetFL(infile, finnisSinclair = False):
   #Read embedding function and density function
   def readelementblock():
     workingdict = {}
-    headerline = infile.next()[:-1]
+    headerline = next(infile)[:-1]
     ielem, amass, blat, lat = headerline.split()
     workingdict['ielem'] = int(ielem)
     workingdict['amass'] = float(amass)
     workingdict['blat'] = float(blat)
     workingdict['lat'] = lat
     floatit = _floatiterator(infile)
-    for i in xrange(outdict['nr']):
+    for i in range(outdict['nr']):
       workingdict.setdefault('embeddingfunction', []).append(next(floatit))
     floatit = _floatiterator(infile)
     readDensityFunction(floatit, outdict, workingdict)
     outdict.setdefault('elementblocks', []).append(workingdict)
 
-  for i in xrange(outdict['ntypes']):
+  for i in range(outdict['ntypes']):
     readelementblock()
 
   #Read pair potentials
   def readppairblock():
     workinglist = []
     floatit = _floatiterator(infile)
-    for i in xrange(outdict['nr']):
+    for i in range(outdict['nr']):
       workinglist.append(next(floatit))
     outdict.setdefault('ppairs', []).append(workinglist)
 
-  for i in xrange(outdict['ntypes']):
-    for j in xrange(i,outdict['ntypes']):
+  for i in range(outdict['ntypes']):
+    for j in range(i,outdict['ntypes']):
       readppairblock()
   return outdict
 
@@ -175,10 +180,10 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print("pair_style eam/fs", file=potfile)
-        print("pair_coeff   *    *  eam.fs O Ce", file=potfile)
-        print("", file=potfile)
-        print("replicate 4 4 4", file=potfile)
+        potfile.write(b"pair_style eam/fs\n")
+        potfile.write(b"pair_coeff   *    *  eam.fs O Ce\n")
+        potfile.write(b"\n")
+        potfile.write(b"replicate 4 4 4\n")
 
 
       # Now define potentials
@@ -247,11 +252,11 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       pairpots = [potO_O, potO_Ce, potCe_Ce]
 
       drho = 0.001
-      nrho = int(100.0 / drho)
+      nrho = int(100.0 // drho)
 
       cutoff = 11.0
       dr = 0.01
-      nr = int(cutoff/dr)
+      nr = int(cutoff // dr)
 
       with open('eam.fs', 'wb') as outfile:
         potentials.writeSetFLFinnisSinclair(
@@ -280,8 +285,8 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print("pair_style eam", file=potfile)
-        print("pair_coeff 1 1 Ag.eam", file=potfile)
+        potfile.write(b"pair_style eam\n")
+        potfile.write(b"pair_coeff 1 1 Ag.eam")
 
       def embed(rho):
         return 0.0
@@ -331,8 +336,8 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print("pair_style eam", file=potfile)
-        print("pair_coeff 1 1 Ag.eam", file=potfile)
+        potfile.write(b"pair_style eam\n")
+        potfile.write(b"pair_coeff 1 1 Ag.eam\n")
 
 
       def embed(rho):
@@ -383,8 +388,8 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print("pair_style eam", file=potfile)
-        print("pair_coeff 1 1 Ag.eam", file=potfile)
+        potfile.write(b"pair_style eam\n")
+        potfile.write(b"pair_coeff 1 1 Ag.eam\n")
 
 
       def embed(rho):
@@ -450,10 +455,10 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       rho_0 = 1.15*rho_e
 
       def e1(rho):
-        return sum([F_ni[i] * (rho/rho_n - 1)**float(i) for i in xrange(4)])
+        return sum([F_ni[i] * (rho/rho_n - 1)**float(i) for i in range(4)])
 
       def e2(rho):
-        return sum([F_i[i] * (rho/rho_e - 1)**float(i) for i in xrange(4)])
+        return sum([F_i[i] * (rho/rho_e - 1)**float(i) for i in range(4)])
 
       def e3(rho):
         return F_e * (1.0 - nu*math.log(rho/rho_s)) * (rho/rho_s)**nu
@@ -554,7 +559,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     """Test that lammps.writeEAMTable can reproduce a DYNAMO funcfl EAM file from the standard LAMMPS distribution here Ag_u3.eam"""
 
     #Read the expected table from the .eam file
-    with contextlib.closing(open(os.path.join(_getResourceDirectory(), 'Ag_u3.eam'))) as infile:
+    with open(os.path.join(_getResourceDirectory(), 'Ag_u3.eam'),'rb') as infile:
       expectTable = _parseEAMTable(infile)
 
     #Create the potential callables to be passed into writeEAMTable()
@@ -587,7 +592,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     eampotlist = [EAMPotential("Ag", atomicNumber, mass, embeddingFunction, densityFunction, latticeConstant, latticeType)]
     potlist = [Potential("Ag", "Ag", effectiveChargeFunction_eV)]
 
-    actualTable = StringIO()
+    actualTable = BytesIO()
     potentials.writeFuncFL(
       nrho, drho,
       nr, dr,
@@ -604,7 +609,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
   def testWriteSetFLFromParameters(self):
     """Test that lammps.potentials.writeSetFL() can generate the Al_zhou.eam.alloy file from LAMMPS distribution"""
 
-    with contextlib.closing(open( os.path.join(_getResourceDirectory(), 'Al_zhou.eam.alloy'), 'r')) as infile:
+    with open(os.path.join(_getResourceDirectory(), 'Al_zhou.eam.alloy'), 'rb') as infile:
       expectEAMTable = _parseSetFL(infile)
 
     comments = [
@@ -667,7 +672,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     pairpots = [ alpp ]
 
-    actualEAMTable = StringIO()
+    actualEAMTable = BytesIO()
     potentials.writeSetFL(
       nrho, drho,
       nr, dr,
@@ -684,7 +689,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
   def testWriteSetFL(self):
     """Test creation of DYNAMO setfl formatted file for use with lammps pair_style eam/alloy"""
-    with contextlib.closing(open( os.path.join(_getResourceDirectory(), 'AlCu.eam.alloy'), 'r')) as infile:
+    with open( os.path.join(_getResourceDirectory(), 'AlCu.eam.alloy'), 'rb') as infile:
       expectEAMTable = _parseSetFL(infile)
 
     comments = [
@@ -718,7 +723,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     cutoff = 6.6825000000e+00
 
-    actualEAMTable = StringIO()
+    actualEAMTable = BytesIO()
     potentials.writeSetFL(
       nrho, drho,
       nr, dr,
@@ -737,7 +742,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     """Test that lammps.potentials.writeSetFLFinnisSinclair() (suitable for use with pair_style eam/fs) can re-create AlFe_mm.eam.fs file from lammps distribution"""
 
     #Open the expected output
-    with contextlib.closing(_openResource('AlFe_mm.eam.fs')) as infile:
+    with _openResource('AlFe_mm.eam.fs') as infile:
       expectEAMTable = _parseSetFL(infile, finnisSinclair = True)
 
     #Set-up tabulation of the actual EAM table from parameters found in
@@ -882,7 +887,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     #Now actually generate the actual tabulated potential
 
-    actualEAMTable = StringIO()
+    actualEAMTable = BytesIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
@@ -891,7 +896,9 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
       comments = comments,
       out = actualEAMTable,
       cutoff = cutoff)
+    actualEAMTable = StringIO(actualEAMTable.getvalue().decode())
     actualEAMTable.seek(0)
+
     actualEAMTable = _parseSetFL(actualEAMTable, finnisSinclair = True)
 
     from . import testutil
@@ -922,7 +929,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     pairpot_bc =potentials.Potential('B', 'C', lambda r: 7.0)
 
     # Define two species
-    sio = StringIO()
+    sio = BytesIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
@@ -948,7 +955,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     # Try a ternary system
     # Define two species
-    sio = StringIO()
+    sio = BytesIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,

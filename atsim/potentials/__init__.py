@@ -1,6 +1,11 @@
 """A collection of classes and functions related to defining potentials"""
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
+
+from builtins import range
+
+from builtins import object
 
 from . import _tablereaders
 
@@ -77,10 +82,9 @@ def plotToFile(fileobj,lowx, highx, func, steps=10000):
   :param highx: X-axis upper value
   :param func: Function to be plotted
   :param steps: Number of data points to be plotted"""
-  steps = float(steps)
-  step = (highx - lowx)/steps
+  step = int((highx - lowx) // steps)
 
-  for i in xrange(int(steps)):
+  for i in range(steps):
     v = lowx + float(i)*step
     y = func(v)
 
@@ -143,7 +147,7 @@ def plotPotentialObjectToFile(fileobj, lowx, highx, potentialObject, steps=10000
 def _LAMMPS_writePotentials(potentialList, cutoff, gridPoints, out):
   """Wrapper function that adapts lammps.writeTABLE.writePotentials() to the API
   expected by potentials.writePotentials"""
-  minr = cutoff/float(gridPoints)
+  minr = cutoff / float(gridPoints)
   from ._lammps_writeTABLE import writePotentials
   writePotentials(potentialList,minr, cutoff, gridPoints, out)
 

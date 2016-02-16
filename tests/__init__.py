@@ -1,7 +1,11 @@
 from __future__ import absolute_import
+from __future__ import division
+from builtins import zip
+from builtins import next
+
 import unittest
 
-from io import StringIO
+from io import StringIO, BytesIO
 
 import os
 
@@ -64,7 +68,7 @@ class TestWritePotentials(unittest.TestCase):
 
   def testDL_POLY(self):
     """Test DL_POLY tabulation"""
-    sio = StringIO()
+    sio = BytesIO()
     potentials.writePotentials(
        'DL_POLY',
        self.potential_objects,
@@ -106,7 +110,7 @@ class TestWritePotentials(unittest.TestCase):
             "5 5.00000000 1.00000000 1.00000000",
             "6 6.00000000 0.00000000 1.00000000"]
 
-    sbuild = StringIO()
+    sbuild = BytesIO()
     potentials.writePotentials('LAMMPS', [pota,potb], 6.0, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()
@@ -114,6 +118,7 @@ class TestWritePotentials(unittest.TestCase):
 
     self.assertEquals(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, actual):
+      a = a.decode()
       self.assertEquals(os.linesep, a[-1])
       a = a[:-1]
       self.assertEquals(e,a)

@@ -1,4 +1,7 @@
 from __future__ import absolute_import
+from __future__ import division
+from builtins import object
+
 import math
 
 from ._util import gradient
@@ -30,8 +33,8 @@ def _splineExponential(startPoint, endPoint):
   B = np.array([
       math.log(sy),
       math.log(ey),
-      sdydx/sy,
-      edydx/ey,
+      sdydx / sy,
+      edydx / ey,
       (sddydx/sy)-((sdydx**2)/(sy**2)),
       (eddydx/ey)-((edydx**2)/(ey**2))
     ])

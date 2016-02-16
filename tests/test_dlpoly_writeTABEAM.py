@@ -1,4 +1,7 @@
 from __future__ import absolute_import
+from __future__ import division
+
+
 import unittest
 
 from atsim import potentials
@@ -56,7 +59,7 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
   def testWriteEAMFile(self):
     """Test _writeTABEAM.writeTABEAM() function"""
 
-    from io import StringIO
+    from io import BytesIO,StringIO
 
 
     #Define potentials
@@ -73,10 +76,10 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
     maxrho = 410.0
     cutoff = 12.0
     drho = dr = 0.01
-    nrho = int(maxrho/drho)
-    nr = int(cutoff/dr)
+    nrho = int(maxrho // drho)
+    nr = int(cutoff // dr)
 
-    outfile = StringIO()
+    outfile = BytesIO()
 
     _dlpoly_writeTABEAM.writeTABEAM(
       nrho, drho,
@@ -85,6 +88,8 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
       [ppbucku, ppbuckuc, ppswcc],
       outfile,
       "Chartier/Van Brutzel Potentials")
+
+    outfile = StringIO(outfile.getvalue().decode())
 
     #Check structure of the file
     self.assertEquals(2, self._countSections(outfile, 'embe'))
@@ -200,11 +205,11 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
 
       # Tabulate potentials
       drho = 0.001
-      nrho = int(200.0 / drho)
+      nrho = int(200.0 // drho)
 
       cutoff = 5.001
       dr = 0.001
-      nr = int(cutoff/dr)
+      nr = int(cutoff // dr)
 
       with open('TABEAM', 'wb') as outfile:
         _dlpoly_writeTABEAM.writeTABEAM(
@@ -232,11 +237,11 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
 
       # Tabulate potentials
       drho = 0.001
-      nrho = int(50.0 / drho) + 1
+      nrho = int(50.0 // drho) + 1
 
       cutoff = 5.0
       dr = 0.001
-      nr = int(cutoff/dr) +1
+      nr = int(cutoff // dr) +1
 
       with open('TABEAM', 'wb') as outfile:
         _dlpoly_writeTABEAM.writeTABEAM(
