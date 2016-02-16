@@ -1,7 +1,9 @@
 """Module containing tests for the _lammps_writeTABLE module"""
 
 import unittest
-import StringIO
+
+from io import StringIO
+
 import os
 
 from atsim import potentials
@@ -26,7 +28,7 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
     energyfunc = lambda x: 5.0-x
     pot =potentials.Potential("A", "B", energyfunc)
 
-    sbuild = StringIO.StringIO()
+    sbuild = StringIO()
     _lammps_writeTABLE._writeSinglePotential(pot, 0.1, 5.1, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()
@@ -65,7 +67,7 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
             "5 4.10000000 0.90000000 1.00000000",
             "6 5.10000000 -0.10000000 1.00000000"]
 
-    sbuild = StringIO.StringIO()
+    sbuild = StringIO()
     _lammps_writeTABLE.writePotentials([pota,potb], 0.1, 5.1, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()

@@ -1,18 +1,20 @@
 """A collection of classes and functions related to defining potentials"""
+from __future__ import print_function
+from __future__ import absolute_import
 
-import _tablereaders
+from . import _tablereaders
 
-from _common import * # noqa
-from _spline import SplinePotential # noqa
-from _util import gradient # noqa
-from _dlpoly_writeTABEAM import writeTABEAM # noqa
-from _dlpoly_writeTABEAM import writeTABEAMFinnisSinclair # noqa
+from ._common import * # noqa
+from ._spline import SplinePotential # noqa
+from ._util import gradient # noqa
+from ._dlpoly_writeTABEAM import writeTABEAM # noqa
+from ._dlpoly_writeTABEAM import writeTABEAMFinnisSinclair # noqa
 
-from _lammpsWriteEAM import writeFuncFL # noqa
-from _lammpsWriteEAM import writeSetFL # noqa
-from _lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
+from ._lammpsWriteEAM import writeFuncFL # noqa
+from ._lammpsWriteEAM import writeSetFL # noqa
+from ._lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
 
-from potentialforms import * # noqa
+from .potentialforms import * # noqa
 
 import sys
 
@@ -82,7 +84,7 @@ def plotToFile(fileobj,lowx, highx, func, steps=10000):
     v = lowx + float(i)*step
     y = func(v)
 
-    print >>fileobj, "%f %f" % (v, y)
+    print("%f %f" % (v, y), file=fileobj)
 
 
 def plot(filename, lowx, highx, func, steps=10000):
@@ -142,7 +144,7 @@ def _LAMMPS_writePotentials(potentialList, cutoff, gridPoints, out):
   """Wrapper function that adapts lammps.writeTABLE.writePotentials() to the API
   expected by potentials.writePotentials"""
   minr = cutoff/float(gridPoints)
-  from _lammps_writeTABLE import writePotentials
+  from ._lammps_writeTABLE import writePotentials
   writePotentials(potentialList,minr, cutoff, gridPoints, out)
 
 class UnsupportedTabulationType(Exception):
@@ -197,7 +199,7 @@ def writePotentials(outputType, potentialList, cutoff, gridPoints, out = sys.std
   :param out: Python file like object to which tabulation should be written
   :type out: file"""
 
-  from _dlpoly_writeTABLE import writePotentials as DLPOLY_writePotentials
+  from ._dlpoly_writeTABLE import writePotentials as DLPOLY_writePotentials
   supportedTabulations = {
     'DL_POLY' : DLPOLY_writePotentials,
     'LAMMPS'  : _LAMMPS_writePotentials

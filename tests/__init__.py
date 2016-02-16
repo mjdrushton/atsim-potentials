@@ -1,13 +1,16 @@
+from __future__ import absolute_import
 import unittest
-import StringIO
+
+from io import StringIO
+
 import os
 
 from atsim import potentials
 
-import test_lammpsWriteTABLE
-import test_lammpsWriteEAM
-import test_dlpoly_writeTABEAM
-import test_dlpoly_writeTABLE
+from . import test_lammpsWriteTABLE
+from . import test_lammpsWriteEAM
+from . import test_dlpoly_writeTABEAM
+from . import test_dlpoly_writeTABLE
 
 class TestPotentialFunctions(unittest.TestCase):
   """Tests for the potential function factories defined in atsim.potentials"""
@@ -61,15 +64,15 @@ class TestWritePotentials(unittest.TestCase):
 
   def testDL_POLY(self):
     """Test DL_POLY tabulation"""
-    sio = StringIO.StringIO()
+    sio = StringIO()
     potentials.writePotentials(
        'DL_POLY',
        self.potential_objects,
        6.5, 6500,
        out = sio)
     sio.seek(0)
-    sio.next()
-    line = sio.next()
+    next(sio)
+    line = next(sio)
     tokens = line.split()
     delpot, cutpot, ngrid = tokens
 
@@ -103,7 +106,7 @@ class TestWritePotentials(unittest.TestCase):
             "5 5.00000000 1.00000000 1.00000000",
             "6 6.00000000 0.00000000 1.00000000"]
 
-    sbuild = StringIO.StringIO()
+    sbuild = StringIO()
     potentials.writePotentials('LAMMPS', [pota,potb], 6.0, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()

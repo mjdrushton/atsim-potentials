@@ -13,10 +13,10 @@ def runDLPoly():
 def extractDLPOLYEnergy():
   with open('STATIS') as infile:
     # import pdb;pdb.set_trace()
-    infile.next()
-    infile.next()
-    infile.next()
-    line = infile.next()
+    next(infile)
+    next(infile)
+    next(infile)
+    line = next(infile)
     tokens = line.split()
     engcfg = float(tokens[2])
   return engcfg

@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import math
 import os
-import StringIO
+
+from io import StringIO
+
+
 import sys
 
-from _common import EAMPotential # noqa
+from ._common import EAMPotential # noqa
 
 
 def _writeHeader(outfile, nrho, drho, nr, dr, cutoff, title, atomicNumber, mass, latticeConstant, latticeType):
-  print >>outfile, title
-  print >>outfile, "%d %f %f %s" % (atomicNumber, mass, latticeConstant, latticeType)
-  print >>outfile, "%d %f %d %f %f" % (nrho, drho, nr, dr, cutoff)
+  print(title, file=outfile)
+  print("%d %f %f %s" % (atomicNumber, mass, latticeConstant, latticeType), file=outfile)
+  print("%d %f %d %f %f" % (nrho, drho, nr, dr, cutoff), file=outfile)
 
 def _writeValueBlock(outfile, values):
   numbertemplate = " % 20.16e"
@@ -34,13 +39,13 @@ def _writeValueBlock(outfile, values):
 
 def _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, out):
   #Line 1-3: comments
-  workout = StringIO.StringIO()
+  workout = StringIO()
 
   newcomments = list(comments)
   newcomments.extend(['', '', ''])
   newcomments = newcomments[:3]
 
-  print >>workout, os.linesep.join(newcomments)
+  print(os.linesep.join(newcomments), file=workout)
 
   #Line 4: ntypes
   ntypes = ["%d" % len(eampots)]
@@ -48,47 +53,47 @@ def _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, out):
   ntypes.extend(typestrings)
   ntypes = " ".join(ntypes)
 
-  print >>workout, ntypes
+  print(ntypes, file=workout)
 
   #Line 5: nrho drho nr dr rcutoff
   numbertemplate = " %20.16e"
   templ = "%%d %s %%d %s %s" % ((numbertemplate,)*3)
-  print >>workout, templ % (nrho, drho, nr, dr, cutoff)
+  print(templ % (nrho, drho, nr, dr, cutoff), file=workout)
 
   #Dump everything into out
   out.write(workout.getvalue())
 
 #Writes elementblock header
 def _writeSetFLElementHeader(eampot, out):
-  workout = StringIO.StringIO()
-  print >>workout, "%d %20.16e %20.16e %s" % (eampot.atomicNumber, eampot.mass, eampot.latticeConstant, eampot.latticeType)
+  workout = StringIO()
+  print("%d %20.16e %20.16e %s" % (eampot.atomicNumber, eampot.mass, eampot.latticeConstant, eampot.latticeType), file=workout)
   out.write(workout.getvalue())
 
 #Writes element block embedding function
 def _writeSetFLEmbeddingFunction(nrho, drho, eampot, out):
-  workout = StringIO.StringIO()
+  workout = StringIO()
   for i in xrange(nrho):
     rho = float(i)*drho
     val = eampot.embeddingFunction(rho)
-    print >>workout, "% 20.16e" % val
+    print("% 20.16e" % val, file=workout)
   out.write(workout.getvalue())
 
 def _writeDensityFunction(func, nr, dr, out):
   for i in xrange(nr):
     r = float(i)*dr
     val = func(r)
-    print >>out, "% 20.16e" % val
+    print("% 20.16e" % val, file=out)
 
 #Writes single density function to element block
 def _writeSetFLDensityFunction(eampot, eampots, nr, dr, out):
-  workout = StringIO.StringIO()
+  workout = StringIO()
   _writeDensityFunction(eampot.electronDensityFunction, nr, dr, workout)
   #Dump into out
   out.write(workout.getvalue())
 
 #Writes multiple density functions (one per element) for each element block
 def _writeSetFLDensityFunctionFinnisSinclair(eampot, eampots, nr, dr, out):
-  workout = StringIO.StringIO()
+  workout = StringIO()
 
   for otherpot in eampots:
     densFunc = eampot.electronDensityFunction[otherpot.species]
@@ -98,7 +103,7 @@ def _writeSetFLDensityFunctionFinnisSinclair(eampot, eampots, nr, dr, out):
   out.write(workout.getvalue())
 
 def _writeSetFLPairPots(nr, dr, eampots, pairpots, out):
-  workout = StringIO.StringIO()
+  workout = StringIO()
 
   def pairkey(a,b):
     k = [a,b]
@@ -123,7 +128,7 @@ def _writeSetFLPairPots(nr, dr, eampots, pairpots, out):
       for k in xrange(nr):
         r = float(k) * dr
         val = r * pp.energy(r)
-        print >>workout, "% 20.16e" % val
+        print("% 20.16e" % val, file=workout)
   out.write(workout.getvalue())
 
 def _writeSetFL(
@@ -136,12 +141,12 @@ def _writeSetFL(
   out,
   writeDensityFunction):
 
-  workout = StringIO.StringIO()
+  workout = StringIO()
   _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, workout)
 
   #Write element block
   for eampot in eampots:
-    eleblockout = StringIO.StringIO()
+    eleblockout = StringIO()
     _writeSetFLElementHeader(eampot, eleblockout)
     _writeSetFLEmbeddingFunction(nrho, drho, eampot, eleblockout)
     writeDensityFunction(eampot, eampots, nr, dr, eleblockout)
@@ -196,7 +201,7 @@ def writeFuncFL(
   eampot = eampots[0]
   pairpot = pairpots[0]
 
-  workingfile = StringIO.StringIO()
+  workingfile = StringIO()
   _writeHeader(workingfile,
                nrho, drho,
                nr, dr, cutoff,

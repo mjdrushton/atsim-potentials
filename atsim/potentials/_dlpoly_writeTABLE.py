@@ -1,7 +1,8 @@
 """Module for creating DL_POLY TABLE files"""
 
 import sys
-import StringIO
+
+from io import StringIO
 
 class WritePotentialException(Exception):
   """Exception class that can be thrown by functions in this module"""
@@ -22,7 +23,7 @@ def _writePotential(potential, cutoff, gridPoints, meshResolution, out ):
   if gridPoints%4 != 0:
     raise WritePotentialException("Number of grid points needs to be divisible by 4")
 
-  outputbuilder = StringIO.StringIO()
+  outputbuilder = StringIO()
 
   #Generate output
   #Write the potential's header
@@ -81,7 +82,7 @@ def _writeTableHeader(delpot, cutpot, ngrid, out):
   @param cutpot Potential short-range cutoff
   @param ngrid Number of grid points
   @param out Python stream object (supporting write()) to which output is sent"""
-  outputbuilder = StringIO.StringIO()
+  outputbuilder = StringIO()
   outputbuilder.write(" "*80 + '\n')
   templParams = dict(delpot = delpot, cutpot = cutpot, ngrid = ngrid)
   outputbuilder.write("%(delpot)15.8e%(cutpot)15.8e%(ngrid)10d\n" % templParams)
@@ -97,7 +98,7 @@ def writePotentials(potentials, cutoff, gridPoints, out = sys.stdout):
   @param out Python stream object (supporting write()) to which output is sent"""
 
   meshResolution = float(cutoff)/(float(gridPoints)-4.0)
-  outputbuilder = StringIO.StringIO()
+  outputbuilder = StringIO()
   _writeTableHeader(meshResolution, cutoff, gridPoints, out)
 
   for potential in potentials:

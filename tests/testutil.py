@@ -35,16 +35,16 @@ def checkVector(tc, expect, actual, msg=None, tolerance = 0.0025):
 
 def _compareCollection(path, testCase, expect, actual, places, percenttolerance):
   expectType = type(expect)
-  if expectType == types.ListType or expectType == types.TupleType:
+  if expectType == list or expectType == tuple:
     #Compare lists
     try:
       testCase.assertEquals(len(expect), len(actual))
-    except AssertionError, e:
+    except AssertionError as e:
       raise AssertionError("%s at '%s'" % (str(e), path))
 
     for i,(e,a) in enumerate(zip(expect, actual)):
       _compareCollection(path+'[%d]'% i, testCase, e,a, places, percenttolerance)
-  elif expectType == types.DictType:
+  elif expectType == dict:
     #Compare dictionaries
     ekeys = expect.keys()
     akeys = actual.keys()
@@ -53,7 +53,7 @@ def _compareCollection(path, testCase, expect, actual, places, percenttolerance)
     testCase.assertEquals(ekeys, akeys)
     for k,v in expect.iteritems():
       _compareCollection(path+'[%s]'% (k,), testCase, v, actual[k], places, percenttolerance)
-  elif expectType == types.FloatType:
+  elif expectType == float:
     #Compare float type in a fuzzy manner
     try:
       if math.isnan(expect):
@@ -62,13 +62,13 @@ def _compareCollection(path, testCase, expect, actual, places, percenttolerance)
         assertFloatWithinPercentage(testCase, expect, actual, percenttolerance = percenttolerance, places = places)
       else:
         testCase.assertAlmostEquals(expect, actual, places = places)
-    except AssertionError, e:
+    except AssertionError as e:
       raise AssertionError("%s at '%s'" % (str(e), path))
   else:
     #Compare anything else
     try:
       testCase.assertEquals(expect,actual)
-    except AssertionError, e:
+    except AssertionError as e:
       raise AssertionError("%s at '%s'" % (str(e), path))
 
 def compareCollection(testCase, expect, actual, places = 5, percenttolerance = None):

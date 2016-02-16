@@ -11,3 +11,4 @@ Pygments-*.egg
 Sphinx-*.egg
 docutils-*.egg
 hgtools-*.egg
+venv_python3

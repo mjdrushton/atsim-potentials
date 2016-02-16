@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import math
 
-from _util import gradient
+from ._util import gradient
 
 def _splineExponential(startPoint, endPoint):
   """Returns a function of the form A + B*x + C*exp(x) + D*exp(-x) that

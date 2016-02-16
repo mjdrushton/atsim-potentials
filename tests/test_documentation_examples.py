@@ -1,4 +1,6 @@
 """Tests to make sure tests given in the documentation work"""
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import unittest
@@ -8,9 +10,9 @@ import shutil
 from atsim.potentials import Potential, EAMPotential
 import atsim.potentials
 
-from _tempfiletestcase import TempfileTestCase
-from _runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS
-from _rundlpoly import needsDLPOLY, extractDLPOLYEnergy, runDLPoly
+from ._tempfiletestcase import TempfileTestCase
+from ._runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS
+from ._rundlpoly import needsDLPOLY, extractDLPOLYEnergy, runDLPoly
 
 def _getDocsDirectory():
   """Returns absolute path to docs/ directory"""
@@ -85,11 +87,12 @@ class basak_tabulateTestCase(TempfileTestCase):
               outfile.write(infile.read() % d)
 
 
-          import StringIO
-          sio = StringIO.StringIO()
-          print >>sio, "vdw %d" % len(pobjs)
+          from io import StringIO
+
+          sio = StringIO()
+          print("vdw %d" % len(pobjs), file=sio)
           for p in pobjs:
-            print >>sio, "%s %s tab" % (p.speciesA, p.speciesB)
+            print("%s %s tab" % (p.speciesA, p.speciesB), file=sio)
           d["potDef"] = sio.getvalue()
 
           with open(os.path.join(dldir, "FIELD_pair.in")) as infile:
@@ -159,8 +162,8 @@ class eam_tabulate_example1TestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print >>potfile, "pair_style eam"
-        print >>potfile, "pair_coeff 1 1 Ag.eam"
+        print("pair_style eam", file=potfile)
+        print("pair_coeff 1 1 Ag.eam", file=potfile)
 
       # Run the main method
       exampleModule.main()
@@ -227,8 +230,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
 
       for expect, potmap in inputExpect:
         with open("potentials.lmpinc", "wb") as potfile:
-          print >>potfile, "pair_style eam/alloy"
-          print >>potfile, "pair_coeff * * table.set "+potmap
+          print("pair_style eam/alloy", file=potfile)
+          print("pair_coeff * * table.set "+potmap, file=potfile)
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expect, energy, msg = potmap)
@@ -292,8 +295,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
 
       for expect, potmap in inputExpect:
         with open("potentials.lmpinc", "wb") as potfile:
-          print >>potfile, "pair_style eam/alloy"
-          print >>potfile, "pair_coeff * * table.set "+potmap
+          print("pair_style eam/alloy", file=potfile)
+          print("pair_coeff * * table.set "+potmap, file=potfile)
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expect, energy, msg = potmap)
@@ -311,8 +314,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       ]
       for expect, potmap in inputExpect:
         with open("potentials.lmpinc", "wb") as potfile:
-          print >>potfile, "pair_style eam/alloy"
-          print >>potfile, "pair_coeff * * table.set "+potmap
+          print("pair_style eam/alloy", file=potfile)
+          print("pair_coeff * * table.set "+potmap, file=potfile)
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expect, energy, msg = potmap)
@@ -365,8 +368,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       # Run the Zhou tabulation created using tools from http://www.ctcms.nist.gov/potentials/Zhou04.html
       for potmap in potmaps:
         with open("potentials.lmpinc", "wb") as potfile:
-          print >>potfile, "pair_style eam/alloy"
-          print >>potfile, "pair_coeff * * table.setfl "+potmap
+          print("pair_style eam/alloy", file=potfile)
+          print("pair_coeff * * table.setfl "+potmap, file=potfile)
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertTrue(energy != None)
@@ -396,8 +399,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
 
       for potmap,expectEnergy in zip(potmaps,expect):
         with open("potentials.lmpinc", "wb") as potfile:
-          print >>potfile, "pair_style eam/alloy"
-          print >>potfile, "pair_coeff * * Zhou_AlCu.setfl "+potmap
+          print("pair_style eam/alloy", file=potfile)
+          print("pair_coeff * * Zhou_AlCu.setfl "+potmap, file=potfile)
         runLAMMPS()
         energy = extractLAMMPSEnergy()
         self.assertAlmostEquals(expectEnergy, energy, places = 4, msg = potmap)
@@ -431,8 +434,8 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "calc_energy.lmpin"), os.path.join(self.tempdir,"calc_energy.lmpin"))
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "random_Al_Cu.lmpstruct"), os.path.join(self.tempdir,"structure.lmpstruct"))
       with open("potentials.lmpinc", "wb") as potfile:
-        print >>potfile, "pair_style eam/alloy"
-        print >>potfile, "pair_coeff * * Zhou_AlCu.setfl Al Cu"
+        print("pair_style eam/alloy", file=potfile)
+        print("pair_coeff * * Zhou_AlCu.setfl Al Cu", file=potfile)
 
       # Create the table files
       exampleModuleA.main()
@@ -503,8 +506,8 @@ class eam_tabulate_example3TestCase(TempfileTestCase):
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "calc_energy.lmpin"), os.path.join(self.tempdir,"calc_energy.lmpin"))
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "random_Al_Fe.lmpstruct"), os.path.join(self.tempdir,"structure.lmpstruct"))
       with open("potentials.lmpinc", "wb") as potfile:
-        print >>potfile, "pair_style eam/fs"
-        print >>potfile, "pair_coeff * * Mendelev_Al_Fe.eam.fs Al Fe"
+        print("pair_style eam/fs", file=potfile)
+        print("pair_coeff * * Mendelev_Al_Fe.eam.fs Al Fe", file=potfile)
 
       # Create the table files
       exampleModuleA.main()

@@ -1,5 +1,9 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import unittest
-import StringIO
+
+from io import StringIO
+
 import contextlib
 import os
 import math
@@ -10,8 +14,8 @@ import shutil
 from atsim.potentials import Potential, EAMPotential, buck, TableReader
 from atsim import potentials
 
-from _tempfiletestcase import TempfileTestCase
-from _runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS
+from ._tempfiletestcase import TempfileTestCase
+from ._runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS
 
 def _getResourceDirectory():
   """Returns path to resources used by this test module (currently assumed to be sub-directory
@@ -56,15 +60,15 @@ def _parseEAMTable(infile):
   #Read the embedding function values
   iter = _floatiterator(infile)
   for i in xrange(nrho):
-    outDict.setdefault('embeddingFunction', []).append(iter.next())
+    outDict.setdefault('embeddingFunction', []).append(next(iter))
 
   #Read the effective charge function values
   for i in xrange(nr):
-    outDict.setdefault('effectiveChargeFunction', []).append(iter.next())
+    outDict.setdefault('effectiveChargeFunction', []).append(next(iter))
 
   #Read the density function values
   for i in xrange(nr):
-    outDict.setdefault('densityFunction', []).append(iter.next())
+    outDict.setdefault('densityFunction', []).append(next(iter))
   return outDict
 
 def _parseSetFL(infile, finnisSinclair = False):
@@ -101,7 +105,7 @@ def _parseSetFL(infile, finnisSinclair = False):
   readDensityFunction = None
   def readSetFLDensityFunction(floatit, outdict, workingdict):
     for i in xrange(outdict['nrho']):
-      workingdict.setdefault('densityfunction', []).append(floatit.next())
+      workingdict.setdefault('densityfunction', []).append(next(floatit))
 
   #... this version of the function creates 'densityfunctions' list and creates NumElements^2 lists for density functions
   def readFinnisSinclairDensityFunction(floatit, outdict, workingdict):
@@ -111,7 +115,7 @@ def _parseSetFL(infile, finnisSinclair = False):
     for n in xrange(numelements):
       workingdenslist = []
       for i in xrange(nrho):
-        workingdenslist.append(floatit.next())
+        workingdenslist.append(next(floatit))
       workinglist.append(workingdenslist)
     workingdict['densityfunctions'] = workinglist
 
@@ -131,7 +135,7 @@ def _parseSetFL(infile, finnisSinclair = False):
     workingdict['lat'] = lat
     floatit = _floatiterator(infile)
     for i in xrange(outdict['nr']):
-      workingdict.setdefault('embeddingfunction', []).append(floatit.next())
+      workingdict.setdefault('embeddingfunction', []).append(next(floatit))
     floatit = _floatiterator(infile)
     readDensityFunction(floatit, outdict, workingdict)
     outdict.setdefault('elementblocks', []).append(workingdict)
@@ -144,7 +148,7 @@ def _parseSetFL(infile, finnisSinclair = False):
     workinglist = []
     floatit = _floatiterator(infile)
     for i in xrange(outdict['nr']):
-      workinglist.append(floatit.next())
+      workinglist.append(next(floatit))
     outdict.setdefault('ppairs', []).append(workinglist)
 
   for i in xrange(outdict['ntypes']):
@@ -171,10 +175,10 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print >>potfile, "pair_style eam/fs"
-        print >>potfile, "pair_coeff   *    *  eam.fs O Ce"
-        print >>potfile, ""
-        print >>potfile, "replicate 4 4 4"
+        print("pair_style eam/fs", file=potfile)
+        print("pair_coeff   *    *  eam.fs O Ce", file=potfile)
+        print("", file=potfile)
+        print("replicate 4 4 4", file=potfile)
 
 
       # Now define potentials
@@ -276,8 +280,8 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print >>potfile, "pair_style eam"
-        print >>potfile, "pair_coeff 1 1 Ag.eam"
+        print("pair_style eam", file=potfile)
+        print("pair_coeff 1 1 Ag.eam", file=potfile)
 
       def embed(rho):
         return 0.0
@@ -327,8 +331,8 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print >>potfile, "pair_style eam"
-        print >>potfile, "pair_coeff 1 1 Ag.eam"
+        print("pair_style eam", file=potfile)
+        print("pair_coeff 1 1 Ag.eam", file=potfile)
 
 
       def embed(rho):
@@ -379,8 +383,8 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       with open("potentials.lmpinc", "wb") as potfile:
-        print >>potfile, "pair_style eam"
-        print >>potfile, "pair_coeff 1 1 Ag.eam"
+        print("pair_style eam", file=potfile)
+        print("pair_coeff 1 1 Ag.eam", file=potfile)
 
 
       def embed(rho):
@@ -583,7 +587,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     eampotlist = [EAMPotential("Ag", atomicNumber, mass, embeddingFunction, densityFunction, latticeConstant, latticeType)]
     potlist = [Potential("Ag", "Ag", effectiveChargeFunction_eV)]
 
-    actualTable = StringIO.StringIO()
+    actualTable = StringIO()
     potentials.writeFuncFL(
       nrho, drho,
       nr, dr,
@@ -593,7 +597,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
       out = actualTable)
     actualTable.seek(0)
     actualTable = _parseEAMTable(actualTable)
-    import testutil
+    from . import testutil
     testutil.compareCollection(self,expectTable, actualTable, places = 3)
 
 
@@ -663,7 +667,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     pairpots = [ alpp ]
 
-    actualEAMTable = StringIO.StringIO()
+    actualEAMTable = StringIO()
     potentials.writeSetFL(
       nrho, drho,
       nr, dr,
@@ -675,7 +679,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actualEAMTable.seek(0)
     actualEAMTable = _parseSetFL(actualEAMTable)
 
-    import testutil
+    from . import testutil
     testutil.compareCollection(self,expectEAMTable, actualEAMTable, places = 3, percenttolerance = 7.0)
 
   def testWriteSetFL(self):
@@ -714,7 +718,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     cutoff = 6.6825000000e+00
 
-    actualEAMTable = StringIO.StringIO()
+    actualEAMTable = StringIO()
     potentials.writeSetFL(
       nrho, drho,
       nr, dr,
@@ -726,7 +730,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actualEAMTable.seek(0)
     actualEAMTable = _parseSetFL(actualEAMTable)
 
-    import testutil
+    from . import testutil
     testutil.compareCollection(self,expectEAMTable, actualEAMTable, places = 3)
 
   def testWriteSetFLFinnisSinclair(self):
@@ -878,7 +882,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     #Now actually generate the actual tabulated potential
 
-    actualEAMTable = StringIO.StringIO()
+    actualEAMTable = StringIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
@@ -890,7 +894,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actualEAMTable.seek(0)
     actualEAMTable = _parseSetFL(actualEAMTable, finnisSinclair = True)
 
-    import testutil
+    from . import testutil
     testutil.compareCollection(self,expectEAMTable, actualEAMTable, places = 3, percenttolerance = 7.0)
 
   def testWriteSetFLFinnisSinclair_PairPotentialOrder(self):
@@ -918,7 +922,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     pairpot_bc =potentials.Potential('B', 'C', lambda r: 7.0)
 
     # Define two species
-    sio = StringIO.StringIO()
+    sio = StringIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
@@ -939,12 +943,12 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     actual = actual[37:]
     actual = [float(v) for v in actual]
 
-    import testutil
+    from . import testutil
     testutil.compareCollection(self,expect, actual)
 
     # Try a ternary system
     # Define two species
-    sio = StringIO.StringIO()
+    sio = StringIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,

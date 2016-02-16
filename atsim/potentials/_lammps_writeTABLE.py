@@ -1,4 +1,7 @@
-import StringIO
+from __future__ import print_function
+
+from io import StringIO
+
 import os
 import sys
 
@@ -16,23 +19,23 @@ def _writeSinglePotential(pot, minr, maxr, gridPoints, out):
   @param out Python file object supporting write() method to which tabulated
              potential will be written"""
   #Write the section header
-  sbuild = StringIO.StringIO()
+  sbuild = StringIO()
 
-  print >>sbuild, "%s-%s" % (pot.speciesA, pot.speciesB)
-  print >>sbuild, "N %(gridpoints)d R %(minr).8f %(maxr).8f" % { 'gridpoints' : gridPoints,
+  print("%s-%s" % (pot.speciesA, pot.speciesB), file=sbuild)
+  print("N %(gridpoints)d R %(minr).8f %(maxr).8f" % { 'gridpoints' : gridPoints,
                                                                  'minr' : minr,
-                                                                 'maxr' : maxr }
-  print >>sbuild, ""
+                                                                 'maxr' : maxr }, file=sbuild)
+  print("", file=sbuild)
   #Write the body of the potential
   for n in xrange(1,gridPoints+1):
     r = minr + float(n-1)* (maxr - minr) / (float(gridPoints) -1)
     energy = pot.energy(r)
     force = pot.force(r)
 
-    print >> sbuild, "%(n)s %(r).8f %(energy).8f %(force).8f" % { 'n' : n,
+    print("%(n)s %(r).8f %(energy).8f %(force).8f" % { 'n' : n,
                                                                   'r' : r,
                                                                   'energy' :  energy,
-                                                                  'force' : force }
+                                                                  'force' : force }, file=sbuild)
   out.write(sbuild.getvalue())
 
 def writePotentials(potentials, minr, maxr, gridPoints, out = sys.stdout):
@@ -46,7 +49,7 @@ def writePotentials(potentials, minr, maxr, gridPoints, out = sys.stdout):
 
   potlines = []
   for potential in potentials:
-    sbuild = StringIO.StringIO()
+    sbuild = StringIO()
     _writeSinglePotential(potential, minr, maxr, gridPoints, sbuild)
     potlines.append(sbuild.getvalue())
   out.write(os.linesep.join(potlines))

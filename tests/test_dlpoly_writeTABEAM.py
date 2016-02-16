@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import unittest
 
 from atsim import potentials
@@ -7,8 +8,8 @@ import math
 import shutil
 import os
 
-from _tempfiletestcase import TempfileTestCase
-from _rundlpoly import needsDLPOLY, extractDLPOLYEnergy, runDLPoly
+from ._tempfiletestcase import TempfileTestCase
+from ._rundlpoly import needsDLPOLY, extractDLPOLYEnergy, runDLPoly
 
 
 def _getResourceDirectory():
@@ -55,7 +56,8 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
   def testWriteEAMFile(self):
     """Test _writeTABEAM.writeTABEAM() function"""
 
-    import StringIO
+    from io import StringIO
+
 
     #Define potentials
     ppbucku  = potentials.Potential('U', 'U', _zerowrap(potentials.buck(668.546808, 0.408333, 0.0)))
@@ -74,7 +76,7 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
     nrho = int(maxrho/drho)
     nr = int(cutoff/dr)
 
-    outfile = StringIO.StringIO()
+    outfile = StringIO()
 
     _dlpoly_writeTABEAM.writeTABEAM(
       nrho, drho,
@@ -91,9 +93,9 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
 
 
   def testTabulateFunction(self):
-    import StringIO
+    from io import StringIO
 
-    testfile = StringIO.StringIO()
+    testfile = StringIO()
 
     def testFunction(r):
       return 2.0*r + 3.0
