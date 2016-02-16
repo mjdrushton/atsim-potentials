@@ -2,13 +2,13 @@
 from setuptools import setup, find_packages
 
 setup(name="atsim.potentials",
-  use_hg_version=True,
-
   packages = find_packages(exclude=["tests"]),
   namespace_packages = ["atsim"],
   test_suite = "tests",
-  setup_requires = ["future", "hgtools"],
-  install_requires = ["setuptools"],
+  setup_requires = ["future", "setuptools"],
+  install_requires = ["future"],
+
+  version = '0.1.1dev',
 
   #zip_safe = True,
 
@@ -32,5 +32,5 @@ setup(name="atsim.potentials",
     "atomic scale"],
   classifiers = [
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 2.7 :: 3.5",
     "Topic :: Scientific/Engineering"])
