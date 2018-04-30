@@ -45,7 +45,7 @@ From the source directory install ``atsim.potentials`` using the following comma
 Contact
 =======
 
-``atsim.potentials`` was developed by Michael Rushton, if you have any problems, suggestions or queries please get in touch (contact details are available from my `homepage`_).
+``atsim.potentials`` was developed by Michael Rushton, if you have any problems, suggestions or queries please get in touch at m.j.d.rushton@gmail.com .
 
 
 License
@@ -57,6 +57,5 @@ please see LICENSE and NOTICE file.
 
 .. _LAMMPS: http://lammps.sandia.gov
 .. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx
-.. _homepage: http://abulafia.mt.ic.ac.uk/groupmembers/michael
 .. _bitbucket: http://https://bitbucket.org/mjdr/atsim_potentials/
 .. _mercurial: http://mercurial.selenic.com

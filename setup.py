@@ -8,15 +8,13 @@ setup(name="atsim.potentials",
   setup_requires = ["future", "setuptools"],
   install_requires = ["future"],
 
-  version = '0.1.1dev',
-
-  #zip_safe = True,
+  version = '0.2.0',
 
   # Meta-data for PyPI
   description = "atsim.potentials provides tools for working with pair and embedded atom method potential models including tabulation routines for DL_POLY and LAMMPS",
   long_description = open('README.rst').read(),
   author = "M.J.D. Rushton",
-  author_email = "m.rushton@imperial.ac.uk",
+  author_email = "m.j.d.rushton@gmail.com",
   license = "Apache License (2.0)",
   url = "https://bitbucket.org/mjdr/atsim_potentials",
   download_url = "https://bitbucket.org/mjdr/atsim_potentials/get/0.0.0.tar.gz",
@@ -32,5 +30,5 @@ setup(name="atsim.potentials",
     "atomic scale"],
   classifiers = [
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 2.7 :: 3.5",
+    "Programming Language :: Python :: 2.7 :: 3.5 :: 3.6",
     "Topic :: Scientific/Engineering"])
