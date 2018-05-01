@@ -5,8 +5,8 @@ setup(name="atsim.potentials",
   packages = find_packages(exclude=["tests"]),
   namespace_packages = ["atsim"],
   test_suite = "tests",
-  setup_requires = ["future", "setuptools"],
-  install_requires = ["future"],
+  setup_requires = ["setuptools"],
+  install_requires = [],
 
   version = '0.2.0',
 
