@@ -30,5 +30,9 @@ setup(name="atsim.potentials",
     "atomic scale"],
   classifiers = [
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 2.7 :: 3.5 :: 3.6",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
     "Topic :: Scientific/Engineering"])
