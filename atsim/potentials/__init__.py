@@ -88,7 +88,7 @@ def plotToFile(fileobj,lowx, highx, func, steps=10000):
     v = lowx + float(i)*step
     y = func(v)
 
-    print("%f %f" % (v, y), file=fileobj)
+    fileobj.write("{0} {1}\n".format(v,y))
 
 
 def plot(filename, lowx, highx, func, steps=10000):
@@ -103,7 +103,7 @@ def plot(filename, lowx, highx, func, steps=10000):
   :param func: Function to be plotted
   :param steps: Number of data points to be plotted"""
 
-  with open(filename, 'wb') as outfile:
+  with open(filename, 'w') as outfile:
     plotToFile(outfile, lowx, highx, func, steps)
 
 
@@ -121,7 +121,7 @@ def plotPotentialObject(filename, lowx, highx, potentialObject, steps=10000):
   :param func: :class:`atsim.potentials.Potential` object.
   :param steps: Number of data points to be plotted"""
 
-  with open(filename, 'wb') as outfile:
+  with open(filename, 'w') as outfile:
     plotPotentialObjectToFile(outfile, lowx, highx, potentialObject, steps)
 
 
