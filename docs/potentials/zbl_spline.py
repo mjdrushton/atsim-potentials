@@ -12,7 +12,6 @@ def main():
 
     zbl = potentialforms.zbl(14, 8)
 
-
     spline = atsim.potentials.SplinePotential( zbl, bks_buck, 0.8, 1.4)
 
     atsim.potentials.plot( 'bks_buck.dat', 0.1, 10.0, bks_buck, 5000)
