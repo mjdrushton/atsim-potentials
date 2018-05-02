@@ -8,7 +8,7 @@ setup(name="atsim.potentials",
   setup_requires = ["future", "setuptools"],
   install_requires = ["future"],
 
-  version = '0.2.0',
+  version = '0.3.0dev',
 
   # Meta-data for PyPI
   description = "atsim.potentials provides tools for working with pair and embedded atom method potential models including tabulation routines for DL_POLY and LAMMPS",
