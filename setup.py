@@ -5,8 +5,10 @@ setup(name="atsim.potentials",
   packages = find_packages(exclude=["tests"]),
   namespace_packages = ["atsim"],
   test_suite = "tests",
-  setup_requires = ["setuptools"],
-  install_requires = [],
+  install_requires = [
+    "setuptools",
+    "configparser",
+    "cexprtk>=0.3.2"],
 
   version = '0.3.0dev',
 

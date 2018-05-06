@@ -1,6 +1,9 @@
 import collections
-import configparser
+from backports import configparser
 import re
+import itertools
+
+import cexprtk
 
 SpeciesTuple = collections.namedtuple("SpeciesTuple", ["species_a", "species_b"])
 PairPotentialTuple = collections.namedtuple("PairPotentialTuple", ["species", "potential_form", "parameters"])
@@ -98,3 +101,112 @@ class ConfigParser(object):
       pf = PotentialFormTuple(signature, v.strip())
       potential_forms.append(pf)
     return potential_forms
+
+
+class Potential_Form_Registry_Exception(Exception):
+  pass
+
+class Potential_Form_Registry(object):
+  """Factory class that takes [Potential-Form] definitions
+  from ConfigParser and turns them into Potential_Form objects"""
+
+  def __init__(self, cfg):
+    definitions = cfg.potential_form
+    self._potential_forms = self._build_potential_forms(definitions)
+    self._register_with_each_other()
+    self._definitions = definitions
+
+
+  def _build_potential_forms(self, definitions):
+    potential_forms = {}
+    for d in definitions:
+      if d.signature.label in potential_forms:
+        raise Potential_Form_Registry_Exception("Two potential forms have the same label: '{0}'".format(d.signature.label))
+      pf = Potential_Form(d)
+      potential_forms[d.signature.label] = pf
+    return potential_forms
+
+  def _register_with_each_other(self):
+    # So that each function can rely on other custom functions, add each function to every other
+    # function's symbol table
+    pairs = list(itertools.permutations(self._potential_forms.values(), 2))
+    # print([(a.signature.label, b.signature.label) for (a,b) in pairs])
+    for a,b in pairs:
+      a._function.register_function(b._function)
+
+  @property
+  def registered(self):
+    """Returns the labels for the potentials registered here."""
+    return [d.signature.label for d in self._definitions]
+
+  def __getitem__(self, k):
+    return self._potential_forms[k]
+
+class Potential_Form_Exception(Exception):
+  pass
+
+class _Potential_Function(object):
+  """Callable that can be added to cexprtk symbol_table. 
+
+  Its wrapped cexprtk expression is only instantiated on first use. This is to allow
+  the expression's symbol table to be populated before the expression is parsed. 
+  Otherwise custom functions may not have been defined at the time of parsing."""
+
+
+  def __init__(self, potential_form_tuple):
+    """:param potential_form_tuple: PotentialFormTuple describing this function"""
+    self._potential_form_tuple = potential_form_tuple
+    self._local_symbol_table = self._init_symbol_table()
+    self._expression = None
+
+  def _init_symbol_table(self):
+    local_symbol_table = cexprtk.Symbol_Table({})
+    parameter_names = self._potential_form_tuple.signature.parameter_names
+    for pn in parameter_names:
+      local_symbol_table.variables[pn] = 1.0
+    return local_symbol_table
+
+  def register_function(self, func):
+    """Register `func` with this object's symbol_table"""
+    label = func._potential_form_tuple.signature.label
+    self._local_symbol_table.functions[label] = func
+
+  def __call__(self, *args):
+    parameter_names = self._potential_form_tuple.signature.parameter_names
+    assert len(args) == len(parameter_names)
+    for (pn, v) in zip(parameter_names, args):
+      self._local_symbol_table.variables[pn] = v
+
+    if not self._expression:
+      self._expression = cexprtk.Expression(self._potential_form_tuple.expression, self._local_symbol_table)
+    retval = self._expression()
+    return retval
+
+class Potential_Form(object):
+  
+  def __init__(self, potential_form):
+    """Create Potential_Form object.
+
+    :param potential_form: PotentialFormTuple describing the potential."""
+    self.potential_definition = potential_form
+    self._function = _Potential_Function(potential_form)
+
+  @property
+  def signature(self):
+    return self.potential_definition.signature
+
+  @property
+  def expression(self):
+    return self.potential_definition.expression
+
+  def __call__(self, *args):
+    # Curry all but the first argument
+    if not len(args) == len(self.signature.parameter_names)-1:
+      raise Potential_Form_Exception(
+        "Potential form requires {0} arguments but {1} were provided".format(len(self.signature.parameter_names)-1, len(args)))
+
+    def f(r):
+      funcargs = [r]
+      funcargs.extend(args)
+      return self._function(*funcargs)
+    return f

@@ -1,5 +1,5 @@
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 import unittest
 
 import distutils
@@ -18,5 +18,5 @@ def extractLAMMPSEnergy():
 
 def runLAMMPS():
   import subprocess
-  output = subprocess.getoutput("lammps -in calc_energy.lmpin -log out.lmpout -echo none")
+  output = subprocess.check_output("lammps -in calc_energy.lmpin -log out.lmpout -echo none", shell = True)
 
