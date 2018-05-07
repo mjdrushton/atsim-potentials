@@ -15,3 +15,10 @@ def gradient(func, h = 0.1e-5):
     dUdr = dU/dr
     return dUdr
   return wrapped
+
+import functools
+class _rpartial(functools.partial):
+    def __call__(self, *args, **kwargs):
+        kw = self.keywords.copy()
+        kw.update(kwargs)
+        return self.func(*(args + self.args), **kwargs)

@@ -2,8 +2,11 @@ import collections
 from backports import configparser
 import re
 import itertools
+import inspect
 
 import cexprtk
+
+
 
 SpeciesTuple = collections.namedtuple("SpeciesTuple", ["species_a", "species_b"])
 PairPotentialTuple = collections.namedtuple("PairPotentialTuple", ["species", "potential_form", "parameters"])
@@ -110,19 +113,40 @@ class Potential_Form_Registry(object):
   """Factory class that takes [Potential-Form] definitions
   from ConfigParser and turns them into Potential_Form objects"""
 
-  def __init__(self, cfg):
+  def __init__(self, cfg, register_standard = False):
+    """:param cfg: ConfigParser instance.
+       :param register_standard: If `True` then functions contained in atsim.potentials.potentialfunctions
+          are registered with this object with the `as.` namespace prefix."""
+
     definitions = cfg.potential_form
-    self._potential_forms = self._build_potential_forms(definitions)
+    self._potential_forms = {}
+
+    if register_standard:
+      self._potential_forms.update(self._register_standard())
+
+    self._potential_forms.update(self._build_potential_forms(definitions))
     self._register_with_each_other()
     self._definitions = definitions
 
+  def _register_standard(self):
+    from . import potentialfunctions
+    potential_forms = {}
+    for name, pyfunc in inspect.getmembers(potentialfunctions, inspect.isfunction):
+      name = "as."+name
+      argspec = inspect.getargspec(pyfunc)
+      d = PotentialFormTuple(signature = PotentialFormSignatureTuple(name, argspec.args), expression = "")
+      func = _Python_Potential_Function(d, pyfunc)
+      pf = Potential_Form(func)
+      potential_forms[name] = pf
+    return potential_forms
 
   def _build_potential_forms(self, definitions):
     potential_forms = {}
     for d in definitions:
       if d.signature.label in potential_forms:
         raise Potential_Form_Registry_Exception("Two potential forms have the same label: '{0}'".format(d.signature.label))
-      pf = Potential_Form(d)
+      func = _Cexptrk_Potential_Function(d)
+      pf = Potential_Form(func)
       potential_forms[d.signature.label] = pf
     return potential_forms
 
@@ -145,7 +169,24 @@ class Potential_Form_Registry(object):
 class Potential_Form_Exception(Exception):
   pass
 
-class _Potential_Function(object):
+class Potential_Form_Circular_Reference_Exception(Potential_Form_Exception):
+  pass
+
+class _Python_Potential_Function(object):
+  """Callable that can be added to cexprtk symbol_table"""
+
+  def __init__(self, potential_form_tuple, pyfunc):
+    self._potential_form_tuple = potential_form_tuple
+    self._pyfunc = pyfunc
+
+  def register_function(self, func):
+    pass
+  
+  def __call__(self, *args):
+    return self._pyfunc(*args)
+
+
+class _Cexptrk_Potential_Function(object):
   """Callable that can be added to cexprtk symbol_table. 
 
   Its wrapped cexprtk expression is only instantiated on first use. This is to allow
@@ -184,12 +225,12 @@ class _Potential_Function(object):
 
 class Potential_Form(object):
   
-  def __init__(self, potential_form):
+  def __init__(self, potential_function):
     """Create Potential_Form object.
 
-    :param potential_form: PotentialFormTuple describing the potential."""
-    self.potential_definition = potential_form
-    self._function = _Potential_Function(potential_form)
+    :param potential_function: _Potential_Function object."""
+    self.potential_definition = potential_function._potential_form_tuple
+    self._function = potential_function
 
   @property
   def signature(self):

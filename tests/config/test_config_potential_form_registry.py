@@ -2,9 +2,11 @@ import pytest
 
 import io
 
-from atsim.potentials._config import Potential_Form_Registry, ConfigParser, Potential_Form
+from atsim.potentials._config import Potential_Form_Registry, ConfigParser, Potential_Form, _Cexptrk_Potential_Function
 from atsim.potentials._config import PotentialFormSignatureTuple, PotentialFormTuple 
-from atsim.potentials._config import Potential_Form_Exception, Potential_Form_Registry_Exception
+from atsim.potentials._config import Potential_Form_Exception, Potential_Form_Registry_Exception, Potential_Form_Circular_Reference_Exception
+
+import atsim.potentials
 
 import cexprtk
 
@@ -56,7 +58,7 @@ def test_potential_instantiation_with_wrong_params_error():
   sig = PotentialFormSignatureTuple('buck', ["r", "A", "rho", "C"])
   pot = PotentialFormTuple(sig, "A*exp(-r/rho) - C/r^6")
 
-  pf = Potential_Form(pot)
+  pf = Potential_Form(_Cexptrk_Potential_Function(pot))
   potfunc = pf(1000.0, 0.1, 2.0)
   with pytest.raises(Potential_Form_Exception):
     pf(1000.0, 0.1, 2.0, 10.0)
@@ -65,4 +67,32 @@ def test_potential_instantiation_with_wrong_params_error():
     pf(2.0, 10.0)
 
 
+def test_with_default_potentials():
+  """Tests for potential forms defined by atsim.potentials"""
+
+  cfg_string = u"""[Potential-Form]
+buck_morse(r, A, rho, C, gamma, r_star, D) : as.buck(r,A,rho,C) + as.morse(r, gamma, r_star, D)
+"""
+  expect = atsim.potentials.plus(atsim.potentials.potentialforms.buck(1000.0, 0.1, 32.0),
+    atsim.potentials.potentialforms.morse(0.2, 1.3, 25.0))(1.4)
+
+  cfg = ConfigParser(io.StringIO(cfg_string))
+  pfr = Potential_Form_Registry(cfg, True)
+  buck_morse = pfr["buck_morse"](1000.0, 0.1, 32.0, 0.2, 1.3, 25.0)
+  
+  actual = buck_morse(1.4)
+  assert pytest.approx(expect) == actual
+
+  # Effectively the same test but mixing cexprtk definitions with the canned definition.
+  cfg_string = u"""[Potential-Form]
+buck(r, A, rho, C) : A*exp(-r/rho) - C/r^6
+buck_morse(r, A, rho, C, gamma, r_star, D) : buck(r,A,rho,C) + as.morse(r, gamma, r_star, D)
+"""
+
+  cfg = ConfigParser(io.StringIO(cfg_string))
+  pfr = Potential_Form_Registry(cfg, True)
+  buck_morse = pfr["buck_morse"](1000.0, 0.1, 32.0, 0.2, 1.3, 25.0)
+  
+  actual = buck_morse(1.4)
+  assert pytest.approx(expect) == actual
 

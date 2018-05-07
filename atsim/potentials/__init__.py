@@ -21,6 +21,8 @@ from ._lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
 
 from .potentialforms import * # noqa
 
+from . import potentialfunctions
+
 import sys
 
 
