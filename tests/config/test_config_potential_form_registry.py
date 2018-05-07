@@ -2,9 +2,13 @@ import pytest
 
 import io
 
-from atsim.potentials._config import Potential_Form_Registry, ConfigParser, Potential_Form, _Cexptrk_Potential_Function
-from atsim.potentials._config import PotentialFormSignatureTuple, PotentialFormTuple 
-from atsim.potentials._config import Potential_Form_Exception, Potential_Form_Registry_Exception, Potential_Form_Circular_Reference_Exception
+from atsim.potentials.config import Potential_Form_Registry, ConfigParser
+from atsim.potentials.config._cexprtk_potential_function import _Cexptrk_Potential_Function 
+
+from atsim.potentials.config._common import PotentialFormSignatureTuple, PotentialFormTuple 
+from atsim.potentials.config._common import Potential_Form_Exception, Potential_Form_Registry_Exception
+
+from atsim.potentials.config._potential_form import Potential_Form
 
 import atsim.potentials
 
