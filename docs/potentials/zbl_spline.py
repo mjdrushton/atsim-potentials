@@ -21,7 +21,7 @@ def main():
     atsim.potentials.plot( 'spline.dat', 0.1, 10.0, spline, 5000)
 
     bks_SiO = atsim.potentials.Potential('Si', 'O', spline)
-    with open('bks_SiO.lmptab', 'wb') as outfile:
+    with open('bks_SiO.lmptab', 'w') as outfile:
         atsim.potentials.writePotentials('LAMMPS', [bks_SiO], 10.0, 5000, out = outfile)
 
 

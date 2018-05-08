@@ -5,7 +5,7 @@ from builtins import range
 
 import sys
 
-from ._common import Potential
+from ._potential import Potential
 
 from io import StringIO
 

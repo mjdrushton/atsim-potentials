@@ -4,6 +4,7 @@ import itertools
 from ._common import PotentialFormTuple
 from ._common import PotentialFormSignatureTuple
 from ._common import Potential_Form_Registry_Exception
+from ._common import ConfigParserMissingSectionException
 
 from ._python_potential_function import _Python_Potential_Function
 from ._potential_form import Potential_Form
@@ -19,15 +20,18 @@ class Potential_Form_Registry(object):
        :param register_standard: If `True` then functions contained in atsim.potentials.potentialfunctions
           are registered with this object with the `as.` namespace prefix."""
 
-    definitions = cfg.potential_form
     self._potential_forms = {}
 
     if register_standard:
       self._potential_forms.update(self._register_standard())
-
-    self._potential_forms.update(self._build_potential_forms(definitions))
-    self._register_with_each_other()
-    self._definitions = definitions
+    
+    try:
+      definitions = cfg.potential_form
+      self._potential_forms.update(self._build_potential_forms(definitions))
+      self._register_with_each_other()
+      self._definitions = definitions
+    except ConfigParserMissingSectionException:
+      pass
 
   def _register_standard(self):
     from .. import potentialfunctions
@@ -62,7 +66,7 @@ class Potential_Form_Registry(object):
   @property
   def registered(self):
     """Returns the labels for the potentials registered here."""
-    return [d.signature.label for d in self._definitions]
+    return sorted(self._potential_forms.keys())
 
   def __getitem__(self, k):
     return self._potential_forms[k]

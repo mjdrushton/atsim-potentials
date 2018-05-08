@@ -14,6 +14,13 @@ import atsim.potentials
 
 import cexprtk
 
+def test_empty_potential_forms():
+  """Test no error when instantiating Potential_Form_Registry with no potential forms specified"""
+  cfg_string = u""
+  cfg = ConfigParser(io.StringIO(cfg_string))
+  pfr = Potential_Form_Registry(cfg)
+
+
 def test_config_potential_form_registry_one_potential_form():
   cfg_string = u"""[Potential-Form]
 buck(r, A, rho, C) : A*exp(-r/rho) - C/r^6
@@ -36,7 +43,7 @@ buck_morse(r, A, rho, C, gamma, r_star, D) : buck(r,A,rho,C) + morse(r, gamma, r
   cfg = ConfigParser(io.StringIO(cfg_string))
   pfr = Potential_Form_Registry(cfg)
 
-  assert ["buck", "morse", "buck_morse"] == pfr.registered
+  assert sorted(["buck", "morse", "buck_morse"]) == pfr.registered
 
   buck = pfr["buck"](1000.0, 0.1, 3.0)
   assert pytest.approx(-2.9546) == buck(1.0)

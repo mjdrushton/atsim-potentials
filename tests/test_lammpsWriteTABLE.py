@@ -71,7 +71,7 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
             "5 4.10000000 0.90000000 1.00000000",
             "6 5.10000000 -0.10000000 1.00000000"]
 
-    sbuild = BytesIO()
+    sbuild = StringIO()
     _lammps_writeTABLE.writePotentials([pota,potb], 0.1, 5.1, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()
@@ -80,7 +80,7 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
     msg = "%s != %s" % (expect, actual)
     self.assertEquals(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, sbuild):
-      a = a.decode()
+      # a = a.decode()
       self.assertEquals(os.linesep, a[-1])
       a = a[:-1]
       self.assertEquals(e,a)

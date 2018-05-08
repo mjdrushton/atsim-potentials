@@ -8,8 +8,16 @@ PotentialFormTuple = collections.namedtuple("PotentialFormTuple", ["signature", 
 class ConfigParserException(Exception):
   pass
 
+class ConfigParserException(Exception):
+  pass
+
+class ConfigParserMissingSectionException(ConfigParserException):
+  pass
+
 class Potential_Form_Registry_Exception(Exception):
   pass
 
 class Potential_Form_Exception(Exception):
   pass
+
+PAIR_TABULATION = "Pair"

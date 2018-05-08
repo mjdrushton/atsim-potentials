@@ -9,7 +9,9 @@ from builtins import object
 
 from . import _tablereaders
 
-from ._common import * # noqa
+from ._potential import Potential
+from ._eam_potential import EAMPotential
+
 from ._spline import SplinePotential # noqa
 from ._util import gradient # noqa
 from ._dlpoly_writeTABEAM import writeTABEAM # noqa
@@ -20,7 +22,6 @@ from ._lammpsWriteEAM import writeSetFL # noqa
 from ._lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
 
 from .potentialforms import * # noqa
-
 from . import potentialfunctions
 
 import sys

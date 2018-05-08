@@ -55,5 +55,5 @@ def writePotentials(potentials, minr, maxr, gridPoints, out = sys.stdout):
     sbuild = StringIO()
     _writeSinglePotential(potential, minr, maxr, gridPoints, sbuild)
     potlines.append(sbuild.getvalue())
-  out.write(os.linesep.join(potlines).encode())
+  out.write(os.linesep.join(potlines))
 

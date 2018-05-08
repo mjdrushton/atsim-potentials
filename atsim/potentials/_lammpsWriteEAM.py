@@ -12,7 +12,7 @@ from io import StringIO
 
 import sys
 
-from ._common import EAMPotential # noqa
+from ._eam_potential import EAMPotential # noqa
 
 
 def _writeHeader(outfile, nrho, drho, nr, dr, cutoff, title, atomicNumber, mass, latticeConstant, latticeType):

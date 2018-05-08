@@ -41,7 +41,7 @@ def main():
     # Tabulate into file called Basak.lmptab
     # using short-range cutoff of 6.5 Angs with grid
     # increment of 1e-3 Angs (6500 grid points)
-    with open('Basak.lmptab', 'wb') as outfile: # <-- Filename changed from 'TABLE'
+    with open('Basak.lmptab', 'w') as outfile: # <-- Filename changed from 'TABLE'
         atsim.potentials.writePotentials(
            'LAMMPS', # <-- This has been changed from 'DL_POLY'
            potential_objects,

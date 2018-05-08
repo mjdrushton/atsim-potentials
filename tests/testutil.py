@@ -13,8 +13,6 @@ def assertFloatWithinPercentage(testCase, expect, actual, percenttolerance = 0.5
   expect. If expect is == 0.0 then revert to using testCase.assertAlmostEquals() method and check
   that actual is the same as expect for given number of places"""
 
-
-
   if expect == 0.0:
     testCase.assertAlmostEquals(expect, actual, places = places)
   else:
