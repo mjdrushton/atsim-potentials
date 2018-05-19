@@ -4,7 +4,6 @@ from atsim.potentials import potentialforms
 import atsim.potentials
 
 def main():
-
     bks_buck = potentialforms.buck(18003.7572, 1.0/4.87318, 133.5381)
     bks_coul = potentialforms.coul(2.4, -1.2)
 

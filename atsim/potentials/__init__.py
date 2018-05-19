@@ -82,7 +82,7 @@ def plotToFile(fileobj,lowx, highx, func, steps=10000):
   :param highx: X-axis upper value
   :param func: Function to be plotted
   :param steps: Number of data points to be plotted"""
-  step = int((highx - lowx) // steps)
+  step = (highx - lowx) / float(steps)
 
   for i in range(steps):
     v = lowx + float(i)*step

@@ -1,5 +1,5 @@
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import next
 import unittest
 
@@ -11,11 +11,10 @@ needsDLPOLY = unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
 
 def runDLPoly():
   import subprocess
-  subprocess.getoutput('DLPOLY.Z')
+  subprocess.check_output('DLPOLY.Z', shell = True)
 
 def extractDLPOLYEnergy():
   with open('STATIS') as infile:
-    # import pdb;pdb.set_trace()
     next(infile)
     next(infile)
     next(infile)
