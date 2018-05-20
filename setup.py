@@ -12,6 +12,12 @@ setup(name="atsim.potentials",
 
   version = '0.3.0dev',
 
+  entry_points = {
+        'console_scripts' : [
+          'potable=atsim.potentials.tools.potable:main'
+        ]
+  },
+
   # Meta-data for PyPI
   description = "atsim.potentials provides tools for working with pair and embedded atom method potential models including tabulation routines for DL_POLY and LAMMPS",
   long_description = open('README.rst').read(),

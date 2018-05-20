@@ -63,7 +63,7 @@ class Configuration(object):
     logger.info("  * nr: {}".format(nr))
     logger.info("  * Tabulation will contain:")
     for pot in potobjs:
-      logger.info("    + {}-{}".format(pot.speciesA, pot.speciesB))
+      logger.info("      + {}-{}".format(pot.speciesA, pot.speciesB))
 
     if tabulation_target == "LAMMPS":
       # Make LAMMPS tabulation here
