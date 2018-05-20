@@ -7,6 +7,7 @@ from builtins import str
 
 import os
 import unittest
+import pytest
 import imp
 import shutil
 
@@ -28,7 +29,6 @@ def _getLAMMPSResourceDirectory():
 
 def _getDLPolyResourceDirectory():
   return os.path.join(os.path.dirname(__file__), 'dl_poly_resources')
-
 
 def _loadModule(scriptname):
   name = os.path.basename(scriptname)
@@ -145,8 +145,6 @@ class basak_tabulateTestCase(TempfileTestCase):
     finally:
       os.chdir(oldpwd)
 
-
-
 #eam_tabulate_example1.py
 class eam_tabulate_example1TestCase(TempfileTestCase):
   """Test docs/potentials/eam_tabulate_example1.py"""
@@ -176,7 +174,6 @@ class eam_tabulate_example1TestCase(TempfileTestCase):
       self.assertAlmostEquals(-8.23982879, energy, places = 5)
     finally:
       os.chdir(oldpwd)
-
 
 class eam_tabulate_example2TestCase(TempfileTestCase):
   """Test docs/potentials/eam_tabulate_example2a.py and docs/potentials/eam_tabulate_example2b.py"""
@@ -437,8 +434,6 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
     finally:
       os.chdir(oldpwd)
 
-
-
 #eam_tabulate_example3a.py
 class eam_tabulate_example3TestCase(TempfileTestCase):
   """Test docs/potentials/eam_tabulate_example3a.py and eam_tabulate_example3b.py"""
@@ -514,7 +509,6 @@ try:
 except ImportError:
   NUMPY_AVAILABLE = False
 
-
 #zbl_spline.py
 class zbl_splineTestCase(TempfileTestCase):
   """Test docs/potentials/zbl_spline.py"""
@@ -528,6 +522,21 @@ class zbl_splineTestCase(TempfileTestCase):
     os.chdir(self.tempdir)
     try:
       exampleModule.main()
+
+      output_path = os.path.join(self.tempdir, "bks_buck.dat")
+      assert os.path.exists(output_path)
+
+      with open(output_path) as infile:
+        line = next(infile)
+        tokens = line.split()
+        r = float(tokens[0])
+        assert pytest.approx(0.1) == r
+
+        line = next(infile)
+        tokens = line.split()
+        r = float(tokens[0])
+        assert pytest.approx(0.1 + (10.0-0.1)/5000.0) == r
+
     finally:
       os.chdir(oldpwd)
 

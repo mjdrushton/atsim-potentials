@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'atsim.potentials'
-copyright = u'2014, M.J.D. Rushton'
+copyright = u'2018, M.J.D. Rushton'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
