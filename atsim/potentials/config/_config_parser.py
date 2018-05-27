@@ -1,11 +1,9 @@
 from backports import configparser
 import re
 
-
 from ._common import PotentialFormSignatureTuple, PotentialFormTuple, SpeciesTuple, PairPotentialTuple
 from ._common import ConfigParserException
 from ._common import ConfigParserMissingSectionException
-
 
 class _TabulationSection(object):
   """Represents the [Tabulation] section of a config file"""
@@ -21,8 +19,8 @@ class _TabulationSection(object):
     # Tabulation section not defined
     if not cp.has_section('Tabulation'):
       return
-
     self._init_cutoff(cp)
+    self._init_target(cp)
 
   def _get_or_none(self, k, d, t):
     v = d.get(k, None)
@@ -55,6 +53,10 @@ class _TabulationSection(object):
 
     self._nr = nr 
     self._cutoff = cutoff
+
+  def _init_target(self, cp):
+    target = self._get_or_none('target', cp['Tabulation'], str)
+    self._target = target
 
   @property
   def target(self):

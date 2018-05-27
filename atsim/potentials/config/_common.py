@@ -5,10 +5,10 @@ PairPotentialTuple = collections.namedtuple("PairPotentialTuple", ["species", "p
 PotentialFormSignatureTuple = collections.namedtuple("PotentialFormSignatureTuple", ["label", "parameter_names"])
 PotentialFormTuple = collections.namedtuple("PotentialFormTuple", ["signature", "expression"])
 
-class ConfigParserException(Exception):
+class ConfigurationException(Exception):
   pass
 
-class ConfigParserException(Exception):
+class ConfigParserException(ConfigurationException):
   pass
 
 class ConfigParserMissingSectionException(ConfigParserException):

@@ -40,7 +40,7 @@ def _zerowrap(func):
   return f
 
 def embeddingFunction(rho):
-  return -math.sqrt(rho)
+  return -math.sqrt(rho)  
 
 class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
   """Tests for the _writeTABEAM module"""

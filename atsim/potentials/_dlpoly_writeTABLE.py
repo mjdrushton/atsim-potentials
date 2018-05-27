@@ -107,4 +107,4 @@ def writePotentials(potentials, cutoff, gridPoints, out = sys.stdout):
     _writePotential(potential, cutoff, gridPoints, meshResolution, outputbuilder)
 
   #Write the contents of outputbuilder to the final destination
-  out.write(outputbuilder.getvalue().encode())
+  out.write(outputbuilder.getvalue())

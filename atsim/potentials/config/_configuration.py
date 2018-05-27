@@ -3,8 +3,10 @@ from ._pair_potential_builder import Pair_Potential_Builder
 from ._potential_form_registry import Potential_Form_Registry
 
 from ._common import PAIR_TABULATION
+from ._common import ConfigurationException
 
 from .._pair_tabulation import LAMMPS_PairTabulation
+from .._pair_tabulation import DLPoly_PairTabulation
 
 import logging
 
@@ -42,6 +44,16 @@ class Configuration(object):
     if tabulation_target is None:
       logger.warning("No tabulation target specified - defaulting to 'LAMMPS'")
       tabulation_target = "LAMMPS"
+    elif tabulation_target == "LAMMPS":
+      logger.info("Tabulation target specified as 'LAMMPS'")
+      tabulation_target = "LAMMPS"
+    elif tabulation_target == "DLPOLY":
+      logger.info("Tabulation target specified as 'DLPOLY'")
+      tabulation_target = "DLPOLY"
+    else:
+      errormsg = "Unknown tabulation target specified: '{}'".format(tabulation_target)
+      logger.error(errormsg)
+      raise ConfigurationException(errormsg)
 
     # Get cutoff and gridpoints
     if cp.tabulation.cutoff is None:
@@ -68,8 +80,9 @@ class Configuration(object):
     if tabulation_target == "LAMMPS":
       # Make LAMMPS tabulation here
       tabulation = LAMMPS_PairTabulation(potobjs, cutoff, nr)
-      return tabulation
+    elif tabulation_target == "DLPOLY":
+      tabulation = DLPoly_PairTabulation(potobjs, cutoff, nr)
     else:
       raise ValueError("Unknown pair tabulation target '{}'".format(tabulation_target))
-
-      
+    return tabulation
+    
