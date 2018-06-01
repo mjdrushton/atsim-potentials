@@ -159,7 +159,7 @@ def _writeSetFL(
   _writeSetFLPairPots(nr, dr, eampots, pairpots, workout)
 
   #Dump working output file into out
-  out.write(workout.getvalue().encode())
+  out.write(workout.getvalue())
 
 def writeFuncFL(
     nrho, drho,

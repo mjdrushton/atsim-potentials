@@ -15,9 +15,7 @@ def _parse_command_line():
   # TODO: Provide options to override the contents of the [Tabulation] section of config file.
 
   args = p.parse_args()
-
   return args
-
 
 def _setup_logging():
   logging.basicConfig(level = logging.INFO)

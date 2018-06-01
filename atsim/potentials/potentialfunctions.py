@@ -47,6 +47,15 @@ def coul(r, qi, qj):
   :return: Potential energy"""
   return (qi * qj)/(4.0*math.pi*0.0055264*r)
 
+def constant(r, constant):
+  """Function that simply returns the function that is passed to it.
+
+  :param r: Separation.
+  :param constant: The value to be returned by this function.
+
+  :return: The value passed in as `constant`"""
+  return constant
+
 def hbnd(r, A,B):
   """DL_POLY hbnd form:
 
@@ -91,6 +100,21 @@ def morse(r, gamma, r_star, D):
   :return: Potential energy"""
   return D*(math.exp(-2.0*gamma*(r-r_star)) - 2.0*math.exp(-gamma*(r-r_star)))
 
+
+def sqrt(r,G):
+  """Square root function.
+
+  Potential function is:
+
+  .. math ::
+
+    U(r_{ij}) = G\sqrt{r_{ij}}
+
+  :param r: Variable
+  :param G: Parameter :math:`G`
+  :return: G multiplied by the square root of r."""
+  return G*math.sqrt(r)
+
 def zbl(r, z1,z2):
   """ZBL potential.
 
@@ -110,3 +134,12 @@ def zbl(r, z1,z2):
   Bk4=0.2016
   a=(0.8854*0.529)/(float(z1)**0.23 + float(z2)**0.23)
   return 14.39942 * (z1*z2)/r * (Ck1*math.exp((-Bk1*r)/a) + Ck2*math.exp((-Bk2*r)/a) + Ck3*math.exp((-Bk3*r)/a) + Ck4*math.exp((-Bk4*r)/a))
+
+
+def zero(r):
+  """Function that returns 0.0 for any value of r.
+
+  :param r: Separation.
+  
+  :return: Returns 0.0"""
+  return 0.0

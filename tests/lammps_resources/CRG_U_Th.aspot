@@ -1,0 +1,27 @@
+[Tabulation]
+target :  setfl
+nr : 1000
+dr : 0.01
+nrho : 1000
+drho : 0.01
+
+[Potential-Form]
+buck_morse(r, A, rho, C, D, gamma, r0) = as.buck(r,A,rho,C) + as.morse(r, gamma, r0, D)
+density(r, n) = (n/r^8) * 0.5 * (1+erf(20*(r-1.5)))
+
+[EAM-Embed]
+Th = as.sqrt -1.185
+U  = as.sqrt -1.806
+O  = as.sqrt -0.690
+
+[EAM-Density]
+Th = density 1742.622 
+U  = density 3450.995
+O  = density 106.856
+
+[Pair]
+O-O   = as.buck    830.283 0.352856 3.884372
+Th-Th = as.buck 18600 0.2884 0.0
+U-U   = as.buck 18600 0.2747 0.0
+Th-O  = buck_morse 315.544 0.395903 0.0 0.62614 1.85960 2.49788
+U-O   = buck_morse 448.779 0.387758 0.0 0.66080 2.05815 2.38051

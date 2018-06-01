@@ -24,8 +24,9 @@ from ._lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
 from .potentialforms import * # noqa
 from . import potentialfunctions
 
-import sys
+from ._multi_range_potential_form import Multi_Range_Potential_Form
 
+import sys
 
 def plus(a,b):
   """Takes two functions and returns a third which when evaluated returns the result of a(r) + b(r)

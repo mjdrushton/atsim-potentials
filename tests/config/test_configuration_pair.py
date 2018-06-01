@@ -1,4 +1,4 @@
-"""Tests for atsim.potential.config.Configuration"""
+"""Tests for atsim.potential.config.Configuration for pair-potential models"""
 
 import io
 import os

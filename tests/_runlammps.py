@@ -27,6 +27,18 @@ def lammps_run_fixture(tmpdir):
 
   return tmpdir
 
+@pytest.fixture
+def lammps_run_fluorite_fixture(tmpdir):
+  resource_path = py.path.local(_getResourceDirectory())
+  lmpin = resource_path.join("calc_energy.lmpin")
+  
+  import shutil
+  shutil.copyfile(lmpin.strpath, tmpdir.join("calc_energy.lmpin").strpath)
+  shutil.copyfile(resource_path.join("CeO2-single_cell.lmpstruct").strpath,
+    tmpdir.join("structure.lmpstruct").strpath)
+
+  return tmpdir
+
 def extractLAMMPSEnergy(cwd = None):
   if cwd:
     outpath = os.path.join(cwd, "out.lmpout")
