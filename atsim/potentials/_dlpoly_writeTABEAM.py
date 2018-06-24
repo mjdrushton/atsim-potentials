@@ -126,7 +126,7 @@ def writeTABEAM(nrho, drho, nr, dr, eampots, pairpots, out = sys.stdout, title =
   for eampotential in eampots:
     _writeDensityFunction(eampotential.species, None, eampotential.electronDensityFunction, nr, dr, outputbuilder)
 
-  out.write(outputbuilder.getvalue().encode())
+  out.write(outputbuilder.getvalue())
 
 
 def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.stdout, title = ""):
@@ -178,4 +178,4 @@ def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.s
       except KeyError:
         raise KeyError("Density function for '%s-%s' pair not specified in '%s' EAMPotential, density dictionary." % (speciesA, speciesB, speciesA))
       _writeDensityFunction(speciesA, speciesB, densityFunction, nr, dr, outputbuilder)
-  out.write(outputbuilder.getvalue().encode())
+  out.write(outputbuilder.getvalue())

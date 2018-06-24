@@ -3,7 +3,7 @@ import logging
 import collections
 
 from .._pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation
-from .._eam_tabulation  import SetFL_EAMTabulation
+from .._eam_tabulation  import SetFL_EAMTabulation, TABEAM_EAMTabulation
 
 from ._potential_form_registry import Potential_Form_Registry
 from ._pair_potential_builder import Pair_Potential_Builder
@@ -93,7 +93,7 @@ class EAMTabulationFactory(PairTabulationFactory):
     self.tabulation_type = "EAM"
 
   def _get_cutoffs(self, cp):
-    logger = logging.getLogger(__name__).getChild("PairTabulationFactory._get_cutoffs")
+    logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._get_cutoffs")
     r_cutoff = super()._get_cutoffs(cp)
 
     # Get cutoff and gridpoints
@@ -111,8 +111,14 @@ class EAMTabulationFactory(PairTabulationFactory):
     return R_Rho_CutoffTuple(r_cutoff.cutoff, r_cutoff.nr, cutoff_rho, nrho)
 
   def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry):
+    logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._make_tabulation_args")
     eam_builder =  EAM_Potential_Builder(cp, potential_form_registry)
     eam_potentials = eam_builder.eam_potentials
+
+    logger.info("  * Tabulation will contain following EAM species:")
+    for eam_potential in eam_potentials:
+      logger.info("      + {}".format(eam_potential.species))
+
     args = [potobjs, eam_potentials, 
             r_cutoff.cutoff, r_cutoff.nr, 
             r_cutoff.cutoff_rho, r_cutoff.nrho]
@@ -128,5 +134,6 @@ class EAMTabulationFactory(PairTabulationFactory):
 TABULATION_FACTORIES = {
   "LAMMPS" : PairTabulationFactory("LAMMPS", LAMMPS_PairTabulation),
   "DLPOLY" : PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),
-  "setfl"  : EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation)
+  "setfl"  : EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation),
+  "DL_POLY_EAM" : EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation)
 }

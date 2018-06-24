@@ -8,16 +8,22 @@ from atsim.potentials.config._config_parser import ConfigParser
 
 
 from .._runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS, lammps_run_fluorite_fixture
-# from .._rundlpoly import needsDLPOLY, runDLPoly, extractDLPOLYEnergy
+from .._rundlpoly import needsDLPOLY, runDLPoly, extractDLPOLYEnergy
 
-def _get_resource_dir():
+def _get_resource_dir(subdir):
   rd = py.path.local(__file__).dirpath()
-  rd = rd.parts()[-2].join('lammps_resources')
+  rd = rd.parts()[-2].join(subdir)
   return rd
+
+def _get_lammps_resource_dir():
+  return _get_resource_dir('lammps_resources')
+
+def _get_dlpoly_resource_dir():
+  return _get_resource_dir('dl_poly_resources')
 
 
 def test_configuration_setfl_synonyms():
-  cfg_file_path = _get_resource_dir().join("CRG_U_Th.aspot")
+  cfg_file_path = _get_lammps_resource_dir().join("CRG_U_Th.aspot")
   with cfg_file_path.open() as config_file:
     config_parser = ConfigParser(config_file)
   assert config_parser.tabulation.target == "setfl"
@@ -46,7 +52,7 @@ def test_lammps_setfl_crg_tabulate_ThO2(lammps_run_fluorite_fixture):
   tmpdir = lammps_run_fluorite_fixture
 
   cfgobj = Configuration()
-  config_file = _get_resource_dir().join("CRG_U_Th.aspot").open()
+  config_file = _get_lammps_resource_dir().join("CRG_U_Th.aspot").open()
   tabulation = cfgobj.read(config_file)
 
   with tmpdir.join("table.eam.alloy").open("w") as outfile:
@@ -75,7 +81,7 @@ def test_lammps_setfl_crg_tabulate_UO2(lammps_run_fluorite_fixture):
   tmpdir = lammps_run_fluorite_fixture
 
   cfgobj = Configuration()
-  config_file = _get_resource_dir().join("CRG_U_Th.aspot").open()
+  config_file = _get_lammps_resource_dir().join("CRG_U_Th.aspot").open()
   tabulation = cfgobj.read(config_file)
 
   with tmpdir.join("table.eam.alloy").open("w") as outfile:
@@ -98,3 +104,32 @@ pair_coeff * * eam/alloy table.eam.alloy O U
 
   expect = -162.708748563403
   assert pytest.approx(expect) == energy  
+
+@needsDLPOLY
+def test_dlpoly_TABEAM_tabulate_CeO2(tmpdir):
+  # Copy files into the tmpdir.
+  rd = _get_dlpoly_resource_dir()
+  files = [
+    ("CONFIG_CeO2", "CONFIG"),
+    ("CONTROL_CeO2", "CONTROL"),
+    ("FIELD_CeO2", "FIELD")
+  ]
+
+  for src, dest in files:
+    src = rd.join(src)
+    dest = tmpdir.join(dest)
+    src.copy(dest)
+
+  # Tabulate the TABEAM potential
+  cfgobj = Configuration()
+  config_file = rd.join("CRG_Ce.aspot").open()
+  tabulation = cfgobj.read(config_file)
+
+  with tmpdir.join("TABEAM").open("w") as outfile:
+    tabulation.write(outfile)
+
+  runDLPoly(cwd = tmpdir.strpath)
+  actual = extractDLPOLYEnergy(cwd = tmpdir.strpath)
+
+  expect = -532.6778
+  assert pytest.approx(expect) == actual

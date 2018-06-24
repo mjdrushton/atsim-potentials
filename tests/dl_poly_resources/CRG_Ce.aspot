@@ -1,0 +1,23 @@
+[Tabulation]
+target :  DL_POLY_EAM
+nr : 1000
+dr : 0.01
+nrho : 1000
+drho : 0.01
+
+[Potential-Form]
+buck_morse(r, A, rho, C, D, gamma, r0) = as.buck(r,A,rho,C) + as.morse(r, gamma, r0, D)
+density(r, n) = (n/r^8) * 0.5 * (1+erf(20*(r-1.5)))
+
+[EAM-Embed]
+Ce  = as.sqrt -0.308
+O  = as.sqrt -0.690
+
+[EAM-Density]
+Ce  = density 1556.803
+O  = density 106.856
+
+[Pair]
+O-O   = as.buck 830.283 0.352856 3.884372
+Ce-Ce = as.buck 18600 0.2664 0.0
+Ce-O  = buck_morse 351.341 0.380517 0.0 0.71925 1.86875 2.35604

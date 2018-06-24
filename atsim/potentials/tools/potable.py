@@ -18,10 +18,11 @@ def _parse_command_line():
   return args
 
 def _setup_logging():
-  logging.basicConfig(level = logging.INFO)
+  logging.basicConfig(level = logging.INFO, format = "%(message)s")
 
 def main():
   _setup_logging()
+  logger = logging.getLogger(__name__).getChild("main")
   args = _parse_command_line()
 
   ini_filename = args.in_filename
@@ -32,6 +33,7 @@ def main():
     tabulation = config.read(infile)
   
   with open(out_filename, 'w') as outfile:
+    logger.info("Writing output to: {}".format(out_filename))
     tabulation.write(outfile)
 
 if __name__ == '__main__':
