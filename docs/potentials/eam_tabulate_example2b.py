@@ -128,13 +128,13 @@ def main():
   nr = 2000
   dr = 0.003
 
-  with open("TABEAM", 'wb') as outfile:
+  with open("TABEAM", 'w') as outfile:
     writeTABEAM(
       nrho, drho,
       nr, dr,
       eamPotentials,
       pairPotentials,
-      out= outfile)
+      out = outfile)
 
 if __name__ == '__main__':
   main()

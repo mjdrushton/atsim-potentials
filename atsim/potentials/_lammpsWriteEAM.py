@@ -241,7 +241,7 @@ def writeFuncFL(
   _writeValueBlock(workingfile, valuelist)
 
   #Dump working file into out
-  out.write(workingfile.getvalue().encode())
+  out.write(workingfile.getvalue())
 
 def writeSetFL(
   nrho, drho,

@@ -7,7 +7,7 @@ from builtins import str as text
 
 import unittest
 
-from io import BytesIO, StringIO
+from io import StringIO
 
 import contextlib
 import os
@@ -179,11 +179,11 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     oldpwd = os.getcwd()
     os.chdir(self.tempdir)
     try:
-      with open("potentials.lmpinc", "wb") as potfile:
-        potfile.write(b"pair_style eam/fs\n")
-        potfile.write(b"pair_coeff   *    *  eam.fs O Ce\n")
-        potfile.write(b"\n")
-        potfile.write(b"replicate 4 4 4\n")
+      with open("potentials.lmpinc", "w") as potfile:
+        potfile.write("pair_style eam/fs\n")
+        potfile.write("pair_coeff   *    *  eam.fs O Ce\n")
+        potfile.write("\n")
+        potfile.write("replicate 4 4 4\n")
 
 
       # Now define potentials
@@ -258,7 +258,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       dr = 0.01
       nr = int(cutoff // dr)
 
-      with open('eam.fs', 'wb') as outfile:
+      with open('eam.fs', 'w') as outfile:
         potentials.writeSetFLFinnisSinclair(
             nrho, drho,
             nr, dr,
@@ -284,9 +284,9 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     oldpwd = os.getcwd()
     os.chdir(self.tempdir)
     try:
-      with open("potentials.lmpinc", "wb") as potfile:
-        potfile.write(b"pair_style eam\n")
-        potfile.write(b"pair_coeff 1 1 Ag.eam")
+      with open("potentials.lmpinc", "w") as potfile:
+        potfile.write("pair_style eam\n")
+        potfile.write("pair_coeff 1 1 Ag.eam")
 
       def embed(rho):
         return 0.0
@@ -312,7 +312,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
 
       from atsim.potentials import writeFuncFL
 
-      with open("Ag.eam", 'wb') as outfile:
+      with open("Ag.eam", 'w') as outfile:
         writeFuncFL(
           nrho, drho,
           nr, dr,
@@ -335,9 +335,9 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     oldpwd = os.getcwd()
     os.chdir(self.tempdir)
     try:
-      with open("potentials.lmpinc", "wb") as potfile:
-        potfile.write(b"pair_style eam\n")
-        potfile.write(b"pair_coeff 1 1 Ag.eam\n")
+      with open("potentials.lmpinc", "w") as potfile:
+        potfile.write("pair_style eam\n")
+        potfile.write("pair_coeff 1 1 Ag.eam\n")
 
 
       def embed(rho):
@@ -364,7 +364,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
 
       from atsim.potentials import writeFuncFL
 
-      with open("Ag.eam", 'wb') as outfile:
+      with open("Ag.eam", 'w') as outfile:
         writeFuncFL(
           nrho, drho,
           nr, dr,
@@ -387,10 +387,9 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
     oldpwd = os.getcwd()
     os.chdir(self.tempdir)
     try:
-      with open("potentials.lmpinc", "wb") as potfile:
-        potfile.write(b"pair_style eam\n")
-        potfile.write(b"pair_coeff 1 1 Ag.eam\n")
-
+      with open("potentials.lmpinc", "w") as potfile:
+        potfile.write("pair_style eam\n")
+        potfile.write("pair_coeff 1 1 Ag.eam\n")
 
       def embed(rho):
         return -math.sqrt(rho)
@@ -414,7 +413,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
 
       from atsim.potentials import writeFuncFL
 
-      with open("Ag.eam", 'wb') as outfile:
+      with open("Ag.eam", 'w') as outfile:
         writeFuncFL(
           nrho, drho,
           nr, dr,
@@ -559,7 +558,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     """Test that lammps.writeEAMTable can reproduce a DYNAMO funcfl EAM file from the standard LAMMPS distribution here Ag_u3.eam"""
 
     #Read the expected table from the .eam file
-    with open(os.path.join(_getResourceDirectory(), 'Ag_u3.eam'),'rb') as infile:
+    with open(os.path.join(_getResourceDirectory(), 'Ag_u3.eam'),'r') as infile:
       expectTable = _parseEAMTable(infile)
 
     #Create the potential callables to be passed into writeEAMTable()
@@ -592,7 +591,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     eampotlist = [EAMPotential("Ag", atomicNumber, mass, embeddingFunction, densityFunction, latticeConstant, latticeType)]
     potlist = [Potential("Ag", "Ag", effectiveChargeFunction_eV)]
 
-    actualTable = BytesIO()
+    actualTable = StringIO()
     potentials.writeFuncFL(
       nrho, drho,
       nr, dr,
@@ -609,7 +608,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
   def testWriteSetFLFromParameters(self):
     """Test that lammps.potentials.writeSetFL() can generate the Al_zhou.eam.alloy file from LAMMPS distribution"""
 
-    with open(os.path.join(_getResourceDirectory(), 'Al_zhou.eam.alloy'), 'rb') as infile:
+    with open(os.path.join(_getResourceDirectory(), 'Al_zhou.eam.alloy'), 'r') as infile:
       expectEAMTable = _parseSetFL(infile)
 
     comments = [
@@ -672,7 +671,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     pairpots = [ alpp ]
 
-    actualEAMTable = BytesIO()
+    actualEAMTable = StringIO()
     potentials.writeSetFL(
       nrho, drho,
       nr, dr,
@@ -689,7 +688,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
   def testWriteSetFL(self):
     """Test creation of DYNAMO setfl formatted file for use with lammps pair_style eam/alloy"""
-    with open( os.path.join(_getResourceDirectory(), 'AlCu.eam.alloy'), 'rb') as infile:
+    with open( os.path.join(_getResourceDirectory(), 'AlCu.eam.alloy'), 'r') as infile:
       expectEAMTable = _parseSetFL(infile)
 
     comments = [
@@ -723,7 +722,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     cutoff = 6.6825000000e+00
 
-    actualEAMTable = BytesIO()
+    actualEAMTable = StringIO()
     potentials.writeSetFL(
       nrho, drho,
       nr, dr,
@@ -887,7 +886,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     #Now actually generate the actual tabulated potential
 
-    actualEAMTable = BytesIO()
+    actualEAMTable = StringIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
@@ -896,7 +895,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
       comments = comments,
       out = actualEAMTable,
       cutoff = cutoff)
-    actualEAMTable = StringIO(actualEAMTable.getvalue().decode())
+    actualEAMTable = StringIO(actualEAMTable.getvalue())
     actualEAMTable.seek(0)
 
     actualEAMTable = _parseSetFL(actualEAMTable, finnisSinclair = True)
@@ -929,7 +928,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     pairpot_bc =potentials.Potential('B', 'C', lambda r: 7.0)
 
     # Define two species
-    sio = BytesIO()
+    sio = StringIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,
@@ -955,7 +954,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     # Try a ternary system
     # Define two species
-    sio = BytesIO()
+    sio = StringIO()
     potentials.writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,

@@ -102,7 +102,7 @@ pair_coeff * * eam/alloy table.eam.alloy O U
   runLAMMPS(cwd = tmpdir.strpath)
   energy = extractLAMMPSEnergy(cwd = tmpdir.strpath)
 
-  expect = -162.708748563403
+  expect = -163.072240194504
   assert pytest.approx(expect) == energy  
 
 @needsDLPOLY

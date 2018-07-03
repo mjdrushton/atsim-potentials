@@ -40,7 +40,7 @@ def main():
     # Tabulate into file called TABLE
     # using short-range cutoff of 6.5 Angs with grid
     # increment of 1e-3 Angs (6500 grid points)
-    with open('TABLE', 'wb') as outfile:
+    with open('TABLE', 'w') as outfile:
         atsim.potentials.writePotentials(
            'DL_POLY',
            potential_objects,

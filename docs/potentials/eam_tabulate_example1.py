@@ -32,7 +32,7 @@ def main():
 
   from atsim.potentials import writeFuncFL
 
-  with open("Ag.eam", 'wb') as outfile:
+  with open("Ag.eam", 'w') as outfile:
     writeFuncFL(
             nrho, drho,
             nr, dr,

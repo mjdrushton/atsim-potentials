@@ -125,7 +125,7 @@ def main():
   nr   = 10000
   dr   = 6.50000000000000E-4
 
-  with open("Mendelev_Al_Fe.eam.fs", "wb") as outfile:
+  with open("Mendelev_Al_Fe.eam.fs", "w") as outfile:
     writeSetFLFinnisSinclair(
       nrho, drho,
       nr, dr,

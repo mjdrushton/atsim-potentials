@@ -59,7 +59,7 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
   def testWriteEAMFile(self):
     """Test _writeTABEAM.writeTABEAM() function"""
 
-    from io import BytesIO,StringIO
+    from io import StringIO
 
 
     #Define potentials
@@ -79,7 +79,7 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
     nrho = int(maxrho // drho)
     nr = int(cutoff // dr)
 
-    outfile = BytesIO()
+    outfile = StringIO()
 
     _dlpoly_writeTABEAM.writeTABEAM(
       nrho, drho,
@@ -89,7 +89,7 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
       outfile,
       "Chartier/Van Brutzel Potentials")
 
-    outfile = StringIO(outfile.getvalue().decode())
+    outfile = StringIO(outfile.getvalue())
 
     #Check structure of the file
     self.assertEquals(2, self._countSections(outfile, 'embe'))
@@ -211,7 +211,7 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
       dr = 0.001
       nr = int(cutoff // dr)
 
-      with open('TABEAM', 'wb') as outfile:
+      with open('TABEAM', 'w') as outfile:
         _dlpoly_writeTABEAM.writeTABEAM(
             nrho, drho,
             nr, dr,
@@ -243,7 +243,7 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
       dr = 0.001
       nr = int(cutoff // dr) +1
 
-      with open('TABEAM', 'wb') as outfile:
+      with open('TABEAM', 'w') as outfile:
         _dlpoly_writeTABEAM.writeTABEAM(
             nrho, drho,
             nr, dr,
@@ -308,7 +308,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
     try:
       os.chdir(self.tempdir)
 
-      with open("TABEAM", "wb") as outfile:
+      with open("TABEAM", "w") as outfile:
         potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile, "")
 
       runDLPoly()
@@ -355,7 +355,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
     try:
       os.chdir(self.tempdir)
 
-      with open("TABEAM", "wb") as outfile:
+      with open("TABEAM", "w") as outfile:
         potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
 
       runDLPoly()
@@ -409,7 +409,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
     try:
       os.chdir(self.tempdir)
 
-      with open("TABEAM", "wb") as outfile:
+      with open("TABEAM", "w") as outfile:
         potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile)
 
       runDLPoly()

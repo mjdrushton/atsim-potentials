@@ -5,7 +5,7 @@ from builtins import next
 
 import unittest
 
-from io import StringIO, BytesIO
+from io import StringIO
 
 import os
 
@@ -68,7 +68,7 @@ class TestWritePotentials(unittest.TestCase):
 
   def testDL_POLY(self):
     """Test DL_POLY tabulation"""
-    sio = BytesIO()
+    sio = StringIO()
     potentials.writePotentials(
        'DL_POLY',
        self.potential_objects,
@@ -110,7 +110,7 @@ class TestWritePotentials(unittest.TestCase):
             "5 5.00000000 1.00000000 1.00000000",
             "6 6.00000000 0.00000000 1.00000000"]
 
-    sbuild = BytesIO()
+    sbuild = StringIO()
     potentials.writePotentials('LAMMPS', [pota,potb], 6.0, 6, sbuild)
     sbuild.seek(0)
     actual = sbuild.readlines()

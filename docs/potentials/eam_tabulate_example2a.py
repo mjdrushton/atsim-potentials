@@ -128,7 +128,7 @@ def main():
   nr = 2000
   dr = 0.003
 
-  with open("Zhou_AlCu.setfl", 'wb') as outfile:
+  with open("Zhou_AlCu.setfl", 'w') as outfile:
     writeSetFL(
       nrho, drho,
       nr, dr,

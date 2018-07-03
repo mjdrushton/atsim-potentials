@@ -3,7 +3,7 @@ from builtins import zip
 
 import unittest
 
-from io import BytesIO,StringIO
+from io import StringIO
 
 import os
 

@@ -228,7 +228,7 @@ Finally, the potential can be tabulated in a format suitable for LAMMPS using :f
 .. code-block:: python
 
     bks_SiO = atsim.potentials.Potential('Si', 'O', spline)
-    with open('bks_SiO.lmptab', 'wb') as outfile:
+    with open('bks_SiO.lmptab', 'w') as outfile:
         atsim.potentials.writePotentials('LAMMPS', [bks_SiO], 10.0, 5000, out = outfile)
 
 

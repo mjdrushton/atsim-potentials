@@ -126,7 +126,7 @@ def main():
   dr   = 6.50000000000000E-4
   cutoff = 6.5
 
-  with open("TABEAM", "wb") as outfile:
+  with open("TABEAM", "w") as outfile:
     writeTABEAMFinnisSinclair(
       nrho, drho,
       nr, dr,
