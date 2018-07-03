@@ -22,7 +22,7 @@ class Multi_Range_Potential_Form(object):
 
   Range_Defn_Tuple = collections.namedtuple("Range_Defn_Tuple", ["range_type", "start", "potential_form"])  
 
-  def __init__(self, *range_tuples, default_value = 0.0):
+  def __init__(self, *range_tuples, **kwargs):
     """Define potential form from a list of `Multi_Range_Potential_Form.Range_Defn_Tuple` objects.
 
     Each named tuple provides a callable (each accepting a single argument) that should be used for a particular range.
@@ -47,7 +47,13 @@ class Multi_Range_Potential_Form(object):
     :param default_value: This value is returned when this object is called with an argument below the 
       the lowest `start` value in `range_tuples`."""
 
-    self.default_value = default_value
+    if kwargs:
+      keys = set(kwargs)
+      keys = keys - set(['default_value'])
+      if keys:
+        raise ValueError("Unknown keyword arguments: {}".format(",".join(sorted(keys))))
+
+    self.default_value = kwargs.get('default_value', 0.0)
     self._range_tuples = None
     self.range_tuples = range_tuples
 

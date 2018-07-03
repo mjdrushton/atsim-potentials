@@ -9,7 +9,6 @@ from ._potential_form_registry import Potential_Form_Registry
 from ._pair_potential_builder import Pair_Potential_Builder
 from ._eam_potential_builder import EAM_Potential_Builder
 
-
 RCutoffTuple = collections.namedtuple('RCutoffTuple', ['cutoff', 'nr'])
 R_Rho_CutoffTuple = collections.namedtuple('R_Rho_CutoffTuple', ['cutoff', 'nr', 'cutoff_rho', 'nrho'])
 
@@ -89,12 +88,12 @@ class PairTabulationFactory(object):
 class EAMTabulationFactory(PairTabulationFactory):
 
   def __init__(self, tabulation_target, tabulation_class):
-    super().__init__(tabulation_target, tabulation_class)
+    super(EAMTabulationFactory, self).__init__(tabulation_target, tabulation_class)
     self.tabulation_type = "EAM"
 
   def _get_cutoffs(self, cp):
     logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._get_cutoffs")
-    r_cutoff = super()._get_cutoffs(cp)
+    r_cutoff = super(EAMTabulationFactory, self)._get_cutoffs(cp)
 
     # Get cutoff and gridpoints
     if cp.tabulation.cutoff_rho is None:
@@ -125,7 +124,7 @@ class EAMTabulationFactory(PairTabulationFactory):
     return args
 
   def _log_cutoffs(self, logger, r_cutoff, **kwargs):
-    super()._log_cutoffs(logger, r_cutoff, **kwargs)
+    super(EAMTabulationFactory, self)._log_cutoffs(logger, r_cutoff, **kwargs)
     logger.info("  * cutoff_rho: {}".format(r_cutoff.cutoff_rho))
     logger.info("  * nrho: {}".format(r_cutoff.nrho))
 

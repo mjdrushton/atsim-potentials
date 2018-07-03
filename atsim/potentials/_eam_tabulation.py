@@ -22,7 +22,7 @@ class _EAMTabulationAbstractbase(_PairTabulation_AbstractBase):
     :params nrho: Number of points to be used when discretising density range during EAM tabulation
     :params target: Name of tabulation target.
     """
-    super().__init__(potentials, cutoff, nr, target)
+    super(_EAMTabulationAbstractbase, self).__init__(potentials, cutoff, nr, target)
     self._nrho = nrho
     self._cutoff_rho = cutoff_rho
     self._eam_potentials = eam_potentials
@@ -62,7 +62,7 @@ class SetFL_EAMTabulation(_EAMTabulationAbstractbase):
     :params nr: Number of points to be used in tabulation
     :params cutoff_rho: Density cutoff.
     :params nrho: Number of points to be used when discretising density range during EAM tabulation"""
-    super().__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, "setfl")
+    super(SetFL_EAMTabulation, self).__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, "setfl")
 
   def write(self, fp):
     """Write the tabulation to the file object `fp`.
@@ -87,7 +87,7 @@ class TABEAM_EAMTabulation(_EAMTabulationAbstractbase):
     :params nr: Number of points to be used in tabulation
     :params cutoff_rho: Density cutoff.
     :params nrho: Number of points to be used when discretising density range during EAM tabulation"""
-    super().__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, "DL_POLY_EAM")
+    super(TABEAM_EAMTabulation, self).__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, "DL_POLY_EAM")
 
   def write(self, fp):
     """Write the tabulation to the file object `fp`.

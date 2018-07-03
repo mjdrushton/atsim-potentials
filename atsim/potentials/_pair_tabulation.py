@@ -60,7 +60,7 @@ class LAMMPS_PairTabulation(_PairTabulation_AbstractBase):
     :params potentials: List of atsim.potentials.Potential objects.
     :params cutoff: Maximum separation to be tabulated.
     :params nr: Number of points to be used in tabulation"""
-    super().__init__(potentials, cutoff, nr, "LAMMPS")
+    super(LAMMPS_PairTabulation, self).__init__(potentials, cutoff, nr, "LAMMPS")
 
   def write(self, fp):
     """Write the tabulation to the file object `fp`.
@@ -78,7 +78,7 @@ class DLPoly_PairTabulation(_PairTabulation_AbstractBase):
     :params potentials: List of atsim.potentials.Potential objects.
     :params cutoff: Maximum separation to be tabulated.
     :params nr: Number of points to be used in tabulation"""
-    super().__init__(potentials, cutoff, nr, "DLPOLY")
+    super(DLPoly_PairTabulation, self).__init__(potentials, cutoff, nr, "DLPOLY")
 
   def write(self, fp):
     """Write tabulation to the file object `fp`.

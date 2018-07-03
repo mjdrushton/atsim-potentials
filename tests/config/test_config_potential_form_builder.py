@@ -24,6 +24,32 @@ def test_potential_form_builder():
   potential_func = pfb.create_potential_function(in_tuple)
   assert pytest.approx(pforms.buck(2.0, 1000.0, 0.3, 32.0)) == potential_func(2.0)
 
+def test_bad_arguments_to_multi_range_potential_form():
+  Rdt = Multi_Range_Potential_Form.Range_Defn_Tuple
+
+  tuples = [
+  Rdt('>=', 2.0, "one"),
+  Rdt('>', float("-inf"), "two")]
+
+  assert 0.0 == Multi_Range_Potential_Form().default_value
+  assert 1.0 == Multi_Range_Potential_Form(default_value = 1.0).default_value
+
+  assert 0.0 == Multi_Range_Potential_Form(*list(tuples)).default_value
+  assert 1.0 == Multi_Range_Potential_Form(*list(tuples), default_value = 1.0).default_value
+
+  with pytest.raises(ValueError):
+    Multi_Range_Potential_Form(default_value = 1.0, blah = 2.0)
+    
+  with pytest.raises(ValueError):
+    Multi_Range_Potential_Form(blah = 2.0)
+
+  with pytest.raises(ValueError):
+    Multi_Range_Potential_Form(*list(tuples), default_value = 1.0, blah = 2.0)
+    
+  with pytest.raises(ValueError):
+    Multi_Range_Potential_Form(*list(tuples), blah = 2.0)
+
+
 def test_multirange_potential_range_search():
   Rdt = Multi_Range_Potential_Form.Range_Defn_Tuple
 
