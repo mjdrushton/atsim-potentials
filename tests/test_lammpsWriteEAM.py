@@ -805,8 +805,6 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
 
     #Pair potentials
     def ppfuncAlAl(r):
-
-
       funcs = [
         ( (0.0, 1.6) , zerowrap(lambda r: (2433.5591473227/r)  * (0.1818 * math.exp(-22.713109144730* r) + 0.5099 * math.exp(-6.6883008584622* r) + 0.2802* math.exp(-2.8597223982536*r) + 0.02817* math.exp(-1.4309258761180*r)) )),
         ( (1.6, 2.25), lambda r: math.exp(6.0801330531321 - 2.3092752322555*r + 0.042696494305190*r**2 - 0.07952189194038*r**3) ),

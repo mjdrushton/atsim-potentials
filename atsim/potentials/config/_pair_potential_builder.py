@@ -8,14 +8,15 @@ class Pair_Potential_Builder(object):
   """Uses the output of ConfigParser.pair and .potentialforms properties and builds
   Potential objects"""
 
-  def __init__(self, cp, potential_form_registry):
+  def __init__(self, cp, potential_form_registry, modifier_registry):
     """:param cp: atsim.potentials.config.ConfigParser instance.
-       :param potential_form_register: Potential_Form_Registry"""
-    self._potlist = self._init_potentials(cp, potential_form_registry)
+       :param potential_form_register: Potential_Form_Registry
+       :param modifier_register: Modifier_Registry"""
+    self._potlist = self._init_potentials(cp, potential_form_registry, modifier_registry)
 
-  def _init_potentials(self, cp, pfr):
+  def _init_potentials(self, cp, pfr, mr):
     pots = []
-    pfb = Potential_Form_Builder(pfr)
+    pfb = Potential_Form_Builder(pfr, mr)
 
     for potrow in cp.pair:
       pot = self._create_potential(potrow, pfb)

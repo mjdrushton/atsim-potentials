@@ -2,6 +2,7 @@ import pytest
 
 from atsim.potentials.config._potential_form_builder import Potential_Form_Builder
 from atsim.potentials.config._potential_form_registry import Potential_Form_Registry
+from atsim.potentials.config._modifier_registry import Modifier_Registry
 from atsim.potentials.config import ConfigParser
 from atsim.potentials.config._common import PotentialFormInstanceTuple, SpeciesTuple
 from atsim.potentials.config._common import MultiRangeDefinitionTuple
@@ -18,7 +19,7 @@ def test_potential_form_builder():
   pfr = Potential_Form_Registry(cp,register_standard = True)
 
   # Create the potential form builder
-  pfb = Potential_Form_Builder(pfr)
+  pfb = Potential_Form_Builder(pfr, Modifier_Registry())
 
   in_tuple = PotentialFormInstanceTuple("as.buck", [1000.0, 0.3, 32.0], None, None)
   potential_func = pfb.create_potential_function(in_tuple)
@@ -116,7 +117,7 @@ def test_multirange_potential_form_builder():
   cp = ConfigParser(io.StringIO())
   pfr = Potential_Form_Registry(cp,register_standard = True)
 
-  pfb = Potential_Form_Builder(pfr)
+  pfb = Potential_Form_Builder(pfr, Modifier_Registry())
 
   PFitTup = PotentialFormInstanceTuple
   MRTup = MultiRangeDefinitionTuple
@@ -135,3 +136,31 @@ def test_multirange_potential_form_builder():
   assert pytest.approx(pforms.buck(5.0, 1000.0, 0.3, 32.0)) == v
   assert 3.0 == potential_func(5.1)
   assert 3.0 == potential_func(10.0)
+
+def test_sum_modifier():
+  cp = ConfigParser(io.StringIO())
+  pfr = Potential_Form_Registry(cp, register_standard = True)
+  pfb = Potential_Form_Builder(pfr, Modifier_Registry())
+
+  expression = "sum(as.constant 1.0 >=1.0 as.constant 2.0, >1.5 as.constant 3.0)"
+
+  potdef = cp._parse_multi_range("A", expression).potential_form_instance
+  potential_func = pfb.create_potential_function(potdef)
+
+  assert pytest.approx(1.0) == potential_func(0.1)
+  assert pytest.approx(1.0) == potential_func(0.5)
+  assert pytest.approx(2.0) == potential_func(1.1)
+  assert pytest.approx(5.0) == potential_func(1.6)
+
+  # Try another expression
+  expression = ">=0 as.constant 2.0 >=1.0 sum(as.constant 1.0 >= 2.0 as.constant 0.5, >=1.5 as.constant 10.0) >= 3.0 as.zero"
+
+  potdef = cp._parse_multi_range("A", expression).potential_form_instance
+  potential_func = pfb.create_potential_function(potdef)
+
+  assert pytest.approx(2.0) == potential_func(0)
+  assert pytest.approx(1.0) == potential_func(1)
+  assert pytest.approx(11.0) == potential_func(1.6)
+  assert pytest.approx(10.5) == potential_func(2.1)
+  assert pytest.approx(0.0) == potential_func(3.1)
+

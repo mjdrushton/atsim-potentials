@@ -8,7 +8,8 @@ setup(name="atsim.potentials",
   install_requires = [
     "setuptools",
     "configparser",
-    "cexprtk>=0.3.2"],
+    "pyparsing>=2.2.0",
+    "cexprtk>=0.3.3"],
 
   version = '0.3.0dev',
 

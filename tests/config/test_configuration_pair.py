@@ -45,6 +45,32 @@ U-O = as.buck 2000.0 0.2 0.0
   actual = [((p.speciesA, p.speciesB),p.energy(r)) for p in potlist]
   assert sorted(expect) == sorted(actual)
 
+def test_sum_modifier():
+  cfg_string = u"""[Pair]
+O-O = as.buck 1000.0 0.3 32.0
+U-O = sum(as.buck 1000.0 0.3 32.0, as.constant 1.0)
+"""
+
+  cfgobj = Configuration()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+  
+  potlist = tabulation.potentials
+
+  expect = [ ("O", "O"), ("U", "O")]
+  actual = [(p.speciesA, p.speciesB) for p in potlist]
+  assert sorted(expect) == sorted(actual)
+
+  r = 1.3
+  buck_oo = pf.buck(r, 1000.0, 0.3, 32.0)
+
+  expect = [ 
+    (("O", "O"), pytest.approx(buck_oo)), 
+    (("U", "O"), pytest.approx(buck_oo + 1.0))]
+  actual = [((p.speciesA, p.speciesB),p.energy(r)) for p in potlist]
+  assert sorted(expect) == sorted(actual)
+
+
+
 @needsLAMMPS
 def test_lammps_pair_configuration_tabulate(lammps_run_fixture):
   tmpdir = lammps_run_fixture

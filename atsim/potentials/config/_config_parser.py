@@ -2,10 +2,14 @@ from backports import configparser
 import re
 import collections
 
-from ._common import PotentialFormSignatureTuple, PotentialFormTuple, SpeciesTuple, PairPotentialTuple, PotentialFormInstanceTuple, MultiRangeDefinitionTuple
+import pyparsing
+
+from ._common import PotentialFormSignatureTuple, PotentialFormTuple, SpeciesTuple, PairPotentialTuple, PotentialFormInstanceTuple, MultiRangeDefinitionTuple, PotentialModifierTuple
 from ._common import EAMEmbedTuple, EAMDensityTuple
 from ._common import ConfigParserException
 from ._common import ConfigParserMissingSectionException
+
+from ._multi_range_parser import multi_range_parser
 
 def _get_or_none(k, d, t):
   v = d.get(k, None)
@@ -130,75 +134,98 @@ class ConfigParser(object):
     :param fp: file object containing configuration data."""
     self._config_parser = self._init_config_parser(fp)
     self._tabulation_section = None
+    self._default_range_start = MultiRangeDefinitionTuple(">", 0.0)
 
   def _init_config_parser(self, fp):
     cp = _RawConfigParser()
     cp.readfp(fp)
     return cp
 
+  def _descend_potential_modifier(self, modifier_node, sibling_iterator, range_defn):
+
+    # ... extract modifier name
+    modifier_label = modifier_node['modifier_label']
+
+    # ... extract potential_forms
+    params = []
+    modifier_parameters = modifier_node['modifier_parameters']
+    for p in modifier_parameters:
+      ptuple = self._descend_tree(iter(p))
+      params.append(ptuple)
+
+    n = self._descend_tree(sibling_iterator)
+
+    ret_tuple = PotentialModifierTuple(modifier = modifier_label, 
+      potential_forms = params, 
+      start = range_defn, 
+      next = n)
+
+    return ret_tuple
+
+
+  def _descend_potential_description(self, curr_node, sibling_iterator, range_defn):
+    # ... extract potential_form
+    potential = curr_node['potential_label']
+    # ... extract parameters
+    parameters = [p for p in curr_node['potential_parameters']]
+    # ... are there any more (next)
+    n = self._descend_tree(sibling_iterator)
+    # ... build tuple
+    ret_tuple = PotentialFormInstanceTuple(
+      potential_form = potential,
+      parameters = parameters,
+      start = range_defn,
+      next = n)
+    return ret_tuple
+
+  def _descend_tree(self, tree_it):
+    try:
+      first = next(tree_it)
+    except StopIteration:
+      return None
+
+    name = first.getName()
+
+    # Parse tree can start with a range definition
+    # or go straight to a modified instance or potential definition.
+    if name == 'range_start':
+      range_defn = MultiRangeDefinitionTuple(
+        range_type = first['range_type'],
+        start = first['start'])
+      pot = next(tree_it)
+    else:
+      range_defn = self._default_range_start
+      pot = first
+
+    # pot can be a modified instance or potential definition
+
+    # If pot is 'modified' then create PotentialModifierTuple
+    if pot.getName() == 'modifier':
+      return self._descend_potential_modifier(pot, tree_it, range_defn)
+
+    # If pot is 'potential_description' then create PotentialFormInstanceTuple
+    if pot.getName() == 'potential_description':
+      return self._descend_potential_description(pot, tree_it, range_defn)
+    
+    # Shouldn't get here
+    raise Exception("Unknown node type when parsing potential instance description: {}".format(pot.getName()))
+
   def _parse_multi_range(self, k, value, tuple_type = PairPotentialTuple):
     species = k
-    regex = "({cap}>=?)\s*({cap}[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)"
-    splitter = "({})".format(regex.format(cap = "?:"))
-    matcher = regex.format(cap = "")
-    
-    #TODO: Store the compiled regexes on the class.
-    split_regex = re.compile(splitter)
-    match_regex = re.compile(matcher)
-
-    # import pdb; pdb.set_trace()
     value = value.strip()
-    isrange = False
 
-    parts = []
-    range_tuple = MultiRangeDefinitionTuple(">", 0.0)
-    split_parts = split_regex.split(value)
-    for i,sub in enumerate(split_parts):
-      if i == 0 and not sub:
-        isrange = True
-        continue
-      
-      if isrange:
-        m = match_regex.match(sub)
-        if not m:
-          raise ConfigParserException("Could not parse multi-range potential form. '{}' could not be parsed as range for potential-form definition '{} : {}'".format(sub, species, value))
-        groups = m.groups()
-        range_type = groups[0]
-        range_value = groups[1]
+    try:
+      parse_tree = multi_range_parser.parseString(value, parseAll = True)
+    except pyparsing.ParseException as exc:
+      msg = "Error when defining potential instance: '{value}' for species = {species}. {msg} (at char: {loc}).".format(
+        species = species,
+        value = value,
+        loc = exc.loc,
+        msg = exc.msg)
+      raise ConfigParserException(msg)
 
-        try:
-          range_value = float(range_value)
-        except ValueError:
-          raise ConfigParserException("Could not parse multi-range potential form. '{}' could not be parsed as range for potential-form definition '{} : {}'".format(sub, species, value))
-        range_tuple = MultiRangeDefinitionTuple(range_type, range_value)
-        isrange = False
-      else:
-        isrange = True
-        tokens = sub.split()
-
-        
-        potential_form_label = tokens[0]
-        try:
-          params = [float(t) for t in tokens[1:]]
-        except ValueError as e:
-          raise ConfigParserException("Could not parse multi-range potential form. Parameter could not be converted to float for part #{rangenum} '{potential_form_label}': {args}".format(
-            rangenum = i+1, 
-            potential_form_label = potential_form_label, 
-            args = e.args))
-
-        potform_tuple = PotentialFormInstanceTuple(potential_form_label, params, range_tuple, None)
-        parts.append(potform_tuple)
-
-    # Now assemble into potential form tuples
-    if len(parts) == 1:
-      potform_instance = parts[0]
-    else:
-      last = parts.pop()
-      while parts:
-        curr = parts.pop()
-        last = PotentialFormInstanceTuple(curr.potential_form, curr.parameters, curr.start, last)
-      potform_instance = last
-    
+    tree_it = iter(parse_tree[0])
+    potform_instance = self._descend_tree(tree_it)
     return tuple_type(species, potform_instance)
 
   def _parse_label_type_params_line(self, k, value, parse_key_func, tuple_type):

@@ -6,14 +6,15 @@ from .._pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation
 from .._eam_tabulation  import SetFL_EAMTabulation, TABEAM_EAMTabulation
 
 from ._potential_form_registry import Potential_Form_Registry
+from ._modifier_registry import Modifier_Registry
 from ._pair_potential_builder import Pair_Potential_Builder
 from ._eam_potential_builder import EAM_Potential_Builder
 
 RCutoffTuple = collections.namedtuple('RCutoffTuple', ['cutoff', 'nr'])
 R_Rho_CutoffTuple = collections.namedtuple('R_Rho_CutoffTuple', ['cutoff', 'nr', 'cutoff_rho', 'nrho'])
 
-def _create_pair_objects(potential_form_registry, cp):
-  potbuilder = Pair_Potential_Builder(cp, potential_form_registry)
+def _create_pair_objects(potential_form_registry, modifier_registry, cp):
+  potbuilder = Pair_Potential_Builder(cp, potential_form_registry, modifier_registry)
   pots = potbuilder.potentials
   return pots
 
@@ -67,7 +68,7 @@ class PairTabulationFactory(object):
     self._log_pair_potentials(logger, potobjs, **kwargs)
     self._log_more(logger, r_cutoff, potobjs, **kwargs)
 
-  def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry):
+  def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
     return [potobjs, r_cutoff.cutoff, r_cutoff.nr]
 
   def create_tabulation(self,cp):
@@ -76,10 +77,11 @@ class PairTabulationFactory(object):
 
     # Get pair potentials
     potential_form_registry = Potential_Form_Registry(cp, True)
-    potobjs = _create_pair_objects(potential_form_registry, cp)
+    modifier_registry = Modifier_Registry()
+    potobjs = _create_pair_objects(potential_form_registry,modifier_registry, cp)
     self._log_tabulation_details(r_cutoff, potobjs)
 
-    tabulationargs = self._make_tabulation_args(cp, r_cutoff, potobjs, potential_form_registry)
+    tabulationargs = self._make_tabulation_args(cp, r_cutoff, potobjs, potential_form_registry, modifier_registry)
 
     tabulation = self.tabulation_class(*tabulationargs)
     return tabulation
@@ -109,9 +111,9 @@ class EAMTabulationFactory(PairTabulationFactory):
       nrho = cp.tabulation.nrho
     return R_Rho_CutoffTuple(r_cutoff.cutoff, r_cutoff.nr, cutoff_rho, nrho)
 
-  def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry):
+  def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
     logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._make_tabulation_args")
-    eam_builder =  EAM_Potential_Builder(cp, potential_form_registry)
+    eam_builder =  EAM_Potential_Builder(cp, potential_form_registry, modifier_registry)
     eam_potentials = eam_builder.eam_potentials
 
     logger.info("  * Tabulation will contain following EAM species:")

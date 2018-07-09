@@ -7,7 +7,6 @@ class _Cexptrk_Potential_Function(object):
   the expression's symbol table to be populated before the expression is parsed. 
   Otherwise custom functions may not have been defined at the time of parsing."""
 
-
   def __init__(self, potential_form_tuple):
     """:param potential_form_tuple: PotentialFormTuple describing this function"""
     self._potential_form_tuple = potential_form_tuple

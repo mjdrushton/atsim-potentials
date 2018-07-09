@@ -11,12 +11,13 @@ class EAM_Potential_Builder(object):
   EAMPotential instances"""
 
 
-  def __init__(self, cp, potential_form_registry):
+  def __init__(self, cp, potential_form_registry, modifier_registry):
     """:param cp: atsim.potentials.config.ConfigParser instance.
-    :param potential_form_register: Potential_Form_Registry"""
-    self._potlist = self._init_eampotentials(cp, potential_form_registry)
+    :param potential_form_register: Potential_Form_Registry
+    :param modifier_register: Modifier_Registry"""
+    self._potlist = self._init_eampotentials(cp, potential_form_registry, modifier_registry)
 
-  def _init_eampotentials(self, cp, potential_form_registry):
+  def _init_eampotentials(self, cp, potential_form_registry, modifier_registry):
     pots = []
 
     # Gather the embedding functions
@@ -42,7 +43,7 @@ class EAM_Potential_Builder(object):
 
     # Convert the embed and density tuple lists into
     # maps relating species to a potential function.
-    potential_form_builder = Potential_Form_Builder(potential_form_registry)
+    potential_form_builder = Potential_Form_Builder(potential_form_registry, modifier_registry)
     embed_dict = self._to_potential_form_dict(embed, potential_form_builder)
     density_dict = self._to_potential_form_dict(density, potential_form_builder)
 

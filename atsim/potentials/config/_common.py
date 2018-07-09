@@ -18,6 +18,7 @@ PotentialFormSignatureTuple = collections.namedtuple("PotentialFormSignatureTupl
 PotentialFormTuple = collections.namedtuple("PotentialFormTuple", ["signature", "expression"])
 
 MultiRangeDefinitionTuple = collections.namedtuple("MultiRangeDefinition", ["range_type", "start"])
+PotentialModifierTuple = collections.namedtuple("PotentialModifierTuple", ['modifier', 'potential_forms', 'start', 'next'])
 
 class ConfigurationException(Exception):
   pass
