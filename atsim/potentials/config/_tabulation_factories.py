@@ -3,12 +3,12 @@ import logging
 import collections
 
 from .._pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation
-from .._eam_tabulation  import SetFL_EAMTabulation, TABEAM_EAMTabulation
+from .._eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation
 
 from ._potential_form_registry import Potential_Form_Registry
 from ._modifier_registry import Modifier_Registry
 from ._pair_potential_builder import Pair_Potential_Builder
-from ._eam_potential_builder import EAM_Potential_Builder
+from ._eam_potential_builder import EAM_Potential_Builder, EAM_Potential_Builder_FS
 
 RCutoffTuple = collections.namedtuple('RCutoffTuple', ['cutoff', 'nr'])
 R_Rho_CutoffTuple = collections.namedtuple('R_Rho_CutoffTuple', ['cutoff', 'nr', 'cutoff_rho', 'nrho'])
@@ -88,9 +88,12 @@ class PairTabulationFactory(object):
 
 
 class EAMTabulationFactory(PairTabulationFactory):
+  """Tabulation factory for setfl (LAMMPS eam/alloy) potentials"""
 
-  def __init__(self, tabulation_target, tabulation_class):
+
+  def __init__(self, tabulation_target, tabulation_class, eam_builder_class = EAM_Potential_Builder):
     super(EAMTabulationFactory, self).__init__(tabulation_target, tabulation_class)
+    self.eam_builder_class = eam_builder_class
     self.tabulation_type = "EAM"
 
   def _get_cutoffs(self, cp):
@@ -113,7 +116,7 @@ class EAMTabulationFactory(PairTabulationFactory):
 
   def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
     logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._make_tabulation_args")
-    eam_builder =  EAM_Potential_Builder(cp, potential_form_registry, modifier_registry)
+    eam_builder =  self.eam_builder_class(cp, potential_form_registry, modifier_registry)
     eam_potentials = eam_builder.eam_potentials
 
     logger.info("  * Tabulation will contain following EAM species:")
@@ -130,11 +133,11 @@ class EAMTabulationFactory(PairTabulationFactory):
     logger.info("  * cutoff_rho: {}".format(r_cutoff.cutoff_rho))
     logger.info("  * nrho: {}".format(r_cutoff.nrho))
 
-
 """Target name to factory objects"""
 TABULATION_FACTORIES = {
-  "LAMMPS" : PairTabulationFactory("LAMMPS", LAMMPS_PairTabulation),
-  "DLPOLY" : PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),
-  "setfl"  : EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation),
-  "DL_POLY_EAM" : EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation)
+  "LAMMPS"       :  PairTabulationFactory("LAMMPS", LAMMPS_PairTabulation),                 
+  "DLPOLY"       :  PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),                 
+  "setfl"        :  EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation),    
+  "setfl_fs"     :  EAMTabulationFactory("setfl/lammps_eam_fs", SetFL_FS_EAMTabulation, EAM_Potential_Builder_FS),
+  "DL_POLY_EAM"  :  EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation)               
 }

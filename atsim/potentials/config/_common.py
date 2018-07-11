@@ -2,6 +2,7 @@ import collections
 import sys
 
 SpeciesTuple = collections.namedtuple("SpeciesTuple", ["species_a", "species_b"])
+EAMFSDensitySpeciesTuple = collections.namedtuple("EAMFSDensitySpeciesTuple", ["from_species", "to_species"])
 
 _tuple_args = ["species", 'potential_form_instance']
 _potential_instantiation_tuples = ['EAMEmbedTuple', 'EAMDensityTuple', 'PairPotentialTuple']

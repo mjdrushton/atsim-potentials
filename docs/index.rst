@@ -40,7 +40,7 @@ Contents
 Contact
 =======
 
-``atsim.potentials`` was developed by Michael Rushton, if you have any problems, suggestions or queries please get in touch (contact details are available from my `homepage`_).
+``atsim.potentials`` was developed by Michael Rushton, if you have any problems, suggestions or queries please get in touch at m.rushton@bangor.ac.uk
 
 Indices and tables
 ==================
@@ -50,5 +50,4 @@ Indices and tables
 * :ref:`search`
 
 .. _LAMMPS: http://lammps.sandia.gov
-.. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx
-.. _homepage: http://abulafia.mt.ic.ac.uk/groupmembers/michael
+.. _DL_POLY: https://www.scd.stfc.ac.uk/Pages/DL_POLY.aspx

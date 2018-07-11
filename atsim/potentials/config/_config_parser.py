@@ -4,8 +4,16 @@ import collections
 
 import pyparsing
 
-from ._common import PotentialFormSignatureTuple, PotentialFormTuple, SpeciesTuple, PairPotentialTuple, PotentialFormInstanceTuple, MultiRangeDefinitionTuple, PotentialModifierTuple
-from ._common import EAMEmbedTuple, EAMDensityTuple
+from ._common import PotentialFormSignatureTuple, \
+  PotentialFormTuple, \
+  SpeciesTuple, \
+  PairPotentialTuple, \
+  PotentialFormInstanceTuple, \
+  MultiRangeDefinitionTuple, \
+  PotentialModifierTuple, \
+  EAMFSDensitySpeciesTuple, \
+  EAMEmbedTuple, \
+  EAMDensityTuple 
 from ._common import ConfigParserException
 from ._common import ConfigParserMissingSectionException
 
@@ -259,6 +267,19 @@ class ConfigParser(object):
   def _parse_density_line(self, k, value):
     return self._parse_eam_line(k, value, "EAM-Density", EAMDensityTuple)
 
+  def _parse_eam_fs_density_line(self, k, value):
+    def species_func(k):
+      from_species, to_species = k.split("->")
+      from_species = from_species.strip()
+      to_species = to_species.strip()
+      return  EAMFSDensitySpeciesTuple(from_species, to_species)
+
+    try:
+      return self._parse_label_type_params_line(k, value, species_func, EAMDensityTuple)
+    except ConfigParserException:
+      raise ConfigParserException("[{section_name}] parameter lines should be of the form 'FROM_SPECIES->TO_SPECIES : POTENTIAL_FORM PARAMS...'".format(section_name = section_name))
+
+
   def _parse_potential_form_signature(self, pf):
     pf = pf.strip()
     m = self._signature_re.match(pf)
@@ -334,3 +355,14 @@ class ConfigParser(object):
     :returns: List of (SPECIES, potential_form_label, params)
       Where params = [p1, p2, ..., pn] and p1 etc are the density function parameters )"""
     return self._parse_params_section("EAM-Density", self._parse_density_line)
+
+  @property
+  def eam_density_fs(self):
+    """Return the parsed contents of the configuration file's [EAM-Density] section.
+
+    This assumes Finnis-Sinclair parsing rules. This means that SPECIES (below)
+    is parsed as a `EAMFSDensitySpeciesTuple` with  `from_species` and `to_species` attributes.
+
+    :returns: List of (SPECIES, potential_form_label, params)
+      Where params = [p1, p2, ..., pn] and p1 etc are the density function parameters )"""
+    return self._parse_params_section("EAM-Density", self._parse_eam_fs_density_line)

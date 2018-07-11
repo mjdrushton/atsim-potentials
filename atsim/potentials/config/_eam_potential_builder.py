@@ -10,7 +10,6 @@ class EAM_Potential_Builder(object):
   """Uses the output ConfigParser.eam_density and .eam_embed propoerties and builds
   EAMPotential instances"""
 
-
   def __init__(self, cp, potential_form_registry, modifier_registry):
     """:param cp: atsim.potentials.config.ConfigParser instance.
     :param potential_form_register: Potential_Form_Registry
@@ -21,13 +20,13 @@ class EAM_Potential_Builder(object):
     pots = []
 
     # Gather the embedding functions
-    embed = cp.eam_embed
+    embed = self._extract_embed(cp)
     # Gather the density functions
-    density = cp.eam_density
+    density = self._extract_density(cp)
 
     # Check that we have the same set of species in embed and density
-    embed_species = set([row.species for row in embed])
-    density_species = set([row.species for row in density])
+    embed_species = self._embed_species(embed) 
+    density_species = self._density_species(density)
 
     diff = embed_species ^ density_species
 
@@ -35,7 +34,7 @@ class EAM_Potential_Builder(object):
       embed_species = ",".join(sorted(embed_species))
       density_species = ",".join(sorted(density_species))
       diff_species = ",".join(sorted(diff))
-      errmsg = "During EAM tabulation species defined for density function do not match those for embedding functions. Density species: {density}. Embed species: {embed}. Difference: {difference}"
+      errmsg = "During EAM tabulation species defined for density function do not match those for embedding functions. Density species: {density}. Embed species: {embed_species}. Difference: {difference}"
       errmsg = errmsg.format(density = density_species,
         embed_species = embed_species,
         difference = diff_species)
@@ -44,8 +43,8 @@ class EAM_Potential_Builder(object):
     # Convert the embed and density tuple lists into
     # maps relating species to a potential function.
     potential_form_builder = Potential_Form_Builder(potential_form_registry, modifier_registry)
-    embed_dict = self._to_potential_form_dict(embed, potential_form_builder)
-    density_dict = self._to_potential_form_dict(density, potential_form_builder)
+    embed_dict = self._embed_to_potential_form_dict(embed, potential_form_builder)
+    density_dict = self._density_to_potential_form_dict(density, potential_form_builder)
 
     # Now instantiate EAM potential objects
     potlist = []
@@ -53,6 +52,24 @@ class EAM_Potential_Builder(object):
       pot = self._create_eam_potential(species, embed_dict, density_dict)
       potlist.append(pot)
     return potlist
+
+  def _extract_embed(self, cp):
+    return cp.eam_embed
+
+  def _extract_density(self, cp):
+    return cp.eam_density
+
+  def _embed_species(self, embed):
+    return set([row.species for row in embed])
+
+  def _density_species(self, density):
+    return set([row.species for row in density])
+
+  def _embed_to_potential_form_dict(self, tuple_list, potential_form_builder):
+    return self._to_potential_form_dict(tuple_list, potential_form_builder)
+
+  def _density_to_potential_form_dict(self, tuple_list, potential_form_builder):
+    return self._to_potential_form_dict(tuple_list, potential_form_builder)
 
   def _to_potential_form_dict(self, tuple_list, potential_form_builder):
     d = {}
@@ -103,3 +120,37 @@ class EAM_Potential_Builder(object):
   @property
   def eam_potentials(self):
     return self._potlist
+
+
+class EAM_Potential_Builder_FS(EAM_Potential_Builder):
+  """EAM_Potential_Builder for Finnis-Sinclair style potentials.
+
+  The major difference between FS potentials and standard potentials
+  is that density functions are defined in EAMPotential as  dictionaries
+  as densities are specific to interacting pairs of species"""
+
+  def _extract_density(self, cp):
+    return cp.eam_density_fs
+
+  def _density_species(self, density):
+    species_list = []
+    for row in density:
+      species_list.append(row.species.from_species)
+      species_list.append(row.species.to_species)
+    return set(species_list)
+
+  def _density_to_potential_form_dict(self, density, potential_form_builder):
+    outdict = {}
+    for d in density:
+      f_species = d.species.from_species
+      t_species = d.species.to_species
+      
+      pot_func = potential_form_builder.create_potential_function(d.potential_form_instance)
+
+      add_to = outdict.setdefault(f_species, {})
+      
+      if t_species in add_to:
+        raise ConfigurationException("Duplicate density function found for {}".format(d.species))
+
+      add_to[t_species] = pot_func
+    return outdict

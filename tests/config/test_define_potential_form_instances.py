@@ -1,5 +1,11 @@
 from atsim.potentials.config import ConfigParser
-from atsim.potentials.config._common import PotentialFormInstanceTuple, MultiRangeDefinitionTuple, PotentialModifierTuple, PairPotentialTuple
+from atsim.potentials.config._common import PotentialFormInstanceTuple, \
+  MultiRangeDefinitionTuple, \
+  PotentialModifierTuple, \
+  PairPotentialTuple, \
+  EAMFSDensitySpeciesTuple, \
+  EAMDensityTuple
+
 from atsim.potentials.config._common import ConfigParserException
 
 import pytest
@@ -17,9 +23,9 @@ C-D : morse 3000.0 0.3 3.0
   parsed = ConfigParser(io.StringIO(cfg_string))
 
   expect = [
-    (("A","B"), ("buck", [1000.0, 0.1, 1.0], (">", 0), None)),
-    (("B","C"), ("buck", [2000.0, 0.2, 2.0], (">", 0), None)),
-    (("C","D"), ("morse", [3000.0, 0.3, 3.0], (">", 0), None))]
+    (("A","B"), ("buck", [1000.0, 0.1, 1.0], (">", 0.0), None)),
+    (("B","C"), ("buck", [2000.0, 0.2, 2.0], (">", 0.0), None)),
+    (("C","D"), ("morse", [3000.0, 0.3, 3.0], (">", 0.0), None))]
 
   actual = parsed.pair
   assert expect == actual
@@ -34,9 +40,9 @@ C = embed3 3000.0 0.3 3.0
   parsed = ConfigParser(io.StringIO(cfg_string))
 
   expect = [
-    ("A", ("embed1", [1000.0, 0.1, 1.0], (">",0), None)),
-    ("B", ("embed2", [2000.0, 0.2, 2.0], (">",0), None)),
-    ("C", ("embed3", [3000.0, 0.3, 3.0], (">",0), None))]
+    ("A", ("embed1", [1000.0, 0.1, 1.0], (">",0.0), None)),
+    ("B", ("embed2", [2000.0, 0.2, 2.0], (">",0.0), None)),
+    ("C", ("embed3", [3000.0, 0.3, 3.0], (">",0.0), None))]
 
   actual = parsed.eam_embed
   assert expect == actual
@@ -50,11 +56,27 @@ B : density2 2000.0 0.2 2.0
   parsed = ConfigParser(io.StringIO(cfg_string))
 
   expect = [
-    ("A", ("density1", [1000.0, 0.1, 1.0], (">",0), None)),
-    ("B", ("density2", [2000.0, 0.2, 2.0], (">",0), None))]
+    ("A", ("density1", [1000.0, 0.1, 1.0], (">",0.0), None)),
+    ("B", ("density2", [2000.0, 0.2, 2.0], (">",0.0), None))]
 
   actual = parsed.eam_density
   assert expect == actual
+
+def test_eam_fs_density():
+  """Test reading of density parameter from [EAM-Density] section of config assuming Finnis-Sinclair potential"""
+
+  cfg_string = u"""[EAM-Density]
+A->A : density1 1000.0 0.1 1.0
+B->C : density2 2000.0 0.2 2.0
+"""
+  parsed = ConfigParser(io.StringIO(cfg_string))
+
+  expect = [
+    EAMDensityTuple(EAMFSDensitySpeciesTuple("A", "A"), PotentialFormInstanceTuple("density1", [1000.0, 0.1, 1.0], MultiRangeDefinitionTuple(">",0.0), None)),
+    EAMDensityTuple(EAMFSDensitySpeciesTuple("B", "C"), PotentialFormInstanceTuple("density2", [2000.0, 0.2, 2.0], MultiRangeDefinitionTuple(">",0.0), None))]
+
+  actual = parsed.eam_density_fs
+  assert DeepDiff(expect, actual) == {}
 
 
 def test_multi_range_potential_form():
@@ -199,6 +221,15 @@ def test_modifier_with_nested_modifier():
   expect = PairPotentialTuple(species = k, potential_form_instance = expect)
   actual = parser._parse_multi_range(k, v)
   assert DeepDiff(expect, actual) == {}
+
+def test_sum_modifier_fs_start():
+  k = "Al->Al"
+  v = ">=0 sum(dens4 0.00019850823042883 2.5 >2.5 as.zero)"
+  
+  parser = ConfigParser(io.StringIO())
+  actual = parser._parse_multi_range(k,v)
+  assert DeepDiff(MultiRangeDefinitionTuple(">=",0), actual.potential_form_instance.start) == {}
+
 
 def test_modifier_parse_exceptions():
   """Check that a ConfigException is raised when parse errors are encountered"""

@@ -89,5 +89,5 @@ class Multi_Range_Potential_Form(object):
 
     if rt is None:
       return self.default_value
-
+    
     return rt.potential_form(r)

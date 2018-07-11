@@ -1,7 +1,7 @@
 
 from ._pair_tabulation import _PairTabulation_AbstractBase
 
-from ._lammpsWriteEAM import writeSetFL
+from ._lammpsWriteEAM import writeSetFL, writeSetFLFinnisSinclair
 from ._dlpoly_writeTABEAM import writeTABEAM
 
 class _EAMTabulationAbstractbase(_PairTabulation_AbstractBase):
@@ -48,7 +48,6 @@ class _EAMTabulationAbstractbase(_PairTabulation_AbstractBase):
     return self._eam_potentials
 
 
-
 class SetFL_EAMTabulation(_EAMTabulationAbstractbase):
   """Class for tabulating setfl formatted embedded atom potentials suitable
   for use with LAMMPS' pair_style eam/alloy"""
@@ -69,6 +68,32 @@ class SetFL_EAMTabulation(_EAMTabulationAbstractbase):
 
     :param fp: File object into which data should be written."""
     writeSetFL(
+      self.nrho, self.drho, 
+      self.nr, self.dr,
+      self.eam_potentials,
+      self.potentials,
+      out = fp)
+
+class SetFL_FS_EAMTabulation(_EAMTabulationAbstractbase):
+  """Class for tabulating setfl Finnis-Sinclair formatted embedded atom potentials suitable
+  for use with LAMMPS' pair_style eam/fs"""
+
+  def __init__(self, potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho):
+    """Instantiate class for tabulation of setfl Finnis-Sinclair formatted embedded atom potential tables.
+
+    :params potentials: List of atsim.potentials.Potential objects.
+    :params eam_potentials: List of `atsim.potentials.EAMPotential` instances.
+    :params cutoff: Maximum separation to be tabulated.
+    :params nr: Number of points to be used in tabulation
+    :params cutoff_rho: Density cutoff.
+    :params nrho: Number of points to be used when discretising density range during EAM tabulation"""
+    super(SetFL_FS_EAMTabulation, self).__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, "setfl_fs")
+
+  def write(self, fp):
+    """Write the tabulation to the file object `fp`.
+
+    :param fp: File object into which data should be written."""
+    writeSetFLFinnisSinclair(
       self.nrho, self.drho, 
       self.nr, self.dr,
       self.eam_potentials,

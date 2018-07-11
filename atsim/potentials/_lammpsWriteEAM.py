@@ -38,8 +38,6 @@ def _writeValueBlock(outfile, values):
       outfile.write(text(os.linesep))
       continue
 
-
-
 def _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, out):
   #Line 1-3: comments
   workout = StringIO()
