@@ -2,7 +2,7 @@
 from ._pair_tabulation import _PairTabulation_AbstractBase
 
 from ._lammpsWriteEAM import writeSetFL, writeSetFLFinnisSinclair
-from ._dlpoly_writeTABEAM import writeTABEAM
+from ._dlpoly_writeTABEAM import writeTABEAM, writeTABEAMFinnisSinclair
 
 class _EAMTabulationAbstractbase(_PairTabulation_AbstractBase):
   """Base class for EAMTabulation objects.
@@ -119,6 +119,31 @@ class TABEAM_EAMTabulation(_EAMTabulationAbstractbase):
 
     :param fp: File object into which data should be written."""
     writeTABEAM(
+      self.nrho, self.drho, 
+      self.nr, self.dr,
+      self.eam_potentials,
+      self.potentials,
+      out = fp)
+
+class TABEAM_FinnisSinclair_EAMTabulation(_EAMTabulationAbstractbase):
+  """Class for tabulating EEAM TABEAM formatted Finnis-Sinclair style embedded atom potentials for the DL_POLY code."""
+
+  def __init__(self, potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho):
+    """Instantiate class for tabulation of DL_POLY EEAM TABEAM formatted Finnis-Sinclair embedded atom potential tables.
+
+    :params potentials: List of atsim.potentials.Potential objects.
+    :params eam_potentials: List of `atsim.potentials.EAMPotential` instances.
+    :params cutoff: Maximum separation to be tabulated.
+    :params nr: Number of points to be used in tabulation
+    :params cutoff_rho: Density cutoff.
+    :params nrho: Number of points to be used when discretising density range during EAM tabulation"""
+    super(TABEAM_FinnisSinclair_EAMTabulation, self).__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, "DL_POLY_EAM_fs")
+
+  def write(self, fp):
+    """Write the tabulation to the file object `fp`.
+
+    :param fp: File object into which data should be written."""
+    writeTABEAMFinnisSinclair(
       self.nrho, self.drho, 
       self.nr, self.dr,
       self.eam_potentials,

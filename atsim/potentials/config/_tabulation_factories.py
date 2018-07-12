@@ -3,7 +3,7 @@ import logging
 import collections
 
 from .._pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation
-from .._eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation
+from .._eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation
 
 from ._potential_form_registry import Potential_Form_Registry
 from ._modifier_registry import Modifier_Registry
@@ -90,7 +90,6 @@ class PairTabulationFactory(object):
 class EAMTabulationFactory(PairTabulationFactory):
   """Tabulation factory for setfl (LAMMPS eam/alloy) potentials"""
 
-
   def __init__(self, tabulation_target, tabulation_class, eam_builder_class = EAM_Potential_Builder):
     super(EAMTabulationFactory, self).__init__(tabulation_target, tabulation_class)
     self.eam_builder_class = eam_builder_class
@@ -120,8 +119,21 @@ class EAMTabulationFactory(PairTabulationFactory):
     eam_potentials = eam_builder.eam_potentials
 
     logger.info("  * Tabulation will contain following EAM species:")
+    any_dict = False
     for eam_potential in eam_potentials:
       logger.info("      + {}".format(eam_potential.species))
+      if isinstance(eam_potential.electronDensityFunction, collections.Mapping):
+        any_dict = True
+    
+    if any_dict:
+      logger.info("  * Tabulation will contain the folowing density functions:")
+      for eam_potential in eam_potentials:
+        if isinstance(eam_potential.electronDensityFunction, collections.Mapping):
+          other_species = sorted(eam_potential.electronDensityFunction.keys())
+          for s in other_species:
+            logger.info("      + {}->{}".format(eam_potential.species, s))
+        else:
+            logger.info("      + {}".format(eam_potential.species))
 
     args = [potobjs, eam_potentials, 
             r_cutoff.cutoff, r_cutoff.nr, 
@@ -139,5 +151,6 @@ TABULATION_FACTORIES = {
   "DLPOLY"       :  PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),                 
   "setfl"        :  EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation),    
   "setfl_fs"     :  EAMTabulationFactory("setfl/lammps_eam_fs", SetFL_FS_EAMTabulation, EAM_Potential_Builder_FS),
-  "DL_POLY_EAM"  :  EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation)               
+  "DL_POLY_EAM"  :  EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation),               
+  "DL_POLY_EAM_fs" :  EAMTabulationFactory("DL_POLY_EAM_fs", TABEAM_FinnisSinclair_EAMTabulation, EAM_Potential_Builder_FS)               
 }
