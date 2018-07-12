@@ -41,7 +41,7 @@ class _EAMTabulationAbstractbase(_PairTabulation_AbstractBase):
 
   @property
   def drho(self):
-    return (self.cutoff / float(self.nr-1))
+    return (self.cutoff_rho / float(self.nrho-1))
 
   @property
   def eam_potentials(self):
@@ -125,4 +125,3 @@ class TABEAM_EAMTabulation(_EAMTabulationAbstractbase):
       self.potentials,
       out = fp)
 
-  

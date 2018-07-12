@@ -143,8 +143,6 @@ def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.s
 
     For a working example using this function see :ref:`eam_example_3b`
 
-
-
   :param nrho:  Number of entries in tabulated embedding functions
   :type nrho: int
   :param drho:  Step size between consecutive embedding function entries
