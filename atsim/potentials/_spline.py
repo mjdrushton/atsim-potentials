@@ -44,9 +44,9 @@ def _splineExponential(startPoint, endPoint):
   B0 = float(coefficients[0])
   B1 = float(coefficients[1])
   B2 = float(coefficients[2])
-  B3 = float( coefficients[3] )
-  B4 = float( coefficients[4])
-  B5 = float( coefficients[5])
+  B3 = float(coefficients[3])
+  B4 = float(coefficients[4])
+  B5 = float(coefficients[5])
 
   def potfunc(x):
     polynomial = B0 + B1*x + B2*x**2 + B3*x**3 + B4*x**4 + B5*x**5
