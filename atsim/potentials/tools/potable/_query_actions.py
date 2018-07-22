@@ -35,8 +35,7 @@ def _parse_raw(cp, orphan_sections):
     outlist.extend(entries)
   return outlist
 
-def _list_items(cfg_file):
-  cp = ConfigParser(cfg_file)
+def _list_items(cp):
   items = []
   parsed_sections = cp.parsed_sections
 
@@ -65,13 +64,12 @@ def _list_items(cfg_file):
   items.extend(raw_items)
   return items
 
-def _list_item_labels(cfg_file):
-  items = _list_items(cfg_file)
+def _list_item_labels(cp):
+  items = _list_items(cp)
   outlist = [k for (k,v) in items]
   return outlist
 
-def _list_plot_item_labels(cfg_file):
-  cp = ConfigParser(cfg_file)
+def _list_plot_item_labels(cp):
   items = list(itertools.chain(
     _list_pair(cp),
     _list_eam_dens(cp),
@@ -85,20 +83,19 @@ def _item_value(cp, key):
   v = cp.raw_config_parser[section][section_key]
   return v 
 
-def action_list_items(cfg_file):
-  items = _list_items(cfg_file)
+def action_list_items(cp):
+  items = _list_items(cp)
   for k, v in items:
     outline = "{}={}\n".format(k,v)
     sys.stdout.write(outline)
 
-def action_list_item_labels(cfg_file):
-  items = _list_items(cfg_file)
+def action_list_item_labels(cp):
+  items = _list_items(cp)
   for k, v in items:
     outline = "{}\n".format(k)
     sys.stdout.write(outline)
   
-def action_item_value(cfg_file, key):
-  cp = ConfigParser(cfg_file)
+def action_item_value(cp, key):
   v = _item_value(cp, key)
   outline = "{}\n".format(v)
   sys.stdout.write(outline)

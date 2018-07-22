@@ -5,6 +5,8 @@ import pytest
 
 from atsim.potentials.config import ConfigParser
 from atsim.potentials.config import ConfigParserException
+from atsim.potentials.config import ConfigParserOverrideTuple
+from atsim.potentials.config import ConfigOverrideException
 from atsim.potentials.config._config_parser import _RawConfigParser
 
 from ._common import _get_lammps_resource_dir, _get_dlpoly_resource_dir
@@ -199,7 +201,69 @@ def test_orphan_sections():
 
   assert expect == actual
 
+
+def test_overrides():
+  # Test changing a values
+  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+    cp = ConfigParser(infile, [
+      ConfigParserOverrideTuple("Tabulation", "target", "DLPOLY"),
+      ConfigParserOverrideTuple("Potential-Form", "bks(r,qi,qj,A,rho,C)", "as.buck(r, A, rho, C)")
+    ])
+
+  assert "DLPOLY" == cp.tabulation.target
+  assert 5000 == cp.tabulation.nr
+  assert 10.0 == cp.tabulation.cutoff
+
+  assert 1 == len(cp.potential_form)
+  k,v = cp.potential_form[0]
+
+  assert k.label == "bks"
+  assert k.parameter_names == ["r","qi","qj","A","rho","C"]
+  assert v == "as.buck(r, A, rho, C)"
   
+  # Make sure an error is thrown when attempting to change a value that doesn't exist
+  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+    with pytest.raises(ConfigOverrideException):
+      cp = ConfigParser(infile, overrides = [
+        ConfigParserOverrideTuple("Tabulation", "targe", "DLPOLY"),
+      ])
+
+  # Test adding extra value to a section
+  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+      cp = ConfigParser(infile, additional = [
+        ConfigParserOverrideTuple("Tabulation", "blah", "blah"),
+      ])
+
+  expect = ['target', 'cutoff', 'nr', 'blah']
+  actual = list(cp.raw_config_parser['Tabulation'])
+  assert expect == actual
+  assert 'blah' == cp.raw_config_parser['Tabulation']['blah']
+
+  # Make sure an error is thrown if trying to add when item already exists
+  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+    with pytest.raises(ConfigOverrideException):
+      cp = ConfigParser(infile, additional = [
+        ConfigParserOverrideTuple("Tabulation", "nr", "blah"),
+      ])
 
 
+  # test removing a value from a section
+  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+      cp = ConfigParser(infile, overrides = [
+        ConfigParserOverrideTuple("Tabulation", "nr", None),
+      ])
+
+  expect = ['target', 'cutoff', ]
+  actual = list(cp.raw_config_parser['Tabulation'])
+  assert expect == actual
+
+  # test removing the last item from a section
+  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+      cp = ConfigParser(infile, overrides = [
+        ConfigParserOverrideTuple("Tabulation", "nr", None),
+        ConfigParserOverrideTuple("Tabulation", "target", None),
+        ConfigParserOverrideTuple("Tabulation", "cutoff", None),
+      ])
+
+  assert not cp.raw_config_parser.has_section("Tabulation")
 

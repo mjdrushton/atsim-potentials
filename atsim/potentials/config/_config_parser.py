@@ -25,6 +25,11 @@ def _get_or_none(k, d, t):
     v = t(v)
   return v
 
+ConfigParserOverrideTuple = collections.namedtuple("ConfigParserOverrideTuple", ["section", "key", "value"])
+
+class ConfigOverrideException(ConfigParserException):
+  pass
+
 class _TabulationCutoff(object):
 
   def __init__(self, cutoff_name, nr_attr='nr', dr_attr = 'dr', cutoff_attr = 'cutoff'):
@@ -172,17 +177,48 @@ class ConfigParser(object):
                 'Potential-Form' : 'potential_form',
                 'EAM-Density' : None}
 
-  def __init__(self, fp):
+  def __init__(self, fp, overrides = [], additional = []):
     """Construct ConfigParser.
 
-    :param fp: file object containing configuration data."""
-    self._config_parser = self._init_config_parser(fp)
+    :param fp: file object containing configuration data.
+    :param overrides: List of `ConfigParserOverrideTuple` instances defining section, key and values of
+                      configuration file entries the should be modified before parsing by this class.
+    :param additional: List of `ConfigParserOverrideTuple` instances defining section, key and value of entries that should be
+                      created in the configuration file before parsing by this class."""
+    self._config_parser = self._init_config_parser(fp, overrides, additional)
     self._tabulation_section = None
     self._default_range_start = MultiRangeDefinitionTuple(">", 0.0)
 
-  def _init_config_parser(self, fp):
+  def _init_config_parser(self, fp, overrides, additional):
     cp = _RawConfigParser()
     cp.readfp(fp)
+
+    # Process overrides
+    for override in overrides:
+      if not cp.has_option(override.section, override.key):
+        raise ConfigOverrideException(
+          "Entry [{section}]: '{key}' not found in configuration file when processing overrides (value = {value})".format(
+          section = override.section, key = override.key, value = override.value))
+
+      if override.value is None:
+        # Remove item
+        cp.remove_option(override.section, override.key)
+        if len(cp[override.section]) == 0:
+          cp.remove_section(override.section)
+      else:
+        cp[override.section][override.key] = override.value
+
+    # Add additional values
+    for override in additional:
+      if cp.has_option(override.section, override.key):
+        raise ConfigOverrideException(
+          "Entry [{section}]: '{key}' already exists in configuration file whilst adding value = {value}".format(
+          section = override.section, key = override.key, value = override.value))
+
+      if not cp.has_section(override.section):
+        cp.add_section(override.section)
+      cp[override.section][override.key] = override.value
+
     return cp
 
   def _descend_potential_modifier(self, modifier_node, sibling_iterator, range_defn):

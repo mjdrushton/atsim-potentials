@@ -19,12 +19,15 @@ class Configuration(object):
 
     :params fp: File like object containing potential information.
     :returns: Tabulation object"""
-    logger = logging.getLogger(__name__).getChild("Configuration.read")
     cp = ConfigParser(fp)
-    return self._create_tabulation_from_config(cp)
+    return self.read_from_parser(cp)
 
-  def _create_tabulation_from_config(self, cp):
-    logger = logging.getLogger(__name__).getChild("Configuration._build_pair_tabulation")
+  def read_from_parser(self, cp):
+    """Read potential data from the `ConfigParser` object `cp` and return a `PairTabulation` or `EAMTabulation` instance.
+
+    :param cp: atsim.potentials.config.ConfigParser instance.
+    :returns: Tabulation object"""
+    logger = logging.getLogger(__name__).getChild("Configuration.read_from_parser")
 
     tabulation_target = cp.tabulation.target
     if tabulation_target is None:

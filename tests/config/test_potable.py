@@ -30,7 +30,8 @@ def test_list_item_labels():
   expect.sort()
   
   with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
-    items = _query_actions._list_item_labels(infile)
+    cp = ConfigParser(infile)
+    items = _query_actions._list_item_labels(cp)
     items.sort()
     assert expect == items
 
@@ -57,7 +58,8 @@ def test_list_items():
   expect.sort()
   
   with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
-    items = _query_actions._list_items(infile)
+    cp = ConfigParser(infile)
+    items = _query_actions._list_items(cp)
     items.sort()
     assert expect == items
     
@@ -84,7 +86,8 @@ def test_list_plot_item_labels():
   expect.sort()
   
   with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
-    items = _query_actions._list_plot_item_labels(infile)
+    cp = ConfigParser(infile)
+    items = _query_actions._list_plot_item_labels(cp)
     items.sort()
     assert expect == items
 
@@ -92,7 +95,7 @@ def test_key_normalisation():
 
   import io
 
-  cfg1 = """[Potential-Form]
+  cfg1 = u"""[Potential-Form]
 buck_morse(r, A,  rho,  C, D,  gamma,    r0) : test
 
 [EAM-Density]
@@ -105,6 +108,7 @@ A -> B : test"""
   expect.sort()
 
   with io.StringIO(cfg1) as infile:
-    items = _query_actions._list_items(infile)
+    cp = ConfigParser(infile)
+    items = _query_actions._list_items(cp)
     items.sort()
     assert expect == items
