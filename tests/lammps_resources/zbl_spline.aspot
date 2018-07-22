@@ -1,0 +1,10 @@
+[Tabulation]
+target : LAMMPS
+cutoff : 10.0
+nr : 5000
+
+[Potential-Form]
+bks(r, qi, qj, A, rho, C) = as.coul(r, qi,qj) + as.buck(r, A, rho, C)
+
+[Pair]
+Si-O = spline(as.zbl 14 8 >=0.8 exp_spline >=1.4 bks 2.4 -1.2 18003.7572 0.2052048149 133.5381)

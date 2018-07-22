@@ -1,8 +1,14 @@
 import io
+import os
+
 import pytest
 
 from atsim.potentials.config import ConfigParser
 from atsim.potentials.config import ConfigParserException
+from atsim.potentials.config._config_parser import _RawConfigParser
+
+from ._common import _get_lammps_resource_dir, _get_dlpoly_resource_dir
+
 
 def test_potential_forms():
   """Testing reading of potential forms from [Potential-Form]"""
@@ -139,4 +145,61 @@ nrho : 11
 """
     parsed = ConfigParser(io.StringIO(cfg_string))
     parsed.tabulation
+
+def test_parsed_sections():
+  expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density', 'pair']
+  expect.sort()
+
+  with _get_dlpoly_resource_dir().join("CRG_Ce.aspot").open() as infile:
+    cp = ConfigParser(infile)
+    actual = cp.parsed_sections
+    actual.sort()
+  assert expect == actual
+
+  expect = ['tabulation', 'potential_form', 'pair']
+  expect.sort()
+
+  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+    cp = ConfigParser(infile)
+    actual = cp.parsed_sections
+    actual.sort()
+  assert expect == actual
+
+  expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density_fs', 'pair']
+  expect.sort()
+
+  with _get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").open() as infile:
+    cp = ConfigParser(infile)
+    actual = cp.parsed_sections
+    actual.sort()
+  assert expect == actual
+
+def test_orphan_sections():
+  with _get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").open("r") as infile:
+    sio = io.StringIO(infile.read())
+
+  sio.seek(0,os.SEEK_END)
+  sio.write("\n\n[Charges]\nU : 2.22\nO: -1.11\n")
+  sio.write("[Masses]\nU : 1.234\nO: 4.56\n")
+  sio.seek(0)
+
+  expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density_fs', 'pair']
+  expect.sort()
+
+  cp = ConfigParser(sio)
+  actual = cp.parsed_sections
+  actual.sort()
+  assert expect == actual
+
+  actual = cp.orphan_sections
+  expect = ["Charges", "Masses"]
+
+  actual.sort()
+  expect.sort()
+
+  assert expect == actual
+
+  
+
+
 

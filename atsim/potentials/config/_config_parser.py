@@ -125,9 +125,36 @@ class _TabulationSection(object):
   def nrho(self):
     return self._density_cutoff.nrho
 
+
+class _ConfigParserDict(collections.OrderedDict):
+  """Dictionary class used by `_RawConfigParser`,
+  this removes whitespace from keys allowing f(x, y) to be equivalent to f(x,y)"""
+
+  def _key_transform(self, k):
+    k = k.strip().replace(' ', '')
+    k = k.replace('\t', '')
+    return k
+
+  def __setitem__(self, key, value):
+    key = self._key_transform(key)
+    return super(_ConfigParserDict, self).__setitem__(key, value)
+
+  def __getitem__(self, key):
+    key = self._key_transform(key)
+    return super(_ConfigParserDict, self).__getitem__(key)
+
+  def __delitem__(self, key):
+    key = self._key_transform(key)
+    return super(_ConfigParserDict, self).__delitem__(key)
+
+
 class _RawConfigParser(configparser.RawConfigParser):
 
+  def __init__(self):
+    super(_RawConfigParser, self).__init__(dict_type = _ConfigParserDict)
+
   def optionxform(self, option):
+    option = option.strip()
     return option
 
 class ConfigParser(object):
@@ -135,6 +162,15 @@ class ConfigParser(object):
   suitable for tabulation functions."""
 
   _signature_re = re.compile(r"^([a-zA-Z]\w*?)\((.*)\)")
+
+  # Map of sections relevant to ConfigParser
+  # Keys are section keys as the appear to the _config_parser (_RawConfigParser)
+  # Values are attribute names on this class to which those sections relate.
+  _section_map = {'Tabulation' : 'tabulation',
+                'Pair' : 'pair',
+                'EAM-Embed' : 'eam_embed',
+                'Potential-Form' : 'potential_form',
+                'EAM-Density' : None}
 
   def __init__(self, fp):
     """Construct ConfigParser.
@@ -169,7 +205,6 @@ class ConfigParser(object):
       next = n)
 
     return ret_tuple
-
 
   def _descend_potential_description(self, curr_node, sibling_iterator, range_defn):
     # ... extract potential_form
@@ -279,7 +314,6 @@ class ConfigParser(object):
     except ConfigParserException:
       raise ConfigParserException("[{section_name}] parameter lines should be of the form 'FROM_SPECIES->TO_SPECIES : POTENTIAL_FORM PARAMS...'".format(section_name = section_name))
 
-
   def _parse_potential_form_signature(self, pf):
     pf = pf.strip()
     m = self._signature_re.match(pf)
@@ -366,3 +400,45 @@ class ConfigParser(object):
     :returns: List of (SPECIES, potential_form_label, params)
       Where params = [p1, p2, ..., pn] and p1 etc are the density function parameters )"""
     return self._parse_params_section("EAM-Density", self._parse_eam_fs_density_line)
+
+  @property
+  def parsed_sections(self):
+    """Returns a list of relevant sections found inside configuration file. 
+
+    Names are returned as the `ConfigParser` attribute names which could be used to access each parsed section.
+    So `[Pair]` becomes `pair` and `[EAM-Density]` is `eam_density`.
+
+    :returns: List of attribute names representing parseable sections of the configuration file"""
+    sections = []
+    for section_key, output_key in self._section_map.items():
+      if output_key and self._config_parser.has_section(section_key):
+        sections.append(output_key)
+
+    # The EAM-Density section is overloaded for Finnis-Sinclair and regular EAM potentials
+    # if the section's keys contain -> then it's FS
+    if self._config_parser.has_section("EAM-Density"):
+      isFS = False
+      for k in self._config_parser["EAM-Density"]:
+        if "->" in k:
+          isFS = True
+          break
+      if isFS:
+        sections.append("eam_density_fs")
+      else:
+        sections.append("eam_density")
+    return sections
+
+  @property
+  def orphan_sections(self):
+    """Returns list of section keys, in current configuration file, that are not relevant to the `ConfigParser` class.property
+
+    :returns: List of section labels."""
+    sections = []
+    for section_key in self._config_parser.sections():
+      if not section_key in self._section_map:
+        sections.append(section_key)
+    return sections
+
+  @property
+  def raw_config_parser(self):
+    return self._config_parser

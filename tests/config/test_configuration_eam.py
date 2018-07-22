@@ -10,17 +10,7 @@ from atsim.potentials.config._config_parser import ConfigParser
 from .._runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS, lammps_run_fluorite_fixture, lammps_run_fixture
 from .._rundlpoly import needsDLPOLY, runDLPoly, extractDLPOLYEnergy
 
-def _get_resource_dir(subdir):
-  rd = py.path.local(__file__).dirpath()
-  rd = rd.parts()[-2].join(subdir)
-  return rd
-
-def _get_lammps_resource_dir():
-  return _get_resource_dir('lammps_resources')
-
-def _get_dlpoly_resource_dir():
-  return _get_resource_dir('dl_poly_resources')
-
+from ._common import _get_dlpoly_resource_dir, _get_lammps_resource_dir
 
 def test_configuration_setfl_synonyms():
   cfg_file_path = _get_lammps_resource_dir().join("CRG_U_Th.aspot")
