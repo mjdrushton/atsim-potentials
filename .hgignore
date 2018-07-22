@@ -12,3 +12,5 @@ Sphinx-*.egg
 docutils-*.egg
 hgtools-*.egg
 venv_python3
+EGG-INFO
+venv*

@@ -2,7 +2,7 @@ import pytest
 
 from ._common import _get_dlpoly_resource_dir, _get_lammps_resource_dir
 
-from atsim.potentials.tools import potable
+from atsim.potentials.tools.potable import _query_actions
 from atsim.potentials.config import ConfigParser
 
 
@@ -30,7 +30,7 @@ def test_list_item_labels():
   expect.sort()
   
   with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
-    items = potable._list_item_labels(infile)
+    items = _query_actions._list_item_labels(infile)
     items.sort()
     assert expect == items
 
@@ -57,14 +57,14 @@ def test_list_items():
   expect.sort()
   
   with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
-    items = potable._list_items(infile)
+    items = _query_actions._list_items(infile)
     items.sort()
     assert expect == items
     
 def test_item_value():
   with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
     cp = ConfigParser(infile)
-    value = potable._item_value(cp, "Tabulation:drho")
+    value = _query_actions._item_value(cp, "Tabulation:drho")
     assert "0.01" == value
 
 def test_list_plot_item_labels():
@@ -84,7 +84,7 @@ def test_list_plot_item_labels():
   expect.sort()
   
   with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
-    items = potable._list_plot_item_labels(infile)
+    items = _query_actions._list_plot_item_labels(infile)
     items.sort()
     assert expect == items
 
@@ -105,6 +105,6 @@ A -> B : test"""
   expect.sort()
 
   with io.StringIO(cfg1) as infile:
-    items = potable._list_items(infile)
+    items = _query_actions._list_items(infile)
     items.sort()
     assert expect == items
