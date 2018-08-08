@@ -1,4 +1,5 @@
 from ._config_parser import ConfigParser, ConfigParserOverrideTuple, ConfigOverrideException
+from ._filtered_config_parser import FilteredConfigParser
 from ._potential_form_registry import Potential_Form_Registry
 from ._configuration import Configuration
 

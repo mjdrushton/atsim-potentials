@@ -9,7 +9,7 @@ import collections
 from . import _query_actions
 from . import _actions
 
-from ...config import ConfigParserOverrideTuple, ConfigParser
+from ...config import ConfigParserOverrideTuple, ConfigParser, FilteredConfigParser
 
 def _parse_command_line():
   p = argparse.ArgumentParser(description = "Tabulate potential models for common atomistic simulation codes. This is part of the atsim.potentials package.")
@@ -23,6 +23,11 @@ def _parse_command_line():
   qmutex_group.add_argument("--list-item-labels", action = 'store_true', help = "List item in configuration file to STD_OUT. One item per line with format SECTION_NAME:KEY")
   qmutex_group.add_argument("--item-value",  type = str, nargs = 1, metavar = "SECTION_NAME:KEY", help = "Return the value for given item in configuration file")
   
+  filter_group = p.add_argument_group("Filter", "Filter items from the configuration file")
+  fmutex_group = filter_group.add_mutually_exclusive_group()
+  fmutex_group.add_argument("--include-species", nargs = '*', metavar = "SPECIES", help = "If specified, only those SPECIES provided will be included in tabulation.")
+  fmutex_group.add_argument("--exclude-species", nargs = '*', metavar = "SPECIES", help = "SPECIES given provided to this option will NOT be included in tabulation.")
+
   override_group = p.add_argument_group("Override", "Add or override values in the configuration file")
   override_group.add_argument("--override-item", "-e", nargs='*', metavar = "SECTION_NAME:KEY=VALUE", help = "Use VALUE for item SECTION_NAME:KEY instead of the in the configuration file")
   override_group.add_argument("--add-item", "-a", nargs='*', metavar = "SECTION_NAME:KEY=VALUE", help = "Add item to configuration file")
@@ -41,7 +46,7 @@ def _create_override_tuple(key, has_value = True):
   retval = ConfigParserOverrideTuple(section = section, key = key, value = value)
   return retval
 
-def _make_config_parser(cfg_file, overrides, additional, remove):
+def _make_config_parser(cfg_file, overrides, additional, remove, species, exclude_flag):
   override_dict = collections.OrderedDict()
   if not overrides is None:
     for override in overrides:
@@ -64,6 +69,12 @@ def _make_config_parser(cfg_file, overrides, additional, remove):
       additional_list.append(over_tuple)
 
   cp = ConfigParser(cfg_file, overrides = overrides_list, additional= additional_list)
+
+  if species:
+    if exclude_flag:
+      cp = FilteredConfigParser(cp, exclude = species)
+    else:
+      cp = FilteredConfigParser(cp, include = species)
   return cp
 
 def _setup_logging():
@@ -73,7 +84,21 @@ def main():
   _setup_logging()
   logger = logging.getLogger(__name__).getChild("main")
   p, args = _parse_command_line()
-  cp = _make_config_parser(args.config_file, args.override_item, args.add_item, args.remove_item)
+
+  species_list = None
+  exclude_flag = False
+  if args.include_species:
+    species_list = args.include_species
+  elif args.exclude_species:
+    species_list = args.exclude_species
+    exclude_flag = True
+
+  cp = _make_config_parser(
+    args.config_file, 
+    args.override_item, 
+    args.add_item, 
+    args.remove_item,
+    species_list, exclude_flag)
   
   if args.list_items:
     _query_actions.action_list_items(cp)

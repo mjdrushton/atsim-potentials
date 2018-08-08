@@ -130,6 +130,14 @@ class _TabulationSection(object):
   def nrho(self):
     return self._density_cutoff.nrho
 
+  def __repr__(self):
+    return "_TabulationSection(r={target}, cutoff={cutoff}, nr={nr}, cutoff_rho={cutoff_rho}, nrho={nrho})".format(
+      target = self.target,
+      cutoff = self.cutoff,
+      nr = self.nr,
+      cutoff_rho = self.cutoff_rho,
+      nrho = self.nrho)
+
 
 class _ConfigParserDict(collections.OrderedDict):
   """Dictionary class used by `_RawConfigParser`,

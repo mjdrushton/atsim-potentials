@@ -2,12 +2,15 @@ import io
 import os
 
 import pytest
+from deepdiff import DeepDiff
 
-from atsim.potentials.config import ConfigParser
+from atsim.potentials.config import ConfigParser, FilteredConfigParser
 from atsim.potentials.config import ConfigParserException
 from atsim.potentials.config import ConfigParserOverrideTuple
 from atsim.potentials.config import ConfigOverrideException
 from atsim.potentials.config._config_parser import _RawConfigParser
+from atsim.potentials.config._common import SpeciesTuple
+from atsim.potentials.config._common import EAMFSDensitySpeciesTuple
 
 from ._common import _get_lammps_resource_dir, _get_dlpoly_resource_dir
 
@@ -267,3 +270,93 @@ def test_overrides():
 
   assert not cp.raw_config_parser.has_section("Tabulation")
 
+def u_th_filtered_test(orig_cp, filtered_cp):
+  # First check the unfiltered properties
+  unfiltered = [
+    "potential_form", 
+    "tabulation", 
+    "parsed_sections", 
+    "orphan_sections", 
+    "raw_config_parser"
+  ]
+
+  for attr in unfiltered:
+    expect = getattr(orig_cp, attr)
+    actual = getattr(filtered_cp, attr)
+    assert DeepDiff(expect, actual) == {}
+
+  # Now check the attributes that should be filtered
+  # ... pair
+  ST = SpeciesTuple
+  expect = [
+    ST("O", "O"),
+    ST("U", "U"),
+    ST("U", "O") ]
+  actual = [p[0] for p in filtered_cp.pair]
+  assert DeepDiff(expect, actual) == {}
+
+  # ... eam_embed
+  expect = [ "U", "O"]
+  actual = [p[0] for p in filtered_cp.eam_embed]  
+  assert DeepDiff(expect, actual) == {}
+
+  # ... eam_density
+  expect = ["U", "O"]
+  actual = [p[0] for p in filtered_cp.eam_density]
+  assert DeepDiff(expect, actual) == {}
+
+
+def test_filtered_config_parser():
+  lmpdir = _get_lammps_resource_dir()
+  with lmpdir.join("CRG_U_Th.aspot").open() as infile:
+    orig_cp = ConfigParser(infile)
+
+  filtered_cp = FilteredConfigParser(orig_cp, exclude = ["Th"])
+  u_th_filtered_test(orig_cp, filtered_cp)
+  
+  filtered_cp = FilteredConfigParser(orig_cp, include = ["U", "O"])
+  u_th_filtered_test(orig_cp, filtered_cp)
+
+  with pytest.raises(ValueError):
+    FilteredConfigParser(orig_cp, include = ["U", "O"], exclude = ["Th"])
+
+
+def test_filtered_config_parser_finnis_sinclair():
+  lmpdir = _get_lammps_resource_dir()
+  with lmpdir.join("AlFe_setfl_fs.aspot").open() as infile:
+    orig_cp = ConfigParser(infile)
+
+  filtered_cp = FilteredConfigParser(orig_cp, exclude = ["Fe"])
+
+  unfiltered = [
+    "potential_form", 
+    "tabulation", 
+    "parsed_sections", 
+    "orphan_sections", 
+    "raw_config_parser"
+  ]
+
+  for attr in unfiltered:
+    expect = getattr(orig_cp, attr)
+    actual = getattr(filtered_cp, attr)
+    assert DeepDiff(expect, actual) == {}
+
+  # Now check the attributes that should be filtered
+  # ... pair
+  ST = SpeciesTuple
+  expect = [
+    ST("Al", "Al")]
+  actual = [p[0] for p in filtered_cp.pair]
+  assert DeepDiff(expect, actual) == {}
+
+  # ... eam_embed
+  expect = ["Al"]
+  actual = [p[0] for p in filtered_cp.eam_embed]  
+  assert DeepDiff(expect, actual) == {}
+
+  # ... eam_density
+  EDST = EAMFSDensitySpeciesTuple
+  expect = [
+    EDST("Al", "Al") ]
+  actual = [p[0] for p in filtered_cp.eam_density_fs]
+  assert DeepDiff(expect, actual) == {}
