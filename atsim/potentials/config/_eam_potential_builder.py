@@ -4,16 +4,18 @@ from .._eam_potential import EAMPotential
 from ._common import ConfigurationException
 from ._potential_form_builder import Potential_Form_Builder
 
-from ..referencedata import reference_data
+from ..referencedata import Reference_Data, Reference_Data_Exception
 
 class EAM_Potential_Builder(object):
   """Uses the output ConfigParser.eam_density and .eam_embed propoerties and builds
   EAMPotential instances"""
 
-  def __init__(self, cp, potential_form_registry, modifier_registry):
+  def __init__(self, cp, potential_form_registry, modifier_registry, reference_data = Reference_Data()):
     """:param cp: atsim.potentials.config.ConfigParser instance.
     :param potential_form_register: Potential_Form_Registry
-    :param modifier_register: Modifier_Registry"""
+    :param modifier_register: Modifier_Registry
+    :param reference_data: Reference_Data object used to provide atomic number, masses and default lattices."""
+    self._reference_data = reference_data
     self._potlist = self._init_eampotentials(cp, potential_form_registry, modifier_registry)
 
   def _init_eampotentials(self, cp, potential_form_registry, modifier_registry):
@@ -83,21 +85,27 @@ class EAM_Potential_Builder(object):
 
   def _get_mass(self, species):
     try:
-      return reference_data[species].atomic_mass
-    except KeyError:
+      return self._reference_data.get(species, 'atomic_mass')
+    except Reference_Data_Exception:
       raise ConfigurationException("Could not find atomic mass for species: {}".format(species))
 
   def _get_atomic_number(self, species):
     try:
-      return reference_data[species].atomic_number
-    except KeyError:
+      return self._reference_data.get(species, 'atomic_number')
+    except Reference_Data_Exception:
       raise ConfigurationException("Could not find atomic number for species: {}".format(species))
 
   def _get_lattice_constant(self, species):
-    return 0.0
+    try:
+      return self._reference_data.get(species, 'lattice_constant')
+    except Reference_Data_Exception:
+      return 0.0
     
   def _get_lattice_type(self, species):
-    return 'fcc'
+    try:
+      return self._reference_data.get(species, 'lattice_type')
+    except Reference_Data_Exception:
+      return 'fcc'
 
   def _create_eam_potential(self, species, embed_dict, density_dict):
     embedding_function = embed_dict[species]

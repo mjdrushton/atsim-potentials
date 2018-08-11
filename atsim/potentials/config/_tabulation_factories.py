@@ -9,6 +9,7 @@ from ._potential_form_registry import Potential_Form_Registry
 from ._modifier_registry import Modifier_Registry
 from ._pair_potential_builder import Pair_Potential_Builder
 from ._eam_potential_builder import EAM_Potential_Builder, EAM_Potential_Builder_FS
+from ..referencedata import Reference_Data
 
 RCutoffTuple = collections.namedtuple('RCutoffTuple', ['cutoff', 'nr'])
 R_Rho_CutoffTuple = collections.namedtuple('R_Rho_CutoffTuple', ['cutoff', 'nr', 'cutoff_rho', 'nrho'])
@@ -113,9 +114,15 @@ class EAMTabulationFactory(PairTabulationFactory):
       nrho = cp.tabulation.nrho
     return R_Rho_CutoffTuple(r_cutoff.cutoff, r_cutoff.nr, cutoff_rho, nrho)
 
+  def _create_reference_data(self, cp):
+    extra_rd = cp.species
+    rd = Reference_Data(extra_rd)
+    return rd
+
   def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
     logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._make_tabulation_args")
-    eam_builder =  self.eam_builder_class(cp, potential_form_registry, modifier_registry)
+    rd = self._create_reference_data(cp)
+    eam_builder =  self.eam_builder_class(cp, potential_form_registry, modifier_registry, rd)
     eam_potentials = eam_builder.eam_potentials
 
     logger.info("  * Tabulation will contain following EAM species:")

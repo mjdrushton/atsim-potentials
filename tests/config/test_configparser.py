@@ -151,6 +151,47 @@ nrho : 11
     parsed = ConfigParser(io.StringIO(cfg_string))
     parsed.tabulation
 
+def test_species():
+
+  # Test empty reference data section
+  parsed = ConfigParser(io.StringIO())
+  assert parsed.species == {}
+
+  # Test reference data with overrides
+  parsed = ConfigParser(io.StringIO("""
+[Species]
+Gd.atomic_mass = 1.234
+Gd.charge = 4.567
+
+NewSpecies.atomic_number = 600
+
+Al.lattice_type = fcc
+Al.lattice_constant = 7.8910
+  
+  """))
+
+  expect =  { 'Gd' : {'atomic_mass' : 1.234, 'charge' : 4.567 },
+              'NewSpecies' : {'atomic_number' : 600},
+              'Al' : {'lattice_type' : 'fcc', 'lattice_constant' : 7.8910}
+  }
+
+  actual = parsed.species
+
+  assert DeepDiff(expect, actual) == {}
+
+  # Test that an exception is raised if invalid syntax used
+
+  parsed = ConfigParser(io.StringIO("""
+[Species]
+Gd : 1.234
+"""))
+  with pytest.raises(ConfigParserException):
+    parsed.species
+    
+
+
+
+
 def test_parsed_sections():
   expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density', 'pair']
   expect.sort()

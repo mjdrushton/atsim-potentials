@@ -180,3 +180,33 @@ def test_dlpoly_EAM_FS_tabulate_AlFe(tmpdir):
   expect = -31.769632
 
   assert pytest.approx(expect) == actual
+
+
+def test_custom_species_data():
+  cfg_file_path = _get_lammps_resource_dir().join("CRG_U_Th.aspot")
+
+  from atsim.potentials.config._config_parser import _RawConfigParser
+  inifile = _RawConfigParser()
+  inifile.read(cfg_file_path.strpath)
+
+  inifile.add_section('Species')
+  inifile["Species"]["U.atomic_mass"] = "235"
+  inifile["Species"]["U.lattice_constant"] = "5.678"
+  inifile["Species"]["Th.lattice_type"] = "bcc"
+
+  modified = io.StringIO()
+  inifile.write(modified)
+  modified.seek(0)
+
+  cfgobj = Configuration()
+  tabulation = cfgobj.read(modified)
+
+  plist = tabulation.eam_potentials
+  upot = [p for p in plist if p.species == "U"][0]
+
+  assert pytest.approx(235.0) == upot.mass
+  assert pytest.approx(5.678) == upot.latticeConstant
+
+  cepot = [p for p in plist if p.species == "Th"][0]
+  assert cepot.latticeType == 'bcc'
+

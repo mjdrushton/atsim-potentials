@@ -486,3 +486,38 @@ class ConfigParser(object):
   @property
   def raw_config_parser(self):
     return self._config_parser
+
+  def _convert_species_type(self, property_name, v):
+    default = str
+    known_properties = {
+      'atomic_mass' : float, 
+      'atomic_number' : int, 
+      'covalent_radius' : float,
+      'lattice_constant' : float, 
+      'charge' : float,
+      'lattice_type' : str}
+
+    converted = known_properties.get(property_name, default)(v)
+    return converted
+
+  @property
+  def species(self):
+    """Return reference data for atomic species.
+    
+    Data is returned as a dictionary relating each species label to a dictionary mapping property name to propety value.
+    
+    :returns: Dictionary of dictionaries."""
+    if not self._config_parser.has_section("Species"):
+      return {}
+
+    d = {}
+    for k in self._config_parser["Species"]:
+      # Split k into SPECIES.PROPERTY_NAME pairs
+      tokens = k.split(".", 1)
+      if len(tokens) == 1:
+        raise ConfigParserException("Error when parsing [Species] section. Keys should be of the form 'SPECIES_LABEL.PROPERTY_NAME'. Invalid key found: '{}'".format(k))
+      species, property_name = [t.strip() for t in tokens]
+      v = self._config_parser["Species"][k]
+      v = self._convert_species_type(property_name, v)
+      d.setdefault(species, {})[property_name] = v
+    return d
