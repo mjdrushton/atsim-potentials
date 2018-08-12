@@ -143,3 +143,23 @@ def zero(r):
   
   :return: Returns 0.0"""
   return 0.0
+
+def exp_spline(r, B0, B1, B2, B3, B4, B5, C):
+  """Exponential spline function (as used in splining routines).
+
+    .. math::
+
+            U(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \\right) + C
+
+  :param B0: Spline coefficient
+  :param B1: Spline coefficient
+  :param B2: Spline coefficient
+  :param B3: Spline coefficient
+  :param B4: Spline coefficient
+  :param B5: Spline coefficient
+  :param C: C parameter
+  :param r: Separation:
+
+  :return: Splined values"""
+  return math.exp(B0 + B1*r + B2*r**2 + B3*r**3 + B4*r**4 + B5*r**5) + C
+
