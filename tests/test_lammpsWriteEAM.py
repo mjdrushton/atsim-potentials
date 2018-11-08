@@ -270,7 +270,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       runLAMMPS()
       energy = extractLAMMPSEnergy()
       expect = -1001.27446044
-      self.assertAlmostEquals(expect, energy, places=5)
+      self.assertAlmostEqual(expect, energy, places=5)
     finally:
       os.chdir(oldpwd)
 
@@ -322,7 +322,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
 
       runLAMMPS()
       energy = extractLAMMPSEnergy()
-      self.assertAlmostEquals(982.2756583, energy)
+      self.assertAlmostEqual(982.2756583, energy)
     finally:
       os.chdir(oldpwd)
 
@@ -374,7 +374,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
 
       runLAMMPS()
       energy = extractLAMMPSEnergy()
-      self.assertAlmostEquals(83.7425918012, energy/2.0, places = 5)
+      self.assertAlmostEqual(83.7425918012, energy/2.0, places = 5)
     finally:
       os.chdir(oldpwd)
 
@@ -423,7 +423,7 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
 
       runLAMMPS()
       energy = extractLAMMPSEnergy()
-      self.assertAlmostEquals(-math.sqrt(2), energy/2.0)
+      self.assertAlmostEqual(-math.sqrt(2), energy/2.0)
     finally:
       os.chdir(oldpwd)
 

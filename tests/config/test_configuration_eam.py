@@ -14,16 +14,16 @@ from ._common import _get_dlpoly_resource_dir, _get_lammps_resource_dir
 
 def test_configuration_setfl_synonyms():
   cfg_file_path = _get_lammps_resource_dir().join("CRG_U_Th.aspot")
-  with cfg_file_path.open() as config_file:
+  with io.open(cfg_file_path.strpath, encoding = "utf8") as config_file:
     config_parser = ConfigParser(config_file)
-  assert config_parser.tabulation.target == "setfl"
+  assert config_parser.tabulation.target == u"setfl"
 
   # Now change setfl to lammps_eam_alloy and check that the target still registers as setfl
   from backports import configparser
   inifile = configparser.ConfigParser()
-  inifile.read(cfg_file_path.strpath)
+  inifile.read(u"{}".format(cfg_file_path.strpath))
 
-  inifile["Tabulation"]['target'] = "lammps_eam_alloy"
+  inifile[u"Tabulation"][u'target'] = u"lammps_eam_alloy"
 
   modified = io.StringIO()
   inifile.write(modified)
@@ -31,25 +31,25 @@ def test_configuration_setfl_synonyms():
 
   inifile = configparser.ConfigParser()
   inifile.read_file(modified)
-  assert inifile["Tabulation"]['target'] == "lammps_eam_alloy"
+  assert inifile[u"Tabulation"][u'target'] == u"lammps_eam_alloy"
 
   modified.seek(0)
   config_parser = ConfigParser(modified)
-  assert config_parser.tabulation.target == "setfl"
+  assert config_parser.tabulation.target == u"setfl"
 
 @needsLAMMPS
 def test_lammps_setfl_crg_tabulate_ThO2(lammps_run_fluorite_fixture):
   tmpdir = lammps_run_fluorite_fixture
 
   cfgobj = Configuration()
-  config_file = _get_lammps_resource_dir().join("CRG_U_Th.aspot").open()
+  config_file = io.open(_get_lammps_resource_dir().join("CRG_U_Th.aspot").strpath, encoding = "utf8")
   tabulation = cfgobj.read(config_file)
 
   with tmpdir.join("table.eam.alloy").open("w") as outfile:
     tabulation.write(outfile)
 
   with lammps_run_fluorite_fixture.join("potentials.lmpinc").open('w') as potfile:
-    potfile.write("""variable O equal 1
+    potfile.write(u"""variable O equal 1
 set type 1 charge -1.1104
 set type 2 charge 2.2208
 
@@ -71,14 +71,14 @@ def test_lammps_setfl_crg_tabulate_UO2(lammps_run_fluorite_fixture):
   tmpdir = lammps_run_fluorite_fixture
 
   cfgobj = Configuration()
-  config_file = _get_lammps_resource_dir().join("CRG_U_Th.aspot").open()
+  config_file =io.open( _get_lammps_resource_dir().join("CRG_U_Th.aspot").strpath, encoding = "utf8")
   tabulation = cfgobj.read(config_file)
 
   with tmpdir.join("table.eam.alloy").open("w") as outfile:
     tabulation.write(outfile)
 
   with lammps_run_fluorite_fixture.join("potentials.lmpinc").open('w') as potfile:
-    potfile.write("""variable O equal 1
+    potfile.write(u"""variable O equal 1
 set type 1 charge -1.1104
 set type 2 charge 2.2208
 
@@ -112,7 +112,7 @@ def test_dlpoly_TABEAM_tabulate_CeO2(tmpdir):
 
   # Tabulate the TABEAM potential
   cfgobj = Configuration()
-  config_file = rd.join("CRG_Ce.aspot").open()
+  config_file = io.open(rd.join("CRG_Ce.aspot").strpath, encoding = "utf8")
   tabulation = cfgobj.read(config_file)
 
   with tmpdir.join("TABEAM").open("w") as outfile:
@@ -129,15 +129,15 @@ def test_lammps_EAM_FS_tabulate_AlFe(lammps_run_fixture):
   tmpdir = lammps_run_fixture
 
   cfgobj = Configuration()
-  config_file = _get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").open()
+  config_file = io.open(_get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").strpath, encoding = "utf8")
   tabulation = cfgobj.read(config_file)
 
   _get_lammps_resource_dir().join("random_Al_Fe.lmpstruct").copy(tmpdir.join("structure.lmpstruct"))
   _get_lammps_resource_dir().join("AlFe_mm.eam.fs").copy(tmpdir.join("table.eam.fs"))
 
   with tmpdir.join("potentials.lmpinc").open("w") as potfile:
-    potfile.write("pair_style eam/fs\n")
-    potfile.write("pair_coeff * * table.eam.fs Al Fe\n")
+    potfile.write(u"pair_style eam/fs\n")
+    potfile.write(u"pair_coeff * * table.eam.fs Al Fe\n")
 
   runLAMMPS(cwd = tmpdir.strpath)
   expect = extractLAMMPSEnergy(cwd = tmpdir.strpath)
@@ -156,9 +156,9 @@ def test_dlpoly_EAM_FS_tabulate_AlFe(tmpdir):
 
   from atsim.potentials.config._config_parser import _RawConfigParser
   inifile = _RawConfigParser()
-  inifile.read(cfg_file_path.strpath)
+  inifile.read(u"{}".format(cfg_file_path.strpath))
 
-  inifile["Tabulation"]['target'] = "DL_POLY_EAM_fs"
+  inifile[u"Tabulation"][u'target'] = u"DL_POLY_EAM_fs"
 
   modified = io.StringIO()
   inifile.write(modified)
@@ -181,18 +181,17 @@ def test_dlpoly_EAM_FS_tabulate_AlFe(tmpdir):
 
   assert pytest.approx(expect) == actual
 
-
 def test_custom_species_data():
   cfg_file_path = _get_lammps_resource_dir().join("CRG_U_Th.aspot")
 
   from atsim.potentials.config._config_parser import _RawConfigParser
   inifile = _RawConfigParser()
-  inifile.read(cfg_file_path.strpath)
+  inifile.read(u"{}".format(cfg_file_path.strpath))
 
-  inifile.add_section('Species')
-  inifile["Species"]["U.atomic_mass"] = "235"
-  inifile["Species"]["U.lattice_constant"] = "5.678"
-  inifile["Species"]["Th.lattice_type"] = "bcc"
+  inifile.add_section(u'Species')
+  inifile[u"Species"][u"U.atomic_mass"] = u"235"
+  inifile[u"Species"][u"U.lattice_constant"] = u"5.678"
+  inifile[u"Species"][u"Th.lattice_type"] = u"bcc"
 
   modified = io.StringIO()
   inifile.write(modified)
@@ -202,11 +201,11 @@ def test_custom_species_data():
   tabulation = cfgobj.read(modified)
 
   plist = tabulation.eam_potentials
-  upot = [p for p in plist if p.species == "U"][0]
+  upot = [p for p in plist if p.species == u"U"][0]
 
   assert pytest.approx(235.0) == upot.mass
   assert pytest.approx(5.678) == upot.latticeConstant
 
-  cepot = [p for p in plist if p.species == "Th"][0]
-  assert cepot.latticeType == 'bcc'
+  cepot = [p for p in plist if p.species == u"Th"][0]
+  assert cepot.latticeType == u'bcc'
 

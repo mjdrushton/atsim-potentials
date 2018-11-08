@@ -37,12 +37,12 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
 
     msg = "%s != %s" % (expect, actual)
 
-    self.assertEquals(len(expect), len(actual), msg = msg)
+    self.assertEqual(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, actual):
       # a = a.decode()
-      self.assertEquals(os.linesep, a[-1])
+      self.assertEqual(os.linesep, a[-1])
       a = a[:-1]
-      self.assertEquals(e,a)
+      self.assertEqual(e,a)
 
   def testWritePotentials(self):
     """Test _lammps_writeTABLE.writePotentials() function"""
@@ -78,9 +78,9 @@ class LammpsWriteTABLETestCase(unittest.TestCase):
     sbuild.seek(0)
 
     msg = "%s != %s" % (expect, actual)
-    self.assertEquals(len(expect), len(actual), msg = msg)
+    self.assertEqual(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, sbuild):
       # a = a.decode()
-      self.assertEquals(os.linesep, a[-1])
+      self.assertEqual(os.linesep, a[-1])
       a = a[:-1]
-      self.assertEquals(e,a)
+      self.assertEqual(e,a)

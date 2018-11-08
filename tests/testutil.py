@@ -10,15 +10,15 @@ import types
 
 def assertFloatWithinPercentage(testCase, expect, actual, percenttolerance = 0.5, places = 5):
   """Assert that actual is within percenttolerance of expect. Percenttolerance is specified as a percentage of
-  expect. If expect is == 0.0 then revert to using testCase.assertAlmostEquals() method and check
+  expect. If expect is == 0.0 then revert to using testCase.assertAlmostEqual() method and check
   that actual is the same as expect for given number of places"""
 
   if expect == 0.0:
-    testCase.assertAlmostEquals(expect, actual, places = places)
+    testCase.assertAlmostEqual(expect, actual, places = places)
   else:
     percentDifference = math.fabs( ((actual-expect)/float(expect)) * 100.0 )
     msg = "Actual %f != Expect %f within tolerance of %f%% (difference = %f%%)" % (actual, expect, percenttolerance, percentDifference)
-    testCase.assert_(percentDifference <= percenttolerance, msg)
+    testCase.assertTrue(percentDifference <= percenttolerance, msg)
 
 def checkVector(tc, expect, actual, msg=None, tolerance = 0.0025):
   """Assert that two vectors are within tolerance of each other
@@ -28,7 +28,7 @@ def checkVector(tc, expect, actual, msg=None, tolerance = 0.0025):
   @param actual Actual vector
   @param msg Test fail message
   @param tolerance Acceptable distance between expected and actual vectors"""
-  tc.assertEquals(len(expect), len(actual), msg=msg)
+  tc.assertEqual(len(expect), len(actual), msg=msg)
   diff = (expect[0] - actual[0], expect[1] - actual[1], expect[2]-actual[2])
   dist = math.sqrt( diff[0]**2 + diff[1]**2 + diff[2]**2)
   if msg == None:
@@ -40,7 +40,7 @@ def _compareCollection(path, testCase, expect, actual, places, percenttolerance)
   if expectType == list or expectType == tuple:
     #Compare lists
     try:
-      testCase.assertEquals(len(expect), len(actual))
+      testCase.assertEqual(len(expect), len(actual))
     except AssertionError as e:
       raise AssertionError("%s at '%s'" % (str(e), path))
 
@@ -52,7 +52,7 @@ def _compareCollection(path, testCase, expect, actual, places, percenttolerance)
     akeys = list(actual.keys())
     ekeys.sort()
     akeys.sort()
-    testCase.assertEquals(ekeys, akeys)
+    testCase.assertEqual(ekeys, akeys)
     for k,v in expect.items():
       _compareCollection(path+'[%s]'% (k,), testCase, v, actual[k], places, percenttolerance)
   elif expectType == float:
@@ -63,13 +63,13 @@ def _compareCollection(path, testCase, expect, actual, places, percenttolerance)
       elif percenttolerance != None:
         assertFloatWithinPercentage(testCase, expect, actual, percenttolerance = percenttolerance, places = places)
       else:
-        testCase.assertAlmostEquals(expect, actual, places = places)
+        testCase.assertAlmostEqual(expect, actual, places = places)
     except AssertionError as e:
       raise AssertionError("%s at '%s'" % (str(e), path))
   else:
     #Compare anything else
     try:
-      testCase.assertEquals(expect,actual)
+      testCase.assertEqual(expect,actual)
     except AssertionError as e:
       raise AssertionError("%s at '%s'" % (str(e), path))
 

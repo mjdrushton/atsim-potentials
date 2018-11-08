@@ -195,11 +195,12 @@ class ConfigParser(object):
                       created in the configuration file before parsing by this class."""
     self._config_parser = self._init_config_parser(fp, overrides, additional)
     self._tabulation_section = None
-    self._default_range_start = MultiRangeDefinitionTuple(">", 0.0)
+    self._default_range_start = MultiRangeDefinitionTuple(u">", 0.0)
 
   def _init_config_parser(self, fp, overrides, additional):
     cp = _RawConfigParser()
-    cp.readfp(fp)
+    # cp.readfp(fp)
+    cp.read_file(fp)
 
     # Process overrides
     for override in overrides:
@@ -488,14 +489,16 @@ class ConfigParser(object):
     return self._config_parser
 
   def _convert_species_type(self, property_name, v):
-    default = str
+    def default(v):
+      return u"{}".format(v)
+
     known_properties = {
       'atomic_mass' : float, 
       'atomic_number' : int, 
       'covalent_radius' : float,
       'lattice_constant' : float, 
       'charge' : float,
-      'lattice_type' : str}
+      'lattice_type' : default}
 
     converted = known_properties.get(property_name, default)(v)
     return converted

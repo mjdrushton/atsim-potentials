@@ -9,7 +9,8 @@ def _grammar():
   identifier = Combine(pyparsing_common.identifier+ZeroOrMore(Literal(".")+pyparsing_common.identifier))
 
   # multi_range
-  range_start = Group((Literal(">=") | Literal(">"))("range_type") + number("start"))("range_start")
+  range_start = Group((Literal(u">=") | Literal(u">"))("range_type") + number("start"))("range_start")
+  # range_start = Group((unicodeString(u">=") | unicodeString(u">"))("range_type") + number("start"))("range_start")
 
   modified = Forward()
   potential_description = Group(identifier("potential_label") + Group(ZeroOrMore(number))("potential_parameters"))("potential_description")

@@ -45,7 +45,7 @@ class TestPotentialClass(unittest.TestCase):
     """Check potentials.Potential.energy"""
     potfunc = potentials.buck(1388.773, 2.76, 175)
     pot = potentials.Potential("A", "B", potfunc)
-    self.assertAlmostEquals(-10041.34343169, pot.energy(0.5), places = 5)
+    self.assertAlmostEqual(-10041.34343169, pot.energy(0.5), places = 5)
 
   def testForce(self):
     """Check potentials.Potential.force() method"""
@@ -53,7 +53,7 @@ class TestPotentialClass(unittest.TestCase):
     pot = potentials.Potential("A", "B", energyfunc)
     expect = 7.151
     actual = pot.force(2.0, h= 0.1e-5)
-    self.assertAlmostEquals(expect, actual, places = 3)
+    self.assertAlmostEqual(expect, actual, places = 3)
 
 class TestWritePotentials(unittest.TestCase):
   """Tests for the atsim.potentials.writePotentials"""
@@ -80,9 +80,9 @@ class TestWritePotentials(unittest.TestCase):
     tokens = line.split()
     delpot, cutpot, ngrid = tokens
 
-    self.assertAlmostEquals(6.5/float(6500), float(delpot), places = 5)
-    self.assertAlmostEquals(6.5, float(cutpot))
-    self.assertEquals(6500, int(ngrid))
+    self.assertAlmostEqual(6.5/float(6500), float(delpot), places = 5)
+    self.assertAlmostEqual(6.5, float(cutpot))
+    self.assertEqual(6500, int(ngrid))
 
   def testLAMMPS(self):
     """Test potentials.writePotentials() for LAMMPS"""
@@ -116,9 +116,9 @@ class TestWritePotentials(unittest.TestCase):
     actual = sbuild.readlines()
     msg = "%s != %s" % (expect, actual)
 
-    self.assertEquals(len(expect), len(actual), msg = msg)
+    self.assertEqual(len(expect), len(actual), msg = msg)
     for e,a in zip(expect, actual):
       a = a.decode()
-      self.assertEquals(os.linesep, a[-1])
+      self.assertEqual(os.linesep, a[-1])
       a = a[:-1]
-      self.assertEquals(e,a)
+      self.assertEqual(e,a)

@@ -11,6 +11,13 @@ from ._potential_form import Potential_Form
 from ._cexprtk_potential_function import _Cexptrk_Potential_Function
 from ._potential_form import Potential_Form
 
+# Later versions of python
+if hasattr(inspect, "getfullargspec"):
+  getargspec = inspect.getfullargspec
+else:
+  getargspec = inspect.getargspec
+
+
 class Potential_Form_Registry(object):
   """Factory class that takes [Potential-Form] definitions
   from ConfigParser and turns them into Potential_Form objects"""
@@ -38,7 +45,8 @@ class Potential_Form_Registry(object):
     potential_forms = {}
     for name, pyfunc in inspect.getmembers(potentialfunctions, inspect.isfunction):
       name = "as."+name
-      argspec = inspect.getargspec(pyfunc)
+      argspec = getargspec(pyfunc)
+      # argspec = inspect.getargspec(pyfunc)
       d = PotentialFormTuple(signature = PotentialFormSignatureTuple(name, argspec.args), expression = "")
       func = _Python_Potential_Function(d, pyfunc)
       pf = Potential_Form(func)

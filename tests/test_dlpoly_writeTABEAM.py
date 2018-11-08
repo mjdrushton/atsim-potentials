@@ -92,9 +92,9 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
     outfile = StringIO(outfile.getvalue())
 
     #Check structure of the file
-    self.assertEquals(2, self._countSections(outfile, 'embe'))
-    self.assertEquals(2, self._countSections(outfile, 'dens'))
-    self.assertEquals(3, self._countSections(outfile, 'pair'))
+    self.assertEqual(2, self._countSections(outfile, 'embe'))
+    self.assertEqual(2, self._countSections(outfile, 'dens'))
+    self.assertEqual(3, self._countSections(outfile, 'pair'))
 
 
   def testTabulateFunction(self):
@@ -118,7 +118,7 @@ class DLPOLYWriteTABEAMTestCase(unittest.TestCase):
 
     expectvalues = [3.0, 5.0, 7.0, 9.0, 11.0]
 
-    self.assertEquals(expectvalues, actualvalues)
+    self.assertEqual(expectvalues, actualvalues)
 
 
 class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
@@ -224,7 +224,7 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
       # import pdb;pdb.set_trace()
       engcfg = extractDLPOLYEnergy()
       expect = -998.811
-      self.assertAlmostEquals(expect, engcfg, places = 3)
+      self.assertAlmostEqual(expect, engcfg, places = 3)
     finally:
       os.chdir(oldpwd)
 
@@ -255,7 +255,7 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
       runDLPoly()
       engcfg = extractDLPOLYEnergy()
       expect =-585.4435
-      self.assertAlmostEquals(expect, engcfg, places = 3)
+      self.assertAlmostEqual(expect, engcfg, places = 3)
     finally:
       os.chdir(oldpwd)
 
@@ -314,7 +314,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       runDLPoly()
       # import pdb;pdb.set_trace()
       energy = extractDLPOLYEnergy()
-      self.assertAlmostEquals(65.31152, energy, places=4)
+      self.assertAlmostEqual(65.31152, energy, places=4)
 
     finally:
       os.chdir(oldpwd)
@@ -360,7 +360,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
 
       runDLPoly()
       energy = extractDLPOLYEnergy()
-      self.assertAlmostEquals(14.72, energy, places=4)
+      self.assertAlmostEqual(14.72, energy, places=4)
 
     finally:
       os.chdir(oldpwd)
@@ -419,7 +419,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
       expect += 0.567*5.0 + 0.98*5.590169
       expect += 0.567*2.5 + 0.98*5.590169
 
-      self.assertAlmostEquals(expect, energy, places=4)
+      self.assertAlmostEqual(expect, energy, places=4)
 
     finally:
       os.chdir(oldpwd)

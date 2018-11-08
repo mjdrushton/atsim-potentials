@@ -170,7 +170,7 @@ class eam_tabulate_example1TestCase(TempfileTestCase):
       runLAMMPS()
       energy = extractLAMMPSEnergy()
 
-      self.assertAlmostEquals(-8.23982879, energy, places = 5)
+      self.assertAlmostEqual(-8.23982879, energy, places = 5)
     finally:
       os.chdir(oldpwd)
 
@@ -232,7 +232,7 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
           potfile.write("pair_coeff * * table.set "+potmap+"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
-        self.assertAlmostEquals(expect, energy, msg = potmap)
+        self.assertAlmostEqual(expect, energy, msg = potmap)
     finally:
       os.chdir(oldpwd)
 
@@ -296,7 +296,7 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
           potfile.write("pair_coeff * * table.set "+potmap+"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
-        self.assertAlmostEquals(expect, energy, msg = potmap)
+        self.assertAlmostEqual(expect, energy, msg = potmap)
 
       # Now repeat for triplet of atoms
       shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(), "setfl_triplet.lmpstruct"), os.path.join(self.tempdir,"structure.lmpstruct"))
@@ -315,7 +315,7 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
           potfile.write("pair_coeff * * table.set "+potmap+"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
-        self.assertAlmostEquals(expect, energy, msg = potmap)
+        self.assertAlmostEqual(expect, energy, msg = potmap)
 
     finally:
       os.chdir(oldpwd)
@@ -328,10 +328,10 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
     eamPotentials, pairPotentials = exampleModule.makePotentialObjects()
     embed_Cu = [p.embeddingFunction for p in eamPotentials if p.species == "Cu"][0]
 
-    self.assertAlmostEquals(-1.76619128240398, embed_Cu(10.0))
-    self.assertAlmostEquals(-2.18790796129658, embed_Cu(20.0))
-    self.assertAlmostEquals(-2.17281697911785, embed_Cu(30.0))
-    self.assertAlmostEquals(-2.13787794765212, embed_Cu(40.0))
+    self.assertAlmostEqual(-1.76619128240398, embed_Cu(10.0))
+    self.assertAlmostEqual(-2.18790796129658, embed_Cu(20.0))
+    self.assertAlmostEqual(-2.17281697911785, embed_Cu(30.0))
+    self.assertAlmostEqual(-2.13787794765212, embed_Cu(40.0))
 
 
   def testWriteSetFLEmbedAl(self):
@@ -341,10 +341,10 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
     eamPotentials, pairPotentials = exampleModule.makePotentialObjects()
     embed_Al = [p.embeddingFunction for p in eamPotentials if p.species == "Al"][0]
 
-    self.assertAlmostEquals(-2.35881750559297, embed_Al(10.0))
-    self.assertAlmostEquals(-2.82971758138417, embed_Al(20.0))
-    self.assertAlmostEquals(-2.75841139984064, embed_Al(30.0))
-    self.assertAlmostEquals(-2.47821972143384, embed_Al(40.0))
+    self.assertAlmostEqual(-2.35881750559297, embed_Al(10.0))
+    self.assertAlmostEqual(-2.82971758138417, embed_Al(20.0))
+    self.assertAlmostEqual(-2.75841139984064, embed_Al(30.0))
+    self.assertAlmostEqual(-2.47821972143384, embed_Al(40.0))
 
 
   @needsLAMMPS
@@ -387,7 +387,7 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
           potfile.write("pair_coeff * * Zhou_AlCu.setfl "+potmap+"\n")
         runLAMMPS()
         energy = extractLAMMPSEnergy()
-        self.assertAlmostEquals(expectEnergy, energy, places = 4, msg = potmap)
+        self.assertAlmostEqual(expectEnergy, energy, places = 4, msg = potmap)
 
     finally:
       os.chdir(oldpwd)
@@ -428,7 +428,7 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
       runLAMMPS()
       lammpsenergy = extractLAMMPSEnergy()
 
-      self.assertAlmostEquals(lammpsenergy, dlpolyenergy, places = 4)
+      self.assertAlmostEqual(lammpsenergy, dlpolyenergy, places = 4)
 
     finally:
       os.chdir(oldpwd)
@@ -497,7 +497,7 @@ class eam_tabulate_example3TestCase(TempfileTestCase):
       runLAMMPS()
       lammpsenergy = extractLAMMPSEnergy()
 
-      self.assertAlmostEquals(lammpsenergy, dlpolyenergy, places = 4)
+      self.assertAlmostEqual(lammpsenergy, dlpolyenergy, places = 4)
 
     finally:
       os.chdir(oldpwd)

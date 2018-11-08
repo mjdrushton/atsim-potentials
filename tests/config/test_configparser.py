@@ -152,13 +152,12 @@ nrho : 11
     parsed.tabulation
 
 def test_species():
-
   # Test empty reference data section
   parsed = ConfigParser(io.StringIO())
   assert parsed.species == {}
 
   # Test reference data with overrides
-  parsed = ConfigParser(io.StringIO("""
+  parsed = ConfigParser(io.StringIO(u"""
 [Species]
 Gd.atomic_mass = 1.234
 Gd.charge = 4.567
@@ -170,9 +169,9 @@ Al.lattice_constant = 7.8910
   
   """))
 
-  expect =  { 'Gd' : {'atomic_mass' : 1.234, 'charge' : 4.567 },
-              'NewSpecies' : {'atomic_number' : 600},
-              'Al' : {'lattice_type' : 'fcc', 'lattice_constant' : 7.8910}
+  expect =  { u'Gd' : {u'atomic_mass' : 1.234, u'charge' : 4.567 },
+              u'NewSpecies' : {u'atomic_number' : 600},
+              u'Al' : {u'lattice_type' : u'fcc', u'lattice_constant' : 7.8910}
   }
 
   actual = parsed.species
@@ -181,16 +180,12 @@ Al.lattice_constant = 7.8910
 
   # Test that an exception is raised if invalid syntax used
 
-  parsed = ConfigParser(io.StringIO("""
+  parsed = ConfigParser(io.StringIO(u"""
 [Species]
 Gd : 1.234
 """))
   with pytest.raises(ConfigParserException):
     parsed.species
-    
-
-
-
 
 def test_parsed_sections():
   expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density', 'pair']
@@ -221,15 +216,15 @@ def test_parsed_sections():
   assert expect == actual
 
 def test_orphan_sections():
-  with _get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").open("r") as infile:
+  with io.open(_get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").strpath, encoding="utf8") as infile:
     sio = io.StringIO(infile.read())
 
   sio.seek(0,os.SEEK_END)
-  sio.write("\n\n[Charges]\nU : 2.22\nO: -1.11\n")
-  sio.write("[Masses]\nU : 1.234\nO: 4.56\n")
+  sio.write(u"\n\n[Charges]\nU : 2.22\nO: -1.11\n")
+  sio.write(u"[Masses]\nU : 1.234\nO: 4.56\n")
   sio.seek(0)
 
-  expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density_fs', 'pair']
+  expect = [u'tabulation', u'potential_form', u'eam_embed', u'eam_density_fs', u'pair']
   expect.sort()
 
   cp = ConfigParser(sio)
@@ -238,7 +233,7 @@ def test_orphan_sections():
   assert expect == actual
 
   actual = cp.orphan_sections
-  expect = ["Charges", "Masses"]
+  expect = [u"Charges", u"Masses"]
 
   actual.sort()
   expect.sort()
@@ -248,10 +243,10 @@ def test_orphan_sections():
 
 def test_overrides():
   # Test changing a values
-  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
     cp = ConfigParser(infile, [
-      ConfigParserOverrideTuple("Tabulation", "target", "DLPOLY"),
-      ConfigParserOverrideTuple("Potential-Form", "bks(r,qi,qj,A,rho,C)", "as.buck(r, A, rho, C)")
+      ConfigParserOverrideTuple(u"Tabulation", u"target", u"DLPOLY"),
+      ConfigParserOverrideTuple(u"Potential-Form", u"bks(r,qi,qj,A,rho,C)", u"as.buck(r, A, rho, C)")
     ])
 
   assert "DLPOLY" == cp.tabulation.target
@@ -262,54 +257,53 @@ def test_overrides():
   k,v = cp.potential_form[0]
 
   assert k.label == "bks"
-  assert k.parameter_names == ["r","qi","qj","A","rho","C"]
-  assert v == "as.buck(r, A, rho, C)"
+  assert k.parameter_names == [u"r",u"qi",u"qj",u"A",u"rho",u"C"]
+  assert v == u"as.buck(r, A, rho, C)"
   
   # Make sure an error is thrown when attempting to change a value that doesn't exist
-  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
     with pytest.raises(ConfigOverrideException):
       cp = ConfigParser(infile, overrides = [
-        ConfigParserOverrideTuple("Tabulation", "targe", "DLPOLY"),
+        ConfigParserOverrideTuple(u"Tabulation", u"targe", u"DLPOLY"),
       ])
 
   # Test adding extra value to a section
-  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
       cp = ConfigParser(infile, additional = [
-        ConfigParserOverrideTuple("Tabulation", "blah", "blah"),
+        ConfigParserOverrideTuple(u"Tabulation", u"blah", u"blah"),
       ])
 
-  expect = ['target', 'cutoff', 'nr', 'blah']
-  actual = list(cp.raw_config_parser['Tabulation'])
+  expect = [u'target', u'cutoff', u'nr', u'blah']
+  actual = list(cp.raw_config_parser[u'Tabulation'])
   assert expect == actual
-  assert 'blah' == cp.raw_config_parser['Tabulation']['blah']
+  assert 'blah' == cp.raw_config_parser[u'Tabulation'][u'blah']
 
   # Make sure an error is thrown if trying to add when item already exists
-  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
     with pytest.raises(ConfigOverrideException):
       cp = ConfigParser(infile, additional = [
-        ConfigParserOverrideTuple("Tabulation", "nr", "blah"),
+        ConfigParserOverrideTuple(u"Tabulation", u"nr", u"blah"),
       ])
-
 
   # test removing a value from a section
-  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
       cp = ConfigParser(infile, overrides = [
-        ConfigParserOverrideTuple("Tabulation", "nr", None),
+        ConfigParserOverrideTuple(u"Tabulation", u"nr", None),
       ])
 
-  expect = ['target', 'cutoff', ]
-  actual = list(cp.raw_config_parser['Tabulation'])
+  expect = [u'target', u'cutoff', ]
+  actual = list(cp.raw_config_parser[u'Tabulation'])
   assert expect == actual
 
   # test removing the last item from a section
-  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
       cp = ConfigParser(infile, overrides = [
-        ConfigParserOverrideTuple("Tabulation", "nr", None),
-        ConfigParserOverrideTuple("Tabulation", "target", None),
-        ConfigParserOverrideTuple("Tabulation", "cutoff", None),
+        ConfigParserOverrideTuple(u"Tabulation", u"nr", None),
+        ConfigParserOverrideTuple(u"Tabulation", u"target", None),
+        ConfigParserOverrideTuple(u"Tabulation", u"cutoff", None),
       ])
 
-  assert not cp.raw_config_parser.has_section("Tabulation")
+  assert not cp.raw_config_parser.has_section(u"Tabulation")
 
 def u_th_filtered_test(orig_cp, filtered_cp):
   # First check the unfiltered properties

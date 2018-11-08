@@ -89,7 +89,7 @@ def spline(potential_forms, potential_form_builder):
   # ... we need to be able to evaluate the potential at the start point
   #     this allows values to be calculated at any point (as long as the potential's well behaved there)
   pot3_start =tdict['start'].start
-  tdict['start'] = MultiRangeDefinitionTuple(">", float("-inf"))
+  tdict['start'] = MultiRangeDefinitionTuple(u">", float("-inf"))
   pot3 = pform.next.next.__class__(**tdict)
 
   if not pform.next.next.next is None:
