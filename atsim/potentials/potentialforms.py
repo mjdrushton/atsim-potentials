@@ -9,6 +9,14 @@ import sys
 
 from ._util import _rpartial
 
+try:
+  from collections.abc import Callable
+except ImportError:
+  from collections import Callable
+
+
+def _iscallable(obj):
+  return isinstance(obj, Callable)
 
 class _FunctionFactory(object):
 
@@ -19,7 +27,7 @@ class _FunctionFactory(object):
     return _rpartial(self._func, *args)
 
 def _populate_module():
-  potfuncs = inspect.getmembers(potentialfunctions, inspect.isfunction)
+  potfuncs = inspect.getmembers(potentialfunctions, _iscallable)
 
   currmodule = sys.modules[__name__]
   for name, func in potfuncs:

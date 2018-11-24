@@ -13,7 +13,7 @@ from ._potential import Potential
 from ._eam_potential import EAMPotential
 
 from ._spline import SplinePotential # noqa
-from ._util import gradient # noqa
+from ._util import gradient, num_gradient # noqa
 from ._dlpoly_writeTABEAM import writeTABEAM # noqa
 from ._dlpoly_writeTABEAM import writeTABEAMFinnisSinclair # noqa
 

@@ -749,7 +749,7 @@ class LAMMPSWriteEAMTableTestCase(unittest.TestCase):
     comments = [
       "Sourse: M.I. Mendelev,  D.J. Srolovitz,  G.J. Ackland and  S. Han, J. Mater. Res. 20, 208-218 (2005).",
       "Contact information: mendelev@ameslab.gov",
-      "Sunday, Jun 10, 2007  The potential was taken from Al3Fe_D03 (in C:\SIMULATION.MD\Al-Fe\T=0)" ]
+      "Sunday, Jun 10, 2007  The potential was taken from Al3Fe_D03 (in C:\\SIMULATION.MD\\Al-Fe\\T=0)" ]
 
     #Embedding functions
     from ._eam_fs_AlFe import alEmbedFunction
