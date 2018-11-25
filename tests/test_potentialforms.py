@@ -1,5 +1,5 @@
 
-from atsim.potentials import potentialfunctions, potentialforms, num_gradient
+from atsim.potentials import potentialfunctions, potentialforms, num_deriv
 
 import pytest
 
