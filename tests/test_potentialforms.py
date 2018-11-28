@@ -13,8 +13,34 @@ def test_polynomial():
   pf = potentialforms.polynomial(1.1, 2.43, 1.82, -2.4)
   assert pytest.approx(pf(r)) == expect
 
+class PotentialFunctionsCaller(object):
+  """Helper used in test_deriv, this is for testing the functions from atsim.potentialfunctions"""
 
-def test_deriv():
+  def create_pot_func(self, potname, args):
+    potfunc = getattr(potentialfunctions, potname)
+    return potfunc
+
+  def call_potfunc(self, potfunc, r, args):
+    r_args = [r]
+    if args:
+      r_args.extend(args)
+    return potfunc(*r_args)
+
+class PotentialFormsCaller(object):
+  """Helper used in test_deriv, this is for testing the functions from atsim.potentialforms"""
+
+  def create_pot_func(self, potname, args):
+    potcls = getattr(potentialforms, potname)
+    potfunc = potcls(*args)
+    return potfunc
+
+  def call_potfunc(self, potfunc, r, args):
+    return potfunc(r)
+
+@pytest.mark.parametrize("caller", [
+  PotentialFunctionsCaller(),
+  PotentialFormsCaller()])
+def test_deriv(caller):
   """Check that potential functions have deriv() attributes"""
 
   r = 1.6
@@ -41,26 +67,30 @@ def test_deriv():
   ) 
 
   for (potname, potargs) in expect.items():
-    potfunc = getattr(potentialfunctions, potname)
+    # potfunc = getattr(potentialfunctions, potname)
 
     if not isinstance(potargs, list):
       potargs = [potargs]
 
     for (args, e_val) in potargs:
-      r_args = (r,)
-      if args:
-        r_args = r_args + args
+      potfunc = caller.create_pot_func(potname, args)
+
 
       # Make sure we can still call the potential function
-      potfunc(*r_args)
+      caller.call_potfunc(potfunc, r, args)
+      # potfunc(*r_args)
 
-      actual = potfunc.deriv(*r_args)
+      actual = caller.call_potfunc(potfunc.deriv, r, args)
       assert pytest.approx(actual) == e_val
 
       # Check against the numerical derivative
       assert pytest.approx(actual, rel = 1e-2) == e_val
 
 
-  potfuncs = inspect.getmembers(potentialfunctions, potentialforms._iscallable)
+@pytest.mark.parametrize("module", [potentialfunctions])
+def test_check_derivs(module):
+  potfuncs = inspect.getmembers(module, potentialforms._iscallable)
   for (potname, potfunc) in potfuncs:
+    if potname.startswith("_"):
+      continue
     assert hasattr(potfunc, "deriv")

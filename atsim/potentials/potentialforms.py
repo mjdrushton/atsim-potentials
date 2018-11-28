@@ -16,7 +16,7 @@ except ImportError:
 
 
 def _iscallable(obj):
-  return isinstance(obj, Callable)
+  return (not obj is Callable) and isinstance(obj, Callable) and (not inspect.isclass(obj))
 
 class _FunctionFactory(object):
 
@@ -24,7 +24,11 @@ class _FunctionFactory(object):
     self._func = func
 
   def __call__(self, *args):
-    return _rpartial(self._func, *args)
+    wrapper = _rpartial(self._func, *args)
+    if hasattr(self._func, "deriv"):
+      wrapper.deriv = _rpartial(self._func.deriv, *args)
+    return wrapper
+
 
 def _populate_module():
   potfuncs = inspect.getmembers(potentialfunctions, _iscallable)

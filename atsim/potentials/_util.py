@@ -80,3 +80,4 @@ class _rpartial(functools.partial):
         kw = self.keywords.copy()
         kw.update(kwargs)
         return self.func(*(args + self.args), **kwargs)
+        
