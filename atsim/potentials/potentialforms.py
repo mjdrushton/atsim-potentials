@@ -27,6 +27,8 @@ class _FunctionFactory(object):
     wrapper = _rpartial(self._func, *args)
     if hasattr(self._func, "deriv"):
       wrapper.deriv = _rpartial(self._func.deriv, *args)
+    if hasattr(self._func, "deriv2"):
+      wrapper.deriv2 = _rpartial(self._func.deriv2, *args)
     return wrapper
 
 

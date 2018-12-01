@@ -31,6 +31,11 @@ import math
 class buck(object):
   """Callable object for evaluating the Buckingham potential"""
 
+  def _as_sympy(self):
+    import sympy
+    r, A, rho, C= sympy.symbols("r A rho C")
+    return A * sympy.exp(-r/rho) - C/r**6
+
   def __call__(self, r, A, rho, C):
     """Buckingham potential form
 
@@ -55,10 +60,25 @@ class buck(object):
     :return: Derivative of Buckingham potential at `r`"""
     return (6.0*C)/r**7 - ((A * math.exp(-r/rho))/rho)
 
+  def deriv2(self, r, A, rho, C):
+    """Return 2nd derivative of Buckingham potential at `r`.
+
+    :param r: Atomic separation.
+    :param A: Buckingham A parameter
+    :param rho: Buckingham rho parameter :math:`\\rho`
+    :param C: Buckingham C parameter
+    :return: Second derivative of Buckingham potential at `r`"""
+    return A*math.exp(-r/rho)/rho**2 - 42.0*C/r**8
+
 buck = buck()
 
 class bornmayer(object):
   """Callable object for evaluating Born-Mayer Potential"""
+
+  def _as_sympy(self):
+    import sympy
+    r, A, rho = sympy.symbols("r A rho")
+    return A * sympy.exp(-r/rho)
 
   def __call__(self, r, A, rho):
     """Born-Mayer potential form
@@ -82,11 +102,26 @@ class bornmayer(object):
     :return: Derivative at `r`"""
     return buck.deriv(r, A, rho, 0.0)
 
+  def deriv2(self, r, A, rho):
+    """Return 2nd derivative of Born-Mayer potential form at `r`
+
+    :param r: Atomic separation.
+    :param A: Potential parameter
+    :param rho: Potential parameter :math:`\\rho`
+    :return: 2nd derivative at `r`"""
+    return buck.deriv2(r, A, rho, 0.0)
+
 bornmayer = bornmayer()
 
 
 class coul(object):
   """Callable representing Coulomb potential (including :math:`4\pi \epsilon_0` term)"""
+
+  def _as_sympy(self):
+    import sympy
+    r, qi, qj = sympy.symbols("r q_i q_j")
+    return (qi * qj)/(4.0*sympy.pi*0.0055264*r)
+    
 
   def __call__(self,r, qi, qj):
     """Coulomb potential (including :math:`4\pi \epsilon_0` term).
@@ -112,7 +147,16 @@ class coul(object):
     :param qj: Charge on species j
     :return: Derivative at `r`"""
 
-    return self(r, qi,qj)/r
+    return -45.2374059061957*qi*qj/(math.pi*r**2)
+
+  def deriv2(self, r, qi, qj):
+    """Return second derivative pf Coulomb potential at `r`
+    
+    :param r: Atomic separation.
+    :param qi: Charge on species i
+    :param qj: Charge on species j
+    :return: 2nd derivative at `r`"""
+    return 90.4748118123914*qi*qj/(math.pi*r**3)
 
 coul = coul()
 
@@ -138,11 +182,26 @@ class constant(object):
     """
     return 0.0
 
+  def deriv2(self, r, constant):
+    """Returns 2nd derivative of this potential form. Here this will always be zero
+
+    :param r: Separation.
+    :param constant: Constant value
+
+    :return: 2nd derivative (0.0)
+    """
+    return 0.0
+
 constant = constant()
 
 class hbnd(object):
   """DL_POLY `hbnd` potential type"""
   
+  def _as_sympy(self):
+    import sympy
+    r, A, B = sympy.symbols("r A B")
+    return A/r**12 - B/r**10
+
   def __call__(self, r, A,B):
     """DL_POLY hbnd form:
 
@@ -167,10 +226,25 @@ class hbnd(object):
 
     return (10.0*B)/r**11 - (12.0 * A)/r**13
 
+  def deriv2(self, r, A,B):
+    """Second derivative of `hbnd` at `r`
+
+    :param r: Atomic separation.
+    :param A: Potential A parameter
+    :param B: Potentials' B parameter
+
+    :return: 2nd derivative of `hbnd` at `r`"""
+    return 2*(78*A/r**2 - 55*B)/r**12
+
 hbnd = hbnd()
 
 class lj(object):
   """Callable for Lennar-Jones 12-6 potential"""
+
+  def _as_sympy(self):
+    import sympy
+    r, epsilon, sigma = sympy.symbols("r epsilon sigma")
+    return 4.0*epsilon*( (sigma**12/r**12) - (sigma**6/r**6))
 
   def __call__(self, r, epsilon, sigma):
     """Lennard-Jones 12-6 potential.
@@ -193,6 +267,15 @@ class lj(object):
     :param sigma: Sigma parameter :math:`\sigma`
     :return: Derivative of potential at `r`"""
     return (24.0*epsilon*sigma**6)/r**7 - (48.0*epsilon*sigma**12)/r**13
+
+  def deriv2(self, r, epsilon, sigma):
+    """Second derivative of Lennard-Jones 12-6 potential at `r`
+
+    :param r: Atomic separation.
+    :param epsilon: Epsilon parameter :math:`\epsilon`
+    :param sigma: Sigma parameter :math:`\sigma`
+    :return: 2nd derivative of potential at `r`"""
+    return -168.0*epsilon*sigma**6/r**8 + 624.0*epsilon*sigma**12/r**14
 
 lj = lj()
 
@@ -231,6 +314,16 @@ class morse(object):
     :return: Derivative of Morse potential at `r`"""
     return D*(-2.0*gamma*math.exp(-2.0*gamma*(r - r_star)) + 2.0*gamma*math.exp(-gamma*(r - r_star)))
 
+  def deriv2(self, r, gamma, r_star, D):
+    """Evaluate derivative of Morse potential at `r`.
+    :param r: Atomic separation.
+    :param gamma: Potential parameter :math:`\gamma`
+    :param r_star: Potential parameter :math:`r_*`
+    :param D: Potential parameter
+
+    :return: Derivative of Morse potential at `r`"""
+    return D*gamma**2*(4.0*math.exp(-2.0*gamma*(r - r_star)) - 2.0*math.exp(-gamma*(r - r_star)))
+
 morse = morse()
 
 
@@ -265,6 +358,17 @@ class polynomial(object):
     :return: derivative of polynomial at `r` """
     r, coefs = self._split_args(args)
     v = [float(i) * r**float(i-1) * c for (i,c) in enumerate(coefs)][1:]
+    return sum([0]+v)
+
+  def deriv2(self, *args):
+    """Evaluate polynomial second derivative.
+
+    This function accepts a variable number of arguments - the first is :math:`r_{ij}`
+    and with the remainder being the polynomial coefficients :math:`C_0, C_1, \dots, C_n` respectively.
+
+    :return: 2nd derivative of polynomial at `r` """
+    r, coefs = self._split_args(args)
+    v = [i * float(i-1) * r**float(i-2) * c for (i,c) in enumerate(coefs)][2:]
     return sum([0]+v)
 
 polynomial = polynomial()
@@ -303,6 +407,16 @@ class sqrt(object):
     :return: Derivative at `r`. """
 
     return (0.5 * G)/math.sqrt(r)
+
+  def deriv2(self, r, G):
+    """Evaluate second derivative of square root function at `r`.
+
+    :param r: Atomic separation.
+    :param r: Variable
+    :param G: Parameter :math:`G`
+
+    :return: 2nd derivative at `r`. """
+    return -G/(4*r**(3/2))
     
 sqrt = sqrt()
 
@@ -369,6 +483,29 @@ class zbl(object):
         *(self.Bk1 + self.Bk2 + self.Bk3 + self.Bk4))/r**2
     return v
 
+  def deriv2(self, r, z1, z2):
+    """Evaluate second derivative of ZBL function at `r`.
+
+    :param r: Atomic separation.
+    :param z1: Atomic number of species i
+    :param z2: Atomic number of species j
+    :return: 2nd derivative of function"""
+    v = z1*z2*(65.6378912429954*(z1**0.23 + z2**0.23)**2* \
+        (self.Bk1**2*self.Ck1*math.exp(-2.13503407300877*self.Bk1*r*(z1**0.23 + z2**0.23)) + \
+        self.Bk2**2*self.Ck2*math.exp(-2.13503407300877*self.Bk2*r*(z1**0.23 + z2**0.23)) + \
+        self.Bk3**2*self.Ck3*math.exp(-2.13503407300877*self.Bk3*r*(z1**0.23 + z2**0.23)) + \
+        self.Bk4**2*self.Ck4*math.exp(-2.13503407300877*self.Bk4*r*(z1**0.23 + z2**0.23))) + \
+        28.79884*(2.13503407300877*z1**0.23 + 2.13503407300877*z2**0.23)* \
+        (self.Bk1*self.Ck1*math.exp(-2.13503407300877*self.Bk1*r*(z1**0.23 + z2**0.23)) + \
+        self.Bk2*self.Ck2*math.exp(-2.13503407300877*self.Bk2*r*(z1**0.23 + z2**0.23)) + \
+        self.Bk3*self.Ck3*math.exp(-2.13503407300877*self.Bk3*r*(z1**0.23 + z2**0.23)) + \
+        self.Bk4*self.Ck4*math.exp(-2.13503407300877*self.Bk4*r*(z1**0.23 + z2**0.23)))/r + \
+        (28.79884*self.Ck1*math.exp(-2.13503407300877*self.Bk1*r*(z1**0.23 + z2**0.23)) + \
+        28.79884*self.Ck2*math.exp(-2.13503407300877*self.Bk2*r*(z1**0.23 + z2**0.23)) + \
+        28.79884*self.Ck3*math.exp(-2.13503407300877*self.Bk3*r*(z1**0.23 + z2**0.23)) + \
+        28.79884*self.Ck4*math.exp(-2.13503407300877*self.Bk4*r*(z1**0.23 + z2**0.23)))/r**2)/r
+    return v
+
 zbl = zbl()
 
 
@@ -387,10 +524,19 @@ class zero(object):
     """Derivative function - always returns 0.0"""
     return 0.0
 
+  def deriv2(self, r):
+    """Second derivative function - always returns 0.0"""
+    return 0.0
+
 zero = zero()
 
 class exp_spline(object):
   """Callable representing exponential spline"""
+
+  def _as_sympy(self):
+    import sympy
+    r, B0, B1, B2, B3, B4, B5, C = sympy.symbols("r, B0, B1, B2, B3, B4, B5, C")
+    return sympy.exp(B0 + B1*r + B2*r**2 + B3*r**3 + B4*r**4 + B5*r**5) + C
 
   def __call__(self, r, B0, B1, B2, B3, B4, B5, C):
     """Exponential spline function (as used in splining routines).
@@ -426,6 +572,24 @@ class exp_spline(object):
       :return: Derivative of spline at `r`"""
 
     return (B1 + r*(2*B2 + r*(3*B3 + 4*B4*r + 5*B5*r**2))) * math.exp(B0 + r*(B1 + r*(B2 + r*(B3 + r*(B4 + B5*r)))))
+
+  def deriv2(self, r, B0, B1, B2, B3, B4, B5, C):
+    """Second derivative of exponential spline. 
+
+      :param r: Atomic separation
+      :param B0: Spline coefficient
+      :param B1: Spline coefficient
+      :param B2: Spline coefficient
+      :param B3: Spline coefficient
+      :param B4: Spline coefficient
+      :param B5: Spline coefficient
+      :param C: C parameter
+
+      :return: 2nd derivative of spline at `r`"""
+
+    return (2*B2 + 6*B3*r + 12*B4*r**2 + 20*B5*r**3 \
+      + (B1 + 2*B2*r + 3*B3*r**2 + 4*B4*r**3 + 5*B5*r**4)**2) \
+      * math.exp(B0 + B1*r + B2*r**2 + B3*r**3 + B4*r**4 + B5*r**5)
 
 exp_spline = exp_spline()
 
