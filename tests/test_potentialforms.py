@@ -1,9 +1,147 @@
 
-from atsim.potentials import potentialfunctions, potentialforms, num_deriv
+from atsim.potentials import potentialfunctions, potentialforms, num_deriv, plus, gradient
 
 import pytest
 
 import inspect
+import math
+import types
+
+def testBuck():
+  r = 0.5
+  a = 1388.773
+  rho = 2.76
+  c = 175.0
+
+  potfunc = potentialforms.buck(a,rho,c)
+  pytest.approx(-10041.34343) == potfunc(r)
+
+def testHbnd():
+  a = 300.0
+  b = 20.0
+
+  potfunc = potentialforms.hbnd(a,b)
+  pytest.approx(1208320) == potfunc(0.5)
+
+def testPlus():
+  potfunc = plus( potentialforms.buck(1388.773, 2.76, 175.0), potentialforms.hbnd(300.0, 20.0))
+  pytest.approx(1198278.65656831) == potfunc(0.5)
+
+def testPlusDeriv():
+  """Test that the plus() function returns wrapped functions that make use of analytical derivatives where available"""
+  
+  class AnalyticalDeriv(object):
+
+    def __init__(self, m, deriv):
+      self._m = m
+      self._deriv = deriv
+
+    def __call__(self, r):
+      return self._m * r + 3.0
+
+    def deriv(self, r):
+      return self._deriv
+
+  # First test that if neither function in the plus has an analytical derivative,
+  # that the wrapped function also doesn't have a .deriv() method
+  def f(r):
+    return -4.0*r
+
+  def g(r):
+    return 10.0*r
+
+  wrapped = plus(f,g)
+  assert not hasattr(wrapped, "deriv")
+  assert pytest.approx(wrapped(2.0)) == 12.0
+  assert pytest.approx(6.0) == gradient(wrapped)(2.0)
+
+  # Now test that if both functions provide analytical derivatives they are 
+  # used and the wrapped function provides a deriv function.
+  f_a = AnalyticalDeriv(-4.0, -24.0)
+  g_a = AnalyticalDeriv(10.0, 100.0)
+
+  wrapped = plus(f_a, g_a)
+  assert hasattr(wrapped, "deriv")
+  assert pytest.approx(wrapped(2.0)) == 18.0
+  assert pytest.approx(6.0) == num_deriv(2.0, wrapped)
+  assert pytest.approx(76.0) == wrapped.deriv(2.0)
+  assert pytest.approx(76.0) == gradient(wrapped)(2.0)
+
+  # Now test that if one of the functions doesn't provide a deriv - the
+  # one that does is still used. 
+  wrapped = plus(f_a, g)
+  assert hasattr(wrapped, "deriv")
+  assert pytest.approx(wrapped(2.0)) == 15.0
+  assert pytest.approx(6.0) == num_deriv(2.0, wrapped)
+  assert pytest.approx(-14.0) == wrapped.deriv(2.0)
+  assert pytest.approx(-14.0) == gradient(wrapped)(2.0)
+
+  # Now do tests for deriv2() method
+  wrapped = plus(f,g)
+  assert not hasattr(wrapped, "deriv2")
+
+  r = 1.6
+
+  A = 1000.0
+  rho = 0.1
+  C = 32
+
+  def b_f(r):
+    return A * math.exp(-r/rho) - C/r**6
+
+  A_h = 100.0
+  B_h = 50.0
+
+  def h_f(r):
+     return  (A_h/r**12) - (B_h/r**10)
+
+  # Create functions with analytical derivatives 
+  b_a = potentialforms.buck(A, rho, C)
+  h_a = potentialforms.hbnd(A_h, B_h)
+
+  assert hasattr(b_a , 'deriv2')
+  assert hasattr(h_a,  'deriv2')
+  assert not hasattr(b_f , 'deriv2')
+  assert not hasattr(h_f,  'deriv2')
+
+  expect_energy = pytest.approx(h_f(r) + b_f(r))
+
+  wrapped_f = plus(h_f, b_f)
+  assert not hasattr(wrapped_f, 'deriv2')
+  assert expect_energy == wrapped_f(r)
+
+  wrapped_a = plus(h_a, b_a)
+  assert hasattr(wrapped_a, 'deriv2')
+  assert expect_energy == wrapped_a(r)
+
+  wrapped_m = plus(h_f, b_a)
+  assert hasattr(wrapped_m, 'deriv2')
+  assert expect_energy == wrapped_m(r)
+
+  expect = pytest.approx(-29.1717612428203)
+  expect_loose = pytest.approx(-29.1717612428203, rel = 1e-4)
+  assert expect_loose == gradient(gradient(wrapped_f))(r)
+  assert expect == gradient(gradient(wrapped_a))(r)
+  assert expect_loose == gradient(gradient(wrapped_m))(r)
+
+  assert expect == wrapped_a.deriv2(r)
+  assert expect_loose == wrapped_m.deriv2(r)
+  
+  # Now let's deliberately change the deriv2 returned by h_a and b_a to make sure the analytical forms are being used.
+  def d2(self, r):
+    return 20.0
+
+  def d2_2(self, r):
+    return 30.0
+
+  h_a.deriv2 = types.MethodType(d2, h_a)#, h_a.__class__)
+  b_a.deriv2 = types.MethodType(d2_2, b_a)#, b_a.__class__)
+
+  wrapped = plus(h_a, b_a)
+  assert pytest.approx(20.0+30.0) == wrapped.deriv2(r)
+  assert pytest.approx(20.0+30.0) == gradient(gradient(wrapped))(r)
+
+
 
 def test_polynomial():
   r = 1.2

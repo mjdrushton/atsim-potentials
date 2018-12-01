@@ -65,16 +65,15 @@ def _writePotential(potential, cutoff, gridPoints, meshResolution, out ):
   #Dump the output to out
   out.write(outputbuilder.getvalue())
 
-def _calculateForce(pot, r, h = 1e-05):
+def _calculateForce(pot, r):
   """Calls pot.force for separation (r) and returns DL_POLY -r dU/dr values rather than
   the dU/dr value normally returned by potentials.Potential.force() method
 
   @param pot potential from which force should be calculated
   @param r Separation at which force should be calculated
-  @param h Increment used when performing numerical differentiation to obtain force
 
   @return -r dU/dr"""
-  dUdr = pot.force(r, h=h)
+  dUdr = pot.force(r)
   return r * dUdr
 
 def _writeTableHeader(delpot, cutpot, ngrid, out):

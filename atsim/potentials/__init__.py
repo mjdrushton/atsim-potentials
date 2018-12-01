@@ -33,6 +33,16 @@ def plus(a,b):
 
   This function is useful for combining existing potentials.
 
+  **Derivatives:**
+
+  If either of the potential callables (`a` and `b`) provide a .deriv() method the function returned by
+  `plus()` will also have a `.deriv()` method. This allows analytical derivatives to be specified. If
+  only one of `a` or `b` provide `.deriv()` then the derivative of the other callable will be evaluated
+  numerically.
+
+  If neither function has a .deriv() method then the function returned here will also *not* have a .deriv()
+  method.
+
   **Example:**
 
     To combine :func:`.buck` and :func:`.hbnd` functions from the :mod:`.potentialsforms` module to give:
@@ -53,6 +63,22 @@ def plus(a,b):
 
   def potential(r):
     return a(r) + b(r)
+
+  # Set derivatives
+  if hasattr(a, 'deriv') or hasattr(b, 'deriv'):
+    deriv_a = gradient(a)
+    deriv_b = gradient(b)
+    def deriv(r):
+      return deriv_a(r) + deriv_b(r)
+    potential.deriv = deriv
+
+    if hasattr(deriv_a, 'deriv') or hasattr(deriv_b, 'deriv'):
+      deriv2_a = gradient(deriv_a)
+      deriv2_b = gradient(deriv_b)
+      def deriv2(r):
+        return deriv2_a(r) + deriv2_b(r)
+      potential.deriv2 = deriv2
+
   return potential
 
 
