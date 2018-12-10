@@ -1,4 +1,6 @@
 import pytest
+from deepdiff import DeepDiff
+
 
 import io
 
@@ -54,6 +56,23 @@ buck_morse(r, A, rho, C, gamma, r_star, D) : buck(r,A,rho,C) + morse(r, gamma, r
   buck_morse = pfr["buck_morse"](1000.0, 0.1, 3.0, 0.719250701502, 1.86874578949, 2.35603812582)
   assert pytest.approx(-0.5811129916666448 + -2.9546) == buck_morse(1.0)
 
+def test_config_potential_form_registry_args():
+  cfg = ConfigParser(io.StringIO())
+  # import pdb; pdb.set_trace()
+  pfr = Potential_Form_Registry(cfg, register_standard=True)
+
+  buck = pfr["as.buck"]
+  actual_pft = buck.signature
+  expect_pft = PotentialFormSignatureTuple("as.buck", ["r", "A", "rho", "C"], False)
+
+  assert DeepDiff(expect_pft, actual_pft) == {}
+
+  buck = pfr["as.polynomial"]
+  actual_pft = buck.signature
+  expect_pft = PotentialFormSignatureTuple("as.polynomial", [], True)
+
+  assert DeepDiff(expect_pft, actual_pft) == {}
+
 def test_repeat_potential_form_error():
   """Make sure error is raised if two potentials have same label"""
   cfg_string = u"""[Potential-Form]
@@ -66,7 +85,7 @@ buck(r, A, rho, C,D) : A*exp(-r/rho) - C/r^6
     pfr = Potential_Form_Registry(cfg)
 
 def test_potential_instantiation_with_wrong_params_error():
-  sig = PotentialFormSignatureTuple('buck', ["r", "A", "rho", "C"])
+  sig = PotentialFormSignatureTuple('buck', ["r", "A", "rho", "C"], False)
   pot = PotentialFormTuple(sig, "A*exp(-r/rho) - C/r^6")
 
   pf = Potential_Form(_Cexptrk_Potential_Function(pot))

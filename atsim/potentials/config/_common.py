@@ -15,7 +15,7 @@ def _populate_module():
 _populate_module()
 
 PotentialFormInstanceTuple = collections.namedtuple('PotentialFormInstanceTuple', ['potential_form', 'parameters', 'start', 'next'])
-PotentialFormSignatureTuple = collections.namedtuple("PotentialFormSignatureTuple", ["label", "parameter_names"])
+PotentialFormSignatureTuple = collections.namedtuple("PotentialFormSignatureTuple", ["label", "parameter_names", "is_varargs"])
 PotentialFormTuple = collections.namedtuple("PotentialFormTuple", ["signature", "expression"])
 
 MultiRangeDefinitionTuple = collections.namedtuple("MultiRangeDefinition", ["range_type", "start"])

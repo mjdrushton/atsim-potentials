@@ -18,7 +18,7 @@ class Potential_Form(object):
     return self.potential_definition.expression
 
   def __call__(self, *args):
-    if not len(args) == len(self.signature.parameter_names)-1:
+    if not self.signature.is_varargs and not len(args) == len(self.signature.parameter_names)-1:
       raise Potential_Form_Exception(
         "Potential form requires {required} arguments but {actual} were provided for potential: {name} {args}".format(
           required = len(self.signature.parameter_names)-1, 

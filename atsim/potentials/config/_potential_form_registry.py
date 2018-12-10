@@ -11,12 +11,9 @@ from ._potential_form import Potential_Form
 from ._cexprtk_potential_function import _Cexptrk_Potential_Function
 from ._potential_form import Potential_Form
 
-# Later versions of python
-if hasattr(inspect, "getfullargspec"):
-  getargspec = inspect.getfullargspec
-else:
-  getargspec = inspect.getargspec
+from ..potentialforms import _iscallable
 
+from funcsigs import signature, Parameter
 
 class Potential_Form_Registry(object):
   """Factory class that takes [Potential-Form] definitions
@@ -40,14 +37,28 @@ class Potential_Form_Registry(object):
     except ConfigParserMissingSectionException:
       pass
 
+  def _is_vararg_signature(self, sig):
+    for p in sig.parameters.values():
+      if not p.kind == Parameter.VAR_POSITIONAL:
+        return False
+    return True
+
   def _register_standard(self):
     from .. import potentialfunctions
     potential_forms = {}
-    for name, pyfunc in inspect.getmembers(potentialfunctions, inspect.isfunction):
+    for name, pyfunc in inspect.getmembers(potentialfunctions, _iscallable):
       name = "as."+name
-      argspec = getargspec(pyfunc)
-      # argspec = inspect.getargspec(pyfunc)
-      d = PotentialFormTuple(signature = PotentialFormSignatureTuple(name, argspec.args), expression = "")
+      sig = signature(pyfunc)
+      
+      # Is this a varargs function?
+      varargs = self._is_vararg_signature(sig)
+      args = []
+
+      if not varargs:
+        for param in sig.parameters.values():
+          args.append(param.name)
+
+      d = PotentialFormTuple(signature = PotentialFormSignatureTuple(name, args, varargs), expression = "")
       func = _Python_Potential_Function(d, pyfunc)
       pf = Potential_Form(func)
       potential_forms[name] = pf

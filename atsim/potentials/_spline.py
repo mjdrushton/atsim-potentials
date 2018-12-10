@@ -6,7 +6,7 @@ import math
 
 from ._util import gradient
 from .potentialfunctions import exp_spline
-
+from .potentialforms import polynomial
 
 
 class Spline_Point(object):
@@ -61,7 +61,7 @@ class Exp_Spline(object):
   """
   
   def __init__(self, detach_point, attach_point):
-    """Create a callable object that is a the exponential spline between `detach_point` and 
+    """Create a callable object that is an exponential spline between `detach_point` and 
     `attach_point`.
 
     :param detach_point: Instance of Spline_Point giving start of spline.
@@ -133,10 +133,138 @@ class Exp_Spline(object):
 
   def __call__(self, r):
     B0,B1,B2,B3,B4,B5,C = self.spline_coefficients
-    # polynomial = B0 + B1*r + B2*r**2 + B3*r**3 + B4*r**4 + B5*r**5
-    # v = math.exp(polynomial) + C
-    # return v
     return exp_spline(r, B0, B1, B2, B3, B4, B5, C)
+
+class Buck4_Spline(object):
+  """Class for representing the splined part of the four ranged Buckingham potential.
+
+  Between the detachment point and `r_min` this is a 5th order polynomial:
+
+  .. math::
+
+    U(r_{ij}) = A_0 + A_1 r_{ij} + A_2 r_{ij}^2 + A_3 r_{ij}^3 + A_4 r_{ij}^4 + A_5 r_{ij}^5
+
+  and between `r_min` and the re-attachment point a 3rd order spline is used:
+
+  .. math::
+
+    U(r_{ij}) = B0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3
+
+  The spline coefficients :math:`A_{0..5}` and :math:`B_{0..3}` are solved such that the 
+  the spline values match with the potential functions at the detach and re-attachment points and r_min.
+  They are continuous in their first and second derivatives across these points and where the two
+  splines meet at `r_min`. Finally, the derivative at `r_min` is set to be 0 with the aim of creating a
+  minimum."""
+
+
+  def __init__(self, detach_point, attach_point, r_min):
+    """Create a callable object that represents the Buckingham-4 type spline between `detach_point` and 
+    `attach_point`.
+
+    :param detach_point: Instance of Spline_Point giving start of spline.
+    :param attach_point: Instance of Spline_Point giving end of spline.
+    :param r_min: Minimum value to be formed between the detach and reattachment points."""
+
+    self._detach_point = detach_point
+    self._attach_point = attach_point
+    self._r_min = r_min
+
+    self._init_spline_coefficients()
+
+
+  def _init_spline_coefficients(self):
+    r_dp = self.detach_point.r
+    r_dp2 = r_dp**2
+    r_dp3 = r_dp**3
+    r_dp4 = r_dp**4
+    r_dp5 = r_dp**5
+
+    r_min = self.r_min
+    r_min2 = r_min**2
+    r_min3 = r_min**3
+    r_min4 = r_min**4
+    r_min5 = r_min**5
+
+    r_ap = self.attach_point.r
+    r_ap2 = r_ap**2
+    r_ap3 = r_ap**3
+
+    import numpy as np
+
+    M = [ 
+      1, r_dp, r_dp2  , r_dp3   , r_dp4    , r_dp5    , 0 , 0     , 0       , 0        ,
+      0, 1   , 2*r_dp , 3*r_dp2 , 4*r_dp3  , 5*r_dp4  , 0 , 0     , 0       , 0        ,
+      0, 0   , 2      , 6*r_dp  , 12*r_dp2 , 20*r_dp3 , 0 , 0     , 0       , 0        ,
+      
+      0, 1   , 2*r_min, 3*r_min2, 4*r_min3 , 5*r_min4 , 0 ,0      ,0        ,0         ,
+      1,r_min, r_min2 , r_min3  , r_min4   , r_min5   , -1, -r_min, -r_min2 , -r_min3  ,
+      0,1    , 2*r_min, 3*r_min2, 4*r_min3 , 5*r_min4 , 0 , -1    , -2*r_min, -3*r_min2,
+      0, 0   , 2      , 6*r_min , 12*r_min2, 20*r_min3, 0 , 0     , -2      , -6*r_min ,
+
+      0, 0   , 0      , 0       , 0        , 0        , 1 , r_ap  , r_ap2   , r_ap3    ,
+      0, 0   , 0      , 0       , 0        , 0        , 0 , 1     , 2*r_ap  , 3*r_ap2  ,
+      0, 0   , 0      , 0       , 0        , 0        , 0 , 0     , 2       , 6*r_ap]
+
+    M = np.reshape(M, (10,10))
+
+    V = [
+      self.detach_point.v,
+      self.detach_point.deriv,
+      self.detach_point.deriv2,
+      0,
+      0,
+      0,
+      0,
+      self.attach_point.v,
+      self.attach_point.deriv,
+      self.attach_point.deriv2 ]
+
+    V = np.reshape(V, (10,1))
+
+    coefficients = np.linalg.solve(M,V)
+    coefficients = coefficients.flatten().tolist()
+
+    self._spline5 = polynomial(*coefficients[:6])
+    self._spline3 = polynomial(*coefficients[6:])
+
+
+  @property
+  def detach_point(self):
+    """Spline_Point giving start of splined region"""
+    return self._detach_point
+
+  @property
+  def attach_point(self):
+    """Spline_Point giving end of splined region"""
+    return self._attach_point
+
+  @property
+  def r_min(self):
+    """Position of minimum"""
+    return self._r_min
+
+  @property
+  def spline_coefficients(self):
+    """Spline coefficients as list of form [A_0, A_1, A_2, A_3, A_4, A_5, B_0, B_1, B_2, B_3]"""
+    return self.spline5.args + self.spline3.args
+
+  @property
+  def spline5(self):
+    """Callable (atsim.potentials.potentialfunctions.polynomial) object representing the fifth order section of the buck4 spline - between `detach_point` and `r_min`"""
+    return self._spline5
+
+  @property
+  def spline3(self):
+    """Callable (atsim.potentials.potentialfunctions.polynomial) object representing the fifth order section of the buck4 spline - between `detach_point` and `r_min`"""
+    return self._spline3
+
+  def __call__(self, r):
+    if r < self.r_min:
+      return self.spline5(r)
+    else:
+      return self.spline3(r)
+
+
 
 class SplinePotential(object):
   """Callable to allow splining of one potential to another"""

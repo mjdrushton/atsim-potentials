@@ -40,7 +40,7 @@ def test_spline_modifier():
     expect = spline(r)
     actual = mod_spline(r)
 
-    assert pytest.approx(expect) == actual
+    assert pytest.approx(expect, abs = 1e-3) == actual
 
 def test_bad_ranges():
   # Bad spline name

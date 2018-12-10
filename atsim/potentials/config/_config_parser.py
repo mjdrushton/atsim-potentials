@@ -370,7 +370,7 @@ class ConfigParser(object):
     label = label.strip()
 
     params = [p.strip() for p in params.split(',')]
-    return PotentialFormSignatureTuple(label, params)
+    return PotentialFormSignatureTuple(label, params, False)
 
   def _parse_params_section(self, section_name, parse_line_func):
     if not self._config_parser.has_section(section_name):

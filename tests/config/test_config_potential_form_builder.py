@@ -25,6 +25,13 @@ def test_potential_form_builder():
   potential_func = pfb.create_potential_function(in_tuple)
   assert pytest.approx(pforms.buck(2.0, 1000.0, 0.3, 32.0)) == potential_func(2.0)
 
+  # Test with a varargs potential form
+  in_tuple = PotentialFormInstanceTuple("as.polynomial", [-1.2, 1.3, 32.0], None, None)
+  potential_func = pfb.create_potential_function(in_tuple)
+  r = 2.0
+  assert pytest.approx(-1.2 + 1.3*r + 32.0*r**2) == potential_func(2.0)
+
+
 def test_bad_arguments_to_multi_range_potential_form():
   Rdt = Multi_Range_Potential_Form.Range_Defn_Tuple
 

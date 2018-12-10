@@ -10,7 +10,7 @@ from atsim.potentials.config import ConfigParserOverrideTuple
 from atsim.potentials.config import ConfigOverrideException
 from atsim.potentials.config._config_parser import _RawConfigParser
 from atsim.potentials.config._common import SpeciesTuple
-from atsim.potentials.config._common import EAMFSDensitySpeciesTuple
+from atsim.potentials.config._common import EAMFSDensitySpeciesTuple, PotentialFormTuple, PotentialFormSignatureTuple
 
 from ._common import _get_lammps_resource_dir, _get_dlpoly_resource_dir
 
@@ -24,18 +24,18 @@ density(r_ij, n) : (n/r_ij^8) * (1/2)*(1+erf(20*(r_ij-1.5)))
 """
 
   expect = [
-    (("buck_morse", ["r_ij", "A", "rho", "C", "D", "gamma", "r0"]), "buck(r_ij, A,rho,C) + morse(r_ij, gamma,r0,D)"),
-    (("density", ["r_ij", "n"]), "(n/r_ij^8) * (1/2)*(1+erf(20*(r_ij-1.5)))")]
+    PotentialFormTuple(PotentialFormSignatureTuple(u"buck_morse", [u"r_ij", u"A", u"rho", u"C", u"D", u"gamma", u"r0"], False), u"buck(r_ij, A,rho,C) + morse(r_ij, gamma,r0,D)"),
+    PotentialFormTuple(PotentialFormSignatureTuple(u"density", [u"r_ij", u"n"], False), u"(n/r_ij^8) * (1/2)*(1+erf(20*(r_ij-1.5)))")]
 
   parsed = ConfigParser(io.StringIO(cfg_string))
   actual = parsed.potential_form
-  assert expect == actual
+  assert DeepDiff(expect,actual) == {}
 
 def test_parse_potential_form_signature():
   pfstr = "buck_morse(r_ij, A,rho,C,D,gamma,r0)"
 
   cfg = ConfigParser(io.StringIO())
-  expect = ("buck_morse", ["r_ij", "A", "rho", "C", "D", "gamma", "r0"])
+  expect = PotentialFormSignatureTuple(u"buck_morse", [u"r_ij", u"A", u"rho", u"C", u"D", u"gamma", u"r0"], False)
   actual = cfg._parse_potential_form_signature(pfstr)
   assert expect == actual
 
