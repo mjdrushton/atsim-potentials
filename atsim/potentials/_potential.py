@@ -36,7 +36,7 @@ class Potential(object):
 
   @property
   def potentialFunction(self):
-    return self_potentialFunction
+    return self._potentialFunction
 
   def energy(self, r):
     """:param r: Separation
