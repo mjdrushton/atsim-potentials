@@ -6,7 +6,8 @@ from atsim.potentials.config._modifier_registry import Modifier_Registry
 from atsim.potentials.config import ConfigParser
 from atsim.potentials.config._common import PotentialFormInstanceTuple, SpeciesTuple
 from atsim.potentials.config._common import MultiRangeDefinitionTuple
-from atsim.potentials import Multi_Range_Potential_Form
+from atsim.potentials import Multi_Range_Defn
+from atsim.potentials._multi_range_potential_form import Multi_Range_Potential_Form
 
 import atsim.potentials.potentialfunctions as pforms
 
@@ -22,6 +23,7 @@ def test_potential_form_builder():
   pfb = Potential_Form_Builder(pfr, Modifier_Registry())
 
   in_tuple = PotentialFormInstanceTuple("as.buck", [1000.0, 0.3, 32.0], None, None)
+  # import pdb; pdb.set_trace()
   potential_func = pfb.create_potential_function(in_tuple)
   assert pytest.approx(pforms.buck(2.0, 1000.0, 0.3, 32.0)) == potential_func(2.0)
 
@@ -33,7 +35,7 @@ def test_potential_form_builder():
 
 
 def test_bad_arguments_to_multi_range_potential_form():
-  Rdt = Multi_Range_Potential_Form.Range_Defn_Tuple
+  Rdt = Multi_Range_Defn
 
   tuples = [
   Rdt('>=', 2.0, "one"),
@@ -59,7 +61,7 @@ def test_bad_arguments_to_multi_range_potential_form():
 
 
 def test_multirange_potential_range_search():
-  Rdt = Multi_Range_Potential_Form.Range_Defn_Tuple
+  Rdt = Multi_Range_Defn
 
   tuples = [
   Rdt('>=', 2.0, "one"),
@@ -98,7 +100,7 @@ def test_multirange_potential_range_search():
 
 def test_multirange_potential_set_range_tuples():
   # Check that range tuples appear in ascending order
-  Rdt = Multi_Range_Potential_Form.Range_Defn_Tuple
+  Rdt = Multi_Range_Defn
   tuples = [
     Rdt('>=', 2.0, "one"),
     Rdt('>', float("-inf"), "two"),

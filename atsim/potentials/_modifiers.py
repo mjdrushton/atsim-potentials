@@ -3,6 +3,8 @@ import logging
 
 from .config._common import ConfigurationException, MultiRangeDefinitionTuple
 
+from atsim.potentials import plus
+
 def modifier(func):
   func.is_modifier = True
   return func
@@ -30,11 +32,9 @@ def sum(potential_forms, potential_form_builder):
     pot_callable = potential_form_builder.create_potential_function(pfi)
     pot_callables.append(pot_callable)
 
-  def sum_func(r):
-    values = [pc(r) for pc in pot_callables]
-    summed = _sum(values)
-    return summed
-  return sum_func
+  sum_mod = functools.reduce(plus, pot_callables)
+
+  return sum_mod
 
 @modifier
 def spline(potential_forms, potential_form_builder):

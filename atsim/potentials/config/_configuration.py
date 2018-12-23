@@ -2,8 +2,6 @@ from ._config_parser import ConfigParser
 
 from ._common import ConfigurationException
 
-from .._pair_tabulation import DLPoly_PairTabulation
-
 from ._tabulation_factories import TABULATION_FACTORIES
 
 import logging

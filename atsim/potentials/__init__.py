@@ -24,7 +24,7 @@ from ._lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
 from .potentialforms import * # noqa
 from . import potentialfunctions
 
-from ._multi_range_potential_form import Multi_Range_Potential_Form
+from ._multi_range_potential_form import create_Multi_Range_Potential_Form, Multi_Range_Defn
 
 import sys
 

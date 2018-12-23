@@ -80,7 +80,7 @@ class Potential_Form_Registry(object):
     pairs = list(itertools.permutations(self._potential_forms.values(), 2))
     # print([(a.signature.label, b.signature.label) for (a,b) in pairs])
     for a,b in pairs:
-      a._function.register_function(b._function)
+      a.potential_function.register_function(b.potential_function)
 
   @property
   def registered(self):

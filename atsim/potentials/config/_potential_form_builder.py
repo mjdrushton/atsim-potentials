@@ -1,6 +1,6 @@
 import logging
 
-from .._multi_range_potential_form import Multi_Range_Potential_Form
+from .._multi_range_potential_form import create_Multi_Range_Potential_Form, Multi_Range_Defn
 
 class Potential_Form_Builder(object):
   """Class that instantiates potential function callables from PotentialFormInstanceTuple"""
@@ -12,7 +12,7 @@ class Potential_Form_Builder(object):
     self.modifier_registry = modifier_registry
     
   def _make_multi_range_tuple(self, pform_instance):
-    """Convert PotentialFormInstanceTuple into Multi_Range_Potential_Form.Range_Defn_Tuple"""
+    """Convert PotentialFormInstanceTuple into Multi_Range_Defn"""
 
     # Is pform_instance a modifier or a potential_instance?
     if hasattr(pform_instance, "modifier"):
@@ -30,7 +30,7 @@ class Potential_Form_Builder(object):
       start = float("-inf")
       range_type = ">="
 
-    mr_tuple = Multi_Range_Potential_Form.Range_Defn_Tuple(range_type, start, pform)
+    mr_tuple = Multi_Range_Defn(range_type, start, pform)
     return mr_tuple
 
   def create_potential_function(self, potential_form_instance):
@@ -47,5 +47,5 @@ class Potential_Form_Builder(object):
     while n:
       tuples.append(self._make_multi_range_tuple(n))
       n = n.next
-    pot_func = Multi_Range_Potential_Form(*tuples)
+    pot_func = create_Multi_Range_Potential_Form(*tuples)
     return pot_func

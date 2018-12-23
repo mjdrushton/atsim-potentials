@@ -1,6 +1,8 @@
-
-import collections
+# import collections
 import functools
+import operator
+
+from ._util import gradient
 
 def _tuple_cmp(a,b):
   if a.start == b.start:
@@ -14,16 +16,91 @@ def _tuple_cmp(a,b):
 
 _tuple_key = functools.cmp_to_key(_tuple_cmp)
 
+# _Base_Tuple = collections.namedtuple("Multi_Range_Defn", ["range_type", "start", "potential_form"])
+
+class Multi_Range_Defn(object):
+
+  def __init__(self, range_type, start, potential_form, **kwargs):
+    self._range_type = range_type
+    self._start = start
+    self._potential_form = potential_form
+
+    self._deriv_callable = gradient(self._potential_form)
+    self._deriv2_callable = gradient(self._deriv_callable)
+
+  @property
+  def range_type(self):
+    return self._range_type
+
+  @property
+  def start(self):
+    return self._start
+
+  @property
+  def potential_form(self):
+    return self._potential_form
+
+  @property
+  def has_deriv(self):
+    """Returns True if the potential callable provides an analytical derivative through a `.deriv()` method."""
+    return hasattr(self.potential_form, "deriv")
+
+  @property
+  def has_deriv2(self):
+    """Returns True if the potential callable provides an analytical derivative through a `.deriv2()` method."""
+    return hasattr(self.potential_form, "deriv2")
+
+  def deriv(self, r):
+    return self._deriv_callable(r)
+
+  def deriv2(self, r):
+    return self._deriv2_callable(r)
+
+  
+
+
+def create_Multi_Range_Potential_Form(*range_tuples, **kwargs):
+  """Creates Multi_Range_Potential_Form or sub-class instance, from list of Multi_Range_Defn
+  instances in `range_tuples`.
+
+  If any Multi_Range_Defn object's `.has_deriv2` are True then an instance
+  of Multi_Range_Potential_Form_Deriv2 is returned.
+
+  If any Multi_Range_Defn object's `.has_deriv` property is True but all `.has_deriv2` are False then an instance
+  of Multi_Range_Potential_Form_Deriv is returned.
+
+  If non of the Multi_Range_Defn objects provide analytical deriv or deriv2 methods, return Multi_Range_Potential_Form.
+
+  :param range_tuples: List of Multi_Range_Defn instances.
+  :param kwargs: Keyword arguments passed to Multi_Range_Potential_Form constructor.
+
+  :return: See above"""
+
+  any_deriv2 = False
+  any_deriv = False
+  for rt in range_tuples:
+    any_deriv2 = any_deriv2 or rt.has_deriv2
+    any_deriv = any_deriv or rt.has_deriv
+
+  if any_deriv2:
+    cls =  Multi_Range_Potential_Form_Deriv2
+  elif any_deriv:
+    cls =  Multi_Range_Potential_Form_Deriv
+  else:
+    cls =  Multi_Range_Potential_Form
+  
+  obj = cls(*range_tuples, **kwargs)
+
+  return obj
+
 
 class Multi_Range_Potential_Form(object):
   """Class allowing the creation of composite potential forms. 
   This allows different potential functions to be defined for different 
   distance ranges when the potential is called"""
 
-  Range_Defn_Tuple = collections.namedtuple("Range_Defn_Tuple", ["range_type", "start", "potential_form"])  
-
   def __init__(self, *range_tuples, **kwargs):
-    """Define potential form from a list of `Multi_Range_Potential_Form.Range_Defn_Tuple` objects.
+    """Define potential form from a list of `Multi_Range_Defn_Tuple` objects.
 
     Each named tuple provides a callable (each accepting a single argument) that should be used for a particular range.
     The `start` property of the tuple defines the point at which this callable may be used.
@@ -39,11 +116,11 @@ class Multi_Range_Potential_Form(object):
       .. code-block::
 
           multi_range_potential = Multi_Range_Potential_Form(
-            Multi_Range_Potential_Form.Range_Defn_Tuple(">", float("-inf'), func1),
-            Multi_Range_Potential_Form.Range_Defn_Tuple(">", 2.0, func2))
+            Multi_Range_Defn(">", float("-inf'), func1),
+            Multi_Range_Defn(">", 2.0, func2))
 
     
-    :param range_tuples: List of Range_Defn_Tuple defining potential ranges.
+    :param range_tuples: List of Multi_Range_Defn defining potential ranges.
     :param default_value: This value is returned when this object is called with an argument below the 
       the lowest `start` value in `range_tuples`."""
 
@@ -91,3 +168,23 @@ class Multi_Range_Potential_Form(object):
       return self.default_value
     
     return rt.potential_form(r)
+
+
+class Multi_Range_Potential_Form_Deriv(Multi_Range_Potential_Form):
+  """Sub-class of Multi_Range_Potential_Form which additionally provides .deriv() method"""
+
+
+  def deriv(self, r):
+    rt = self._range_search(r)
+    if rt is None:
+      return 0.0
+    return rt.deriv(r)
+
+class Multi_Range_Potential_Form_Deriv2(Multi_Range_Potential_Form_Deriv):
+  """Sub-class of Multi_Range_Potential_Form which additionally provides .deriv() and .deriv2() methods"""
+
+  def deriv2(self, r):
+    rt = self._range_search(r)
+    if rt is None:
+      return 0.0
+    return rt.deriv2(r)

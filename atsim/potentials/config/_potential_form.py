@@ -1,4 +1,6 @@
 from ._common import Potential_Form_Exception
+from ..potentialforms import _FunctionFactory
+
 
 class Potential_Form(object):
   
@@ -7,7 +9,12 @@ class Potential_Form(object):
 
     :param potential_function: _Potential_Function object."""
     self.potential_definition = potential_function._potential_form_tuple
-    self._function = potential_function
+    self._potential_function = potential_function
+    self._functionfactory = _FunctionFactory(potential_function)
+
+  @property
+  def potential_function(self):
+    return self._potential_function
 
   @property
   def signature(self):
@@ -26,8 +33,5 @@ class Potential_Form(object):
           name = self.signature.label,
           args = " ".join([str(a) for a in args])))
 
-    def f(r):
-      funcargs = [r]
-      funcargs.extend(args)
-      return self._function(*funcargs)
+    f = self._functionfactory(*args)
     return f

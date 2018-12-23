@@ -69,7 +69,147 @@ U-O = sum(as.buck 1000.0 0.3 32.0, as.constant 1.0)
   actual = [((p.speciesA, p.speciesB),p.energy(r)) for p in potlist]
   assert sorted(expect) == sorted(actual)
 
+def test_sum_modifier_deriv():
+  """Make sure the sum() modifier uses .deriv() methods correctly if they are available"""
+  
+  cfg_string = u"""[Pair]
+#no deriv
+A-B = sum(born_mayer 1000.0 0.1, dispersion 32.0)
+# both have deriv
+B-C = sum(as.bornmayer 1000.0 0.1,  as.buck 0 1.0 32.0)
+#one_deriv
+C-D = sum(as.bornmayer 1000.0 0.1, dispersion 32.0)
 
+[Potential-Form]
+born_mayer(r, A, rho) = A * exp(-r/rho) 
+dispersion(r, C) = - C/r^6
+  
+"""
+  cfgobj = Configuration()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+  
+  pots = tabulation.potentials
+
+  expect = [ ("A", "B"), ("B", "C"), ("C", "D")]
+  actual = [(p.speciesA, p.speciesB) for p in pots]
+  assert sorted(expect) == sorted(actual)
+
+  potdict = dict([((p.speciesA, p.speciesB),p) for p in pots])
+  assert not hasattr(potdict[('A', 'B')].potentialFunction, 'deriv')
+  assert  hasattr(potdict[('B', 'C')].potentialFunction, 'deriv')
+  assert  hasattr(potdict[('C', 'D')].potentialFunction, 'deriv')
+
+  expect_energy = pytest.approx(pf.buck(1.6, 1000, 0.1, 32.0))
+  expect_deriv = pytest.approx(pf.buck.deriv(1.6, 1000, 0.1, 32.0))
+
+  assert expect_energy == potdict[('A', 'B')].potentialFunction(1.6)
+  
+  assert expect_energy == potdict[('B', 'C')].potentialFunction(1.6)
+  assert expect_deriv == potdict[('B', 'C')].potentialFunction.deriv(1.6)
+
+  assert expect_energy == potdict[('C', 'D')].potentialFunction(1.6)
+  assert expect_deriv == potdict[('C', 'D')].potentialFunction.deriv(1.6)
+
+
+def test_multirange_deriv():
+  """Make sure that .deriv() methods are used where possible in MultiRangePotential"""
+  # Neither potentialform has deriv() - resultant doesn't have deriv()
+  cfg_string = u"""[Pair]
+#no deriv
+A-B = born_mayer 1000.0 0.1 >=3.0 dispersion 32.0
+# both have deriv
+B-C = as.bornmayer 1000.0 0.1 >=3.0 as.buck 0 1.0 32.0
+#one_deriv
+C-D = as.bornmayer 1000.0 0.1 >=3.0 dispersion 32.0
+
+[Potential-Form]
+born_mayer(r, A, rho) = A * exp(-r/rho) 
+dispersion(r, C) = - C/r^6
+  
+"""
+
+  cfgobj = Configuration()
+
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+  pots = tabulation.potentials
+
+  potdict = dict([((p.speciesA, p.speciesB),p) for p in pots])
+
+  assert not hasattr(potdict[('A', 'B')].potentialFunction, 'deriv')
+  assert  hasattr(potdict[('B', 'C')].potentialFunction, 'deriv')
+  assert  hasattr(potdict[('C', 'D')].potentialFunction, 'deriv')
+
+  assert pytest.approx(pf.bornmayer.deriv(1.6, 1000.0, 0.1)) == potdict[('B', 'C')].potentialFunction.deriv(1.6)
+  assert pytest.approx(pf.buck.deriv(3.2, 0, 1.0, 32.0)) == potdict[('B', 'C')].potentialFunction.deriv(3.2)
+
+  assert pytest.approx(pf.bornmayer.deriv(1.6, 1000.0, 0.1)) == potdict[('C', 'D')].potentialFunction.deriv(1.6)
+  assert pytest.approx(pf.buck.deriv(3.2, 0, 1.0, 32.0)) == potdict[('C', 'D')].potentialFunction.deriv(3.2)
+
+
+def test_pair_deriv():
+  """Test that pair potentials defined in potentialfunctions expose their .deriv() functions"""
+
+  cfg_string = u"""[Pair]
+O-O = as.buck 1000.0 0.3 32.0
+"""
+
+  cfgobj = Configuration()
+
+  # import pdb; pdb.set_trace()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+
+  potfunc = tabulation.potentials[0].potentialFunction
+  assert hasattr(potfunc, "deriv")
+  assert hasattr(potfunc, "deriv2")
+
+  assert pf.buck.deriv(1.6, 1000.0, 0.3, 32.0) == potfunc.deriv(1.6)
+  assert pf.buck.deriv2(1.6, 1000.0, 0.3, 32.0) == potfunc.deriv2(1.6)
+
+  # Test that cexprtk potentialform doesn't provide a .deriv function.
+  cfg_string = u"""[Pair]
+O-O = my_buck 1000.0 0.3 32.0
+
+[Potential-Form]
+my_buck(r, A, rho, C) = A*exp(-r/rho) - C/r^6
+
+"""
+
+  cfgobj = Configuration()
+
+  # import pdb; pdb.set_trace()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+
+  potfunc = tabulation.potentials[0].potentialFunction
+  assert not hasattr(potfunc, "deriv")
+  assert not hasattr(potfunc, "deriv2")
+
+def test_vararg_potentialform():
+  """Check that a potential form that uses varargs works correctly"""
+
+  cfg_string = u"""[Pair]
+O-O = as.polynomial 10.0 20.0 30.0
+"""
+
+  cfgobj = Configuration()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+
+  potfunc = tabulation.potentials[0].potentialFunction
+  assert pf.polynomial(1.6, 10.0, 20.0, 30.0) == potfunc(1.6)
+
+  # Now check its use in a custom potentialform
+  cfg_string = u"""[Pair]
+O-O = mypoly 10.0 20.0 30.0
+
+[Potential-Form]
+mypoly(r, A, B, C) = as.polynomial(r, A,B,C) + 10.0"""
+
+  expect = pf.polynomial(1.6, 10.0, 20.0, 30.0) + 10.0
+
+  cfgobj = Configuration()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+
+  potfunc = tabulation.potentials[0].potentialFunction
+  assert pytest.approx(expect) == potfunc(1.6)
 
 @needsLAMMPS
 def test_lammps_pair_configuration_tabulate(lammps_run_fixture):
