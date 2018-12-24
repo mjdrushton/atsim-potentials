@@ -2,8 +2,8 @@ import logging
 
 import collections
 
-from .._pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation
-from .._eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation
+from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation
+from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation
 
 from ._potential_form_registry import Potential_Form_Registry
 from ._modifier_registry import Modifier_Registry

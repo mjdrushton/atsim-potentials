@@ -86,3 +86,43 @@ class DLPoly_PairTabulation(_PairTabulation_AbstractBase):
     :param fp: File object into which data should be written."""
     dlpoly_writePotentials(self.potentials, self.cutoff, self.nr, fp)
 
+
+class GULP_PairTabulation(_PairTabulation_AbstractBase):
+  """Class for tabulating pair-potential models for the GULP code.
+
+  .. :seealso::
+
+      * `Gulp Web site <https://nanochemistry.curtin.edu.au/gulp/>`_
+
+  """
+
+  def __init__(self, potentials, cutoff, nr):
+    """Create pair tabulation for GULP.
+
+    :params potentials: List of atsim.potentials.Potential objects.
+    :params cutoff: Maximum separation to be tabulated.
+    :params nr: Number of points to be used in tabulation"""
+    super(GULP_PairTabulation, self).__init__(potentials, cutoff, nr, "GULP")
+
+  def write(self, fp):
+    """Write tabulation to the file object `fp`.
+
+    :param fp: File object into which data should be written."""
+    
+    for pot in self.potentials:
+      self._write_pot(pot, fp)
+
+  def _write_pot(self, pot, fp):
+    header_template = u"{speciesA} {speciesB} {cutoff}\n"
+    row_template = u"{energy:.10f} {sepn:.10f}\n"
+
+    fp.write("spline \n")
+    fp.write(header_template.format(speciesA = pot.speciesA, speciesB = pot.speciesB, cutoff= self.cutoff))
+
+    for n in range(self.nr+1):
+      r = float(n)* self.cutoff / (float(self.nr) -1)
+      energy = pot.energy(r)
+      fp.write(row_template.format(sepn = r, energy = energy))
+    fp.write("\n")
+
+  

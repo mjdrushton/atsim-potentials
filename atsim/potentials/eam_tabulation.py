@@ -1,5 +1,5 @@
 
-from ._pair_tabulation import _PairTabulation_AbstractBase
+from .pair_tabulation import _PairTabulation_AbstractBase
 
 from ._lammpsWriteEAM import writeSetFL, writeSetFLFinnisSinclair
 from ._dlpoly_writeTABEAM import writeTABEAM, writeTABEAMFinnisSinclair
