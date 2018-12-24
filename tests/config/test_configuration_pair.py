@@ -10,6 +10,7 @@ from atsim.potentials import potentialfunctions as pf
 
 from .._runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS, lammps_run_fixture
 from .._rundlpoly import needsDLPOLY, runDLPoly, extractDLPOLYEnergy
+from .._rungulp import needsGULP, runGULP, extractGULPEnergy
 
 def test_pair_configuration():
   cfg_string = u"""[Pair]
@@ -337,3 +338,81 @@ O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
 
   expect = pf.buck(2.0, 1000.0, 0.1, 32.0) + pf.morse(2.0, 0.3, 2.0, 10.0)
   assert pytest.approx(expect) == energy
+
+
+@needsGULP
+def test_gulp_pair_configuration_tabulate(tmpdir):
+  cfg_string = u"""[Tabulation]
+target : GULP
+nr : 500
+cutoff : 15.0
+
+[Pair]
+O-U = as.bornmayer 1761.775 0.35642
+O-O = as.buck 9547.96 0.2192 32.0
+
+"""
+
+  gulp_input = u"""single
+
+cell
+5.468 5.468 5.468 90.0 90.0 90.0
+
+frac
+U 0 0 0
+U 1/2 1/2 0
+U 1/2 0 1/2
+U 0 1/2 1/2
+
+O 1/4 1/4 1/4
+O 1/4 3/4 1/4
+O 3/4 3/4 1/4
+O 3/4 1/4 1/4
+
+O 1/4 1/4 3/4
+O 1/4 3/4 3/4
+O 3/4 3/4 3/4
+O 3/4 1/4 3/4
+
+
+species
+U 4.0
+O -2.0
+
+include potentials.lib
+
+"""
+  
+  # First calculate the expected energy using GULP's built-in analytical potentials
+  with tmpdir.join("potentials.lib").open("w") as potfile:
+    potfile.write("buck\n")
+    potfile.write("O O 9547.96 0.2192 32.0 15.0\n")
+    potfile.write("O U 1761.775 0.35642 0.0 15.0\n")
+
+  gulp_infile = io.StringIO(gulp_input)
+  gulp_infile.seek(0)
+
+  gulp_outfile = io.StringIO()
+  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+
+  gulp_outfile.seek(0)
+  expect = extractGULPEnergy(gulp_outfile)
+
+  tmpdir.join("potentials.lib").remove()
+  assert not tmpdir.join("potentials.lib").exists()
+
+  # Now build a potential model and tabulate it - then re-run the calculation and check the energies match.
+  cfgobj = Configuration()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+
+  with tmpdir.join("potentials.lib").open("w") as potfile:
+    tabulation.write(potfile)
+
+  gulp_infile.seek(0)
+
+  gulp_outfile = io.StringIO()
+  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+
+  gulp_outfile.seek(0)
+  actual = extractGULPEnergy(gulp_outfile)
+  assert pytest.approx(expect) == actual

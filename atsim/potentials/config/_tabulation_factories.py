@@ -2,7 +2,7 @@ import logging
 
 import collections
 
-from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation
+from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation, GULP_PairTabulation
 from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation
 
 from ._potential_form_registry import Potential_Form_Registry
@@ -154,8 +154,9 @@ class EAMTabulationFactory(PairTabulationFactory):
 
 """Target name to factory objects"""
 TABULATION_FACTORIES = {
-  "LAMMPS"       :  PairTabulationFactory("LAMMPS", LAMMPS_PairTabulation),                 
-  "DLPOLY"       :  PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),                 
+  "LAMMPS"       :  PairTabulationFactory("LAMMPS", LAMMPS_PairTabulation),
+  "DLPOLY"       :  PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),
+  "GULP"         :  PairTabulationFactory("GULP", GULP_PairTabulation),
   "setfl"        :  EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation),    
   "setfl_fs"     :  EAMTabulationFactory("setfl/lammps_eam_fs", SetFL_FS_EAMTabulation, EAM_Potential_Builder_FS),
   "DL_POLY_EAM"  :  EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation),               

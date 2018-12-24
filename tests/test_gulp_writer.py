@@ -4,42 +4,9 @@ import io
 
 from atsim.potentials import potentialforms, pair_tabulation, Potential, Multi_Range_Defn, create_Multi_Range_Potential_Form
 
-import distutils
-GULP_FOUND = distutils.spawn.find_executable("gulp-5.0")
+from ._rungulp import needsGULP, runGULP, extractGULPEnergy
 
-
-def runGULP(infile, outfile, cwd = None):  
-  import subprocess
-  popen = subprocess.Popen("gulp-5.0", cwd = cwd, shell = True, stdin = subprocess.PIPE, stdout = subprocess.PIPE, close_fds=True)
-  stdout, stderr = popen.communicate(infile.read().encode("utf-8"))
-  outfile.write(stdout.decode())
-
-def extractGULPEnergy(infile):
-  markers= ['*  Output for configuration   1',
-  '  Components of energy :',
-  '  Total lattice energy       =']
-
-  for find_line in markers:
-    found = False
-    for line in infile:
-      if line.startswith(find_line):
-        found = True
-        break
-    if not found:
-      pytest.fail("Could not extract GULP energy")
-
-  line = line.strip()
-  assert line.endswith("eV")
-
-  line = line[:-2]
-  line, E = line.split("=")
-
-  E = float(E)
-  return E
-
-
-
-@pytest.mark.skipif(not GULP_FOUND, reason = "GULP binary not found")
+@needsGULP
 def test_single_pair(tmpdir):
   gulp_input = u"""single
 
@@ -84,7 +51,7 @@ include potentials.lib"""
     assert expect == actual
 
 
-@pytest.mark.skipif(not GULP_FOUND, reason = "GULP binary not found")
+@needsGULP
 def test_structure(tmpdir):
   gulp_input = u"""single
 
@@ -153,7 +120,3 @@ include potentials.lib"""
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)
   assert pytest.approx(expect) == actual
-
-  
-
-
