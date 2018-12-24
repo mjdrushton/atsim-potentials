@@ -18,7 +18,7 @@ def test_spline_modifier():
   bks_coul = potentialforms.coul(2.4, -1.2)
   bks = atsim.potentials.plus(bks_buck, bks_coul)
   zbl = potentialforms.zbl(14, 8)
-  spline = atsim.potentials.SplinePotential( zbl, bks_buck, 0.8, 1.4)
+  spline = atsim.potentials.SplinePotential(zbl, bks_buck, 0.8, 1.4)
   
   buck_spline = PotentialFormInstanceTuple(potential_form = "as.buck", parameters = [18003.7572, 1.0/4.87318, 133.5381], start = MultiRangeDefinitionTuple('>', 1.4), next = None)
   exp_spline = PotentialFormInstanceTuple(potential_form = "exp_spline", parameters = [], start = MultiRangeDefinitionTuple(">=", 0.8), next = buck_spline)
@@ -114,4 +114,50 @@ def test_too_many_potential_forms():
     spline([], pfb)
 
 def test_buck4_spline():
-  pytest.fail()
+  A = 11272.6
+  rho = 0.1363
+  C = 134.0
+
+  born_mayer = potentialforms.bornmayer(A, rho)
+  dispersion = potentialforms.buck(0, 1, C)
+
+  r_detach = 1.2
+  r_min = 2.1
+  r_attach = 2.6
+
+  spline = atsim.potentials.spline.Buck4_SplinePotential(born_mayer, dispersion, r_detach, r_attach, r_min)
+
+  disp_spline = PotentialFormInstanceTuple(potential_form = "as.buck", parameters = [0.0, 1.0, C], start = MultiRangeDefinitionTuple('>', r_attach), next = None)
+  buck4_spline = PotentialFormInstanceTuple(potential_form = "buck4_spline", parameters = [r_min], start = MultiRangeDefinitionTuple(">=", r_detach), next = disp_spline)
+  bm_spline = PotentialFormInstanceTuple(potential_form = "as.bornmayer", parameters = [A, rho], start = MultiRangeDefinitionTuple(">", 0.0), next = buck4_spline)
+  
+  pmt = PotentialModifierTuple(modifier = 'spline', 
+                          potential_forms = [bm_spline],
+                          start = MultiRangeDefinitionTuple('>', 0.0),
+                          next = None)
+
+  pfr = Potential_Form_Registry(ConfigParser(io.StringIO()), True)
+  mr = Modifier_Registry()
+  pfb = Potential_Form_Builder(pfr, mr)
+  mod_spline = pfb.create_potential_function(pmt)
+
+  for i in range(1,100):
+    r = float(i) / 10.0
+    expect = spline(r)
+    actual = mod_spline(r)
+    assert pytest.approx(expect, abs = 1e-3) == actual
+
+  assert pytest.approx(born_mayer(0.7)) == mod_spline(0.7)
+  assert pytest.approx(dispersion(3.0)) == mod_spline(3.0)
+  assert pytest.approx(spline(2.0)) == mod_spline(2.0)
+  assert pytest.approx(spline(2.4)) == mod_spline(2.4)
+
+  assert pytest.approx(born_mayer.deriv(0.7)) == mod_spline.deriv(0.7)
+  assert pytest.approx(dispersion.deriv(3.0)) == mod_spline.deriv(3.0)
+  assert pytest.approx(spline.deriv(2.0)) == mod_spline.deriv(2.0)
+  assert pytest.approx(spline.deriv(2.4)) == mod_spline.deriv(2.4)
+
+  assert pytest.approx(born_mayer.deriv2(0.7)) == mod_spline.deriv2(0.7)
+  assert pytest.approx(dispersion.deriv2(3.0)) == mod_spline.deriv2(3.0)
+  assert pytest.approx(spline.deriv2(2.0)) == mod_spline.deriv2(2.0)
+  assert pytest.approx(spline.deriv2(2.4)) == mod_spline.deriv2(2.4)

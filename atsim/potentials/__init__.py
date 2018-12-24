@@ -12,7 +12,7 @@ from . import _tablereaders
 from ._potential import Potential
 from ._eam_potential import EAMPotential
 
-from ._spline import SplinePotential # noqa
+from .spline import SplinePotential # noqa
 from ._util import gradient, num_deriv, deriv # noqa
 from ._dlpoly_writeTABEAM import writeTABEAM # noqa
 from ._dlpoly_writeTABEAM import writeTABEAMFinnisSinclair # noqa
@@ -23,6 +23,7 @@ from ._lammpsWriteEAM import writeSetFLFinnisSinclair # noqa
 
 from .potentialforms import * # noqa
 from . import potentialfunctions
+from . import spline
 
 from ._multi_range_potential_form import create_Multi_Range_Potential_Form, Multi_Range_Defn
 

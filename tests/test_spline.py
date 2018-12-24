@@ -3,10 +3,10 @@ import py
 
 from deepdiff import DeepDiff
 
-from atsim.potentials._spline import SplinePotential
-from atsim.potentials._spline import Exp_Spline
-from atsim.potentials._spline import Spline_Point
-from atsim.potentials._spline import Buck4_Spline
+from atsim.potentials.spline import SplinePotential
+from atsim.potentials.spline import Exp_Spline
+from atsim.potentials.spline import Spline_Point
+from atsim.potentials.spline import Buck4_Spline
 
 from atsim.potentials import potentialforms
 from atsim.potentials import plus

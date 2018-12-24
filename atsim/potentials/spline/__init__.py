@@ -4,9 +4,9 @@ from builtins import object
 
 import math
 
-from ._util import gradient
-# from .potentialfunctions import exp_spline
-from .potentialforms import polynomial, exp_spline
+from .._util import gradient
+
+from ..potentialforms import polynomial, exp_spline
 
 
 class Spline_Point(object):
@@ -175,8 +175,8 @@ class Buck4_Spline(object):
     """Create a callable object that represents the Buckingham-4 type spline between `detach_point` and 
     `attach_point`.
 
-    :param detach_point: Instance of Spline_Point giving start of spline.
-    :param attach_point: Instance of Spline_Point giving end of spline.
+    :param detach_point: Instance of :class:`Spline_Point` giving start of spline.
+    :param attach_point: Instance of :class:`Spline_Point` giving end of spline.
     :param r_min: Minimum value to be formed between the detach and reattachment points."""
 
     self._detach_point = detach_point
@@ -289,32 +289,19 @@ class Buck4_Spline(object):
     return self._which_spline(r).deriv2(r)
 
 
-class SplinePotential(object):
+class Custom_SplinePotential(object):
   """Callable to allow splining of one potential to another"""
 
-  def __init__(self, startPotential, endPotential, detachmentX, attachmentX):
-    """Joins ``startPotential`` to ``endPotential`` using spline of form:
+  def __init__(self, spline):
+    """Adapts spline objects such as :class:`Exp_Spline` and :class:`Buck4_Spline` to have the same interface as :class:`SplinePotential`
+      
+    :param spline: Instance of a spline object such as :class:`Exp_Spline` and :class:`Buck4_Spline`
 
-      .. math::
+    """
 
-            U(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \\right) + C
-
-    The spline coefficients :math:`B_{0...5}` can be obtained using the :meth:`.SplineCoefficients` property.
-    
-    .. seealso::
-
-      * :ref:`spline_interpolation`
-      * :ref:`example_spline`
-      * Custom_Spline_Potential for object to allow a different functional form for the spline.
-
-    :param startPotential: Function defining potential for rij <= detachmentX
-    :param endPotential: Function defining potential for rij => attachmentX
-    :param detachmentX: rij value at which startPotential should end
-    :param attachmentX: rij value at which splines join endPotential"""
-
-    self._detach_point = Spline_Point(startPotential, detachmentX)
-    self._attach_point = Spline_Point(endPotential, attachmentX)
-    self._interpolationFunction = Exp_Spline(self._detach_point, self._attach_point)
+    self._spline = self._interpolationFunction = spline
+    self._detach_point = self._spline.detach_point
+    self._attach_point = self._spline.attach_point
 
     self._init_deriv()
 
@@ -363,7 +350,7 @@ class SplinePotential(object):
 
   @property
   def interpolationFunction(self):
-    """:return:  Exponential spline function connecting startPotential and endPotential for separations ``detachmentX`` < rij < ``attachmentX``"""
+    """:return:  Spline object connecting startPotential and endPotential for separations ``detachmentX`` < rij < ``attachmentX``"""
     return self._interpolationFunction
 
   @property
@@ -390,3 +377,57 @@ class SplinePotential(object):
       return self.endPotential(rij)
     else:
       return self._interpolationFunction(rij)
+
+class SplinePotential(Custom_SplinePotential):
+  """Callable to allow splining of one potential to another using an exponential spline"""
+
+  def __init__(self, startPotential, endPotential, detachmentX, attachmentX):
+    """Joins ``startPotential`` to ``endPotential`` using spline of form:
+
+      .. math::
+
+            U(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \\right) + C
+
+    The spline coefficients :math:`B_{0...5}` can be obtained using the :meth:`.SplineCoefficients` property.
+    
+    .. seealso::
+
+      * :ref:`spline_interpolation`
+      * :ref:`example_spline`
+      * :class:`Exp_Spline` - for details of the class which actually performs splining.
+      
+    :param startPotential: Function defining potential for rij <= detachmentX
+    :param endPotential: Function defining potential for rij => attachmentX
+    :param detachmentX: rij value at which startPotential should end
+    :param attachmentX: rij value at which splines join endPotential"""
+
+    detach_point = Spline_Point(startPotential, detachmentX)
+    attach_point = Spline_Point(endPotential, attachmentX)
+    spline = Exp_Spline(detach_point, attach_point)
+
+    super(SplinePotential, self).__init__(spline)
+
+
+class Buck4_SplinePotential(Custom_SplinePotential):
+  """Callable to allow splining of one potential to another using the Buck4 spline type"""
+
+  def __init__(self, startPotential, endPotential, detachmentX, attachmentX, r_min):
+    """Joins ``startPotential`` to ``endPotential`` using :class:`Buck4_Spline`. This class is provided for
+    convenience to make instantiating a :class:`Custom_SplinePotential` using this spline type more straightforward.
+
+    .. seealso::
+
+      * :ref:`spline_interpolation`
+      * :class:`Buck4_Spline` - for details of the class which actually performs splining.
+      
+    :param startPotential: Function defining potential for rij <= detachmentX
+    :param endPotential: Function defining potential for rij => attachmentX
+    :param detachmentX: rij value at which startPotential should end
+    :param attachmentX: rij value at which splines join endPotential
+    :param r_min: rij value for Buck4 spline minimum."""
+
+    detach_point = Spline_Point(startPotential, detachmentX)
+    attach_point = Spline_Point(endPotential, attachmentX)
+    spline = Buck4_Spline(detach_point, attach_point, r_min)
+
+    super(Buck4_SplinePotential, self).__init__(spline)
