@@ -2,7 +2,7 @@ import pytest
 
 import io
 
-from atsim.potentials import potentialforms, pair_tabulation, Potential, Multi_Range_Defn, create_Multi_Range_Potential_Form
+from atsim.potentials import potentialforms, pair_tabulation, Potential, Multi_Range_Defn, create_Multi_Range_Potential_Form, writePotentials
 
 from ._rungulp import needsGULP, runGULP, extractGULPEnergy
 
@@ -107,7 +107,9 @@ include potentials.lib"""
   pot_UO = Potential("U", "O", create_Multi_Range_Potential_Form(
     Multi_Range_Defn(">", 0, potentialforms.bornmayer(1761.775, 0.35642))))
 
-  tabulation = pair_tabulation.GULP_PairTabulation([pot_OO, pot_UO], 15.0, 500)
+  potlist = [pot_OO, pot_UO]
+
+  tabulation = pair_tabulation.GULP_PairTabulation(potlist, 15.0, 500)
 
   with tmpdir.join("potentials.lib").open("w") as potfile:
     tabulation.write(potfile)
@@ -120,3 +122,21 @@ include potentials.lib"""
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)
   assert pytest.approx(expect) == actual
+
+  tmpdir.join("potentials.lib").remove()
+  assert not tmpdir.join("potentials.lib").exists()
+
+  # Now do the same again but use the procedural interface
+  with tmpdir.join("potentials.lib").open("w") as potfile:
+    writePotentials("GULP", potlist, 15.0, 500, out = potfile)
+
+  gulp_infile.seek(0)
+
+  gulp_outfile = io.StringIO()
+  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+
+  gulp_outfile.seek(0)
+  actual = extractGULPEnergy(gulp_outfile)
+  assert pytest.approx(expect) == actual
+
+

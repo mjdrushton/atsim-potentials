@@ -199,6 +199,12 @@ def writePotentials(outputType, potentialList, cutoff, gridPoints, out = sys.std
         within DL_POLY.
       * for a working example see :ref:`Quick-Start: DL_POLY <quick_start>`.
 
+    * ``GULP``:
+
+      * Creates output for the `GULP code <https://nanochemistry.curtin.edu.au/gulp/>`_
+      * Output is in the form of a series of `spline potential forms <https://nanochemistry.curtin.edu.au/gulp/help/new_help_40_txt.html#spline>`_
+      * The generated file can be loaded into GULP using the `library command <https://nanochemistry.curtin.edu.au/gulp/help/new_help_40_txt.html#library>`_
+
     * ``LAMMPS``:
 
       * Creates files readable by LAMMPS `pair_style table <http://lammps.sandia.gov/doc/pair_table.html>`_
@@ -236,16 +242,22 @@ def writePotentials(outputType, potentialList, cutoff, gridPoints, out = sys.std
   :param out: Python file like object to which tabulation should be written
   :type out: file"""
 
-  from ._dlpoly_writeTABLE import writePotentials as DLPOLY_writePotentials
+  from .pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation, GULP_PairTabulation
+
   supportedTabulations = {
-    'DL_POLY' : DLPOLY_writePotentials,
-    'LAMMPS'  : _LAMMPS_writePotentials
+    'DL_POLY' : DLPoly_PairTabulation,
+    'LAMMPS'  : LAMMPS_PairTabulation,
+    'GULP'    : GULP_PairTabulation
     }
 
   if not outputType in supportedTabulations:
-    raise UnsupportedTabulationType("Unsupported tabulation type: '%s' should be one of: %s" % (outputType, ",".join(sorted(supportedTabulations.keys()))))
+    raise UnsupportedTabulationType("Unsupported tabulation type: '{}' should be one of: {}".format(
+      outputType, ",".join(sorted(supportedTabulations.keys()))
+    ))
 
-  supportedTabulations[outputType](potentialList, cutoff, gridPoints, out)
+  tabulation = supportedTabulations[outputType](potentialList,cutoff, gridPoints)
+  tabulation.write(out)
+  
 
 
 
