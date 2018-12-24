@@ -41,3 +41,54 @@ def _populate_module():
     setattr(currmodule, name, funcfactory)
 
 _populate_module()
+
+
+
+def buck4(A, rho, C, r_detach, r_min, r_attach):
+  """Returns a potential form describing the four-range Buckingham potential.
+
+  The potential form is:
+
+  .. math::
+
+    V(r_{ij}) = 
+    \begin{cases}
+      A \exp(-r_{ij}/\rho)                                                 , & 0 \leq r_{ij} \leq  r_\text{detach}\\
+      a_0 + a_1 r_{ij} +a_2 r_{ij}^2+a_3 r_{ij}^3+a_4 r_{ij}^4+a_5 r_{ij}^5, & r_\text{detach} < r_{ij} < r_\text{min}\\
+      b_0 +b_1 *r_{ij}+b_2*r_{ij}^2+b_3*r_{ij}^3                           , & r_\text{min} \leq r_{ij} < r_\text{attach}\\
+      -\frac{C}{r_{ij}^6}                                                  , & r_{ij} \geq r_\text{attach}\\
+    \end{cases}
+
+  In other words this is a Buckingham potential in which the Born-Mayer component acts at small separations and the disprsion
+  term acts at larger separation. These two parts are linked by a fifth then third order polynomial (with a minimum formed in the spline
+  at :math:`r_\text{min}`).
+
+  The spline parameters are subject to the constraints that :math:`V(r_{ij})`, first and second derivatives must be equal at the boundary points
+  and the function must have a stationary point at `r_min`.
+
+  .. seealso::
+
+    * :class:`atsim.potentials.Buck4_Spline`
+    * :class:`atsim.potentials.Buck4_SplinePotential`
+
+  .. note::
+
+    Due to the complexity of calculating the spline-coefficients this potential form does not have an equivalent in the atsim.potentials.potentialfunctions
+    module.
+
+
+  :param A: A potential parameter.
+  :param rho: potential parameter.
+  :param C: C parameter.
+  :param r_detach: Separation where spline starts.
+  :param r_min: Location of stationary point.
+  :param r_attach: End of splined region.
+
+  :return: Splined potential."""
+  bm = bornmayer(A,rho)
+  disp = buck(0.0, 1.0, C)
+
+  from .spline import Buck4_SplinePotential
+  pot = Buck4_SplinePotential(bm, disp, r_detach, r_attach, r_min)
+
+  return pot

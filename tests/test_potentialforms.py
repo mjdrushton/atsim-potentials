@@ -141,6 +141,31 @@ def testPlusDeriv():
   assert pytest.approx(20.0+30.0) == wrapped.deriv2(r)
   assert pytest.approx(20.0+30.0) == gradient(gradient(wrapped))(r)
 
+def test_buck4():
+
+  with pytest.raises(ImportError):
+    from atsim.potentials.potentialfunctions import buck4
+
+  from atsim.potentials.potentialforms import buck4
+
+  A = 11272.6
+  rho = 0.1363
+  C = 134.0
+
+  r_detach = 1.2
+  r_min = 2.1
+  r_attach = 2.6
+
+  pot = buck4(A, rho, C, r_detach, r_min, r_attach)
+
+  assert pytest.approx(0.8227238) == pot(1.3)
+  assert pytest.approx(-0.662829) == pot(2.4)
+
+  assert pytest.approx(potentialfunctions.bornmayer.deriv(1.0, A, rho)) == pot.deriv(1.0)
+  assert pytest.approx(potentialfunctions.buck.deriv(3.0, 0.0, 0.1, C)) == pot.deriv(3.0)
+
+  assert pytest.approx(potentialfunctions.bornmayer.deriv2(1.0, A, rho)) == pot.deriv2(1.0)
+  assert pytest.approx(potentialfunctions.buck.deriv2(3.0, 0.0, 0.1, C)) == pot.deriv2(3.0)
 
 
 def test_polynomial():
