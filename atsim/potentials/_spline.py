@@ -5,8 +5,8 @@ from builtins import object
 import math
 
 from ._util import gradient
-from .potentialfunctions import exp_spline
-from .potentialforms import polynomial
+# from .potentialfunctions import exp_spline
+from .potentialforms import polynomial, exp_spline
 
 
 class Spline_Point(object):
@@ -47,6 +47,14 @@ class Spline_Point(object):
   def deriv2(self):
     """Second derivative of `potential_function`: d2v/dr^2(r)"""
     return self._deriv2_callable(self.r)
+  
+  @property
+  def deriv_callable(self):
+    return self._deriv_callable
+
+  @property
+  def deriv2_callable(self):
+    return self._deriv2_callable
 
 
 class Exp_Spline(object):
@@ -70,7 +78,8 @@ class Exp_Spline(object):
     self._detach_point = detach_point
     self._attach_point = attach_point
 
-    self._init_spline_coefficients()
+    self._coefficients = self._init_spline_coefficients()
+    self._spline_callable = exp_spline(*self.spline_coefficients)
 
   def _init_spline_coefficients(self):
     #Calculate coefficients of the exponential function
@@ -114,7 +123,7 @@ class Exp_Spline(object):
 
     coefficients = [float(c) for c in np.linalg.solve(A,B)]
     coefficients.append(inter)
-    self._coefficients = tuple(coefficients)
+    return tuple(coefficients)
 
   @property
   def detach_point(self):
@@ -132,8 +141,13 @@ class Exp_Spline(object):
     return self._coefficients
 
   def __call__(self, r):
-    B0,B1,B2,B3,B4,B5,C = self.spline_coefficients
-    return exp_spline(r, B0, B1, B2, B3, B4, B5, C)
+    return self._spline_callable(r)
+
+  def deriv(self, r):
+    return self._spline_callable.deriv(r)
+
+  def deriv2(self, r):
+    return self._spline_callable.deriv2(r)
 
 class Buck4_Spline(object):
   """Class for representing the splined part of the four ranged Buckingham potential.
@@ -258,12 +272,21 @@ class Buck4_Spline(object):
     """Callable (atsim.potentials.potentialfunctions.polynomial) object representing the fifth order section of the buck4 spline - between `detach_point` and `r_min`"""
     return self._spline3
 
-  def __call__(self, r):
+  def _which_spline(self, r):
     if r < self.r_min:
-      return self.spline5(r)
+      return self.spline5
     else:
-      return self.spline3(r)
+      return self.spline3
 
+  def __call__(self, r):
+    spline = self._which_spline(r)
+    return spline(r)
+
+  def deriv(self, r):
+    return self._which_spline(r).deriv(r)
+
+  def deriv2(self, r):
+    return self._which_spline(r).deriv2(r)
 
 
 class SplinePotential(object):
@@ -293,6 +316,40 @@ class SplinePotential(object):
     self._attach_point = Spline_Point(endPotential, attachmentX)
     self._interpolationFunction = Exp_Spline(self._detach_point, self._attach_point)
 
+    self._init_deriv()
+
+  def _init_deriv(self):
+    # This isn't technically used as a point - but Spline_Point is used to conveniently set up the gradient callables.
+    self._inter_point = Spline_Point(self._interpolationFunction, None)
+    # Expose a .deriv() method if any of components provide one natively.
+    if hasattr(self._detach_point.potential_function, "deriv") or hasattr(self._attach_point.potential_function, "deriv") or hasattr(self._inter_point.potential_function, "deriv"):
+      def deriv(self, r):
+        return self._deriv(r)
+      self.deriv = deriv.__get__(self)
+
+    # Expose a .deriv2() method if any of components provide one natively.
+    if hasattr(self._detach_point.potential_function, "deriv2") or hasattr(self._attach_point.potential_function, "deriv2") or hasattr(self._inter_point.potential_function, "deriv2"):
+      def deriv2(self, r):
+        return self._deriv2(r)
+      self.deriv2 = deriv2.__get__(self)
+
+
+  # The _deriv and _deriv2 methods are made public as deriv() and deriv2() by _init_deriv() if any of the component functions provide a deriv or deriv2 method.
+  def _deriv(self, rij):
+    if rij <= self.detachmentX:
+      return self._detach_point.deriv_callable(rij)
+    elif rij >= self.attachmentX:
+      return self._attach_point.deriv_callable(rij)
+    else:
+      return self._inter_point.deriv_callable(rij)
+
+  def _deriv2(self, rij):
+    if rij <= self.detachmentX:
+      return self._detach_point.deriv2_callable(rij)
+    elif rij >= self.attachmentX:
+      return self._attach_point.deriv2_callable(rij)
+    else:
+      return self._inter_point.deriv2_callable(rij)
 
   @property
   def startPotential(self):

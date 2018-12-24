@@ -42,6 +42,19 @@ def test_spline_modifier():
 
     assert pytest.approx(expect, abs = 1e-3) == actual
 
+  assert pytest.approx(zbl(0.7)) == mod_spline(0.7)
+  assert pytest.approx(bks_buck(2.0)) == mod_spline(2.0)
+  assert pytest.approx(spline(1.2)) == mod_spline(1.2)
+
+  assert pytest.approx(zbl.deriv(0.7)) == mod_spline.deriv(0.7)
+  assert pytest.approx(bks_buck.deriv(2.0)) == mod_spline.deriv(2.0)
+  assert pytest.approx(spline.deriv(1.2)) == mod_spline.deriv(1.2)
+
+  assert pytest.approx(zbl.deriv2(0.7)) == mod_spline.deriv2(0.7)
+  assert pytest.approx(bks_buck.deriv2(2.0)) == mod_spline.deriv2(2.0)
+  assert pytest.approx(spline.deriv2(1.2)) == mod_spline.deriv2(1.2)
+  
+
 def test_bad_ranges():
   # Bad spline name
   buck_spline = PotentialFormInstanceTuple(potential_form = "as.buck", parameters = [18003.7572, 1.0/4.87318, 133.5381], start = MultiRangeDefinitionTuple('>', 1.4), next = None)
@@ -99,3 +112,6 @@ def test_too_many_potential_forms():
 
   with pytest.raises(ConfigurationException):
     spline([], pfb)
+
+def test_buck4_spline():
+  pytest.fail()
