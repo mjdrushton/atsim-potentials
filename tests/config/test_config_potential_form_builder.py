@@ -112,12 +112,12 @@ def test_multirange_potential_set_range_tuples():
   expect = ["two", "three", "one", "five", "four"]
 
   mrpf = Multi_Range_Potential_Form(*list(tuples))
-  actual = [rt.potential_form for rt in  mrpf.range_tuples]
+  actual = [rt.potential_form for rt in  mrpf.range_defns]
   assert expect == actual
 
   tuples = list(reversed(tuples))
-  mrpf.range_tuples = tuples
-  actual = [rt.potential_form for rt in  mrpf.range_tuples]
+  mrpf.range_defns = tuples
+  actual = [rt.potential_form for rt in  mrpf.range_defns]
   assert expect == actual
   
 

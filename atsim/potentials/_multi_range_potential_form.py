@@ -4,7 +4,7 @@ import operator
 
 from ._util import gradient
 
-def _tuple_cmp(a,b):
+def _range_defn_cmp(a,b):
   if a.start == b.start:
     if a.range_type == ">=" and b.range_type == ">":
       return -1
@@ -14,9 +14,7 @@ def _tuple_cmp(a,b):
 
   return (a.start > b.start) - (a.start < b.start)
 
-_tuple_key = functools.cmp_to_key(_tuple_cmp)
-
-# _Base_Tuple = collections.namedtuple("Multi_Range_Defn", ["range_type", "start", "potential_form"])
+_range_defn_key = functools.cmp_to_key(_range_defn_cmp)
 
 class Multi_Range_Defn(object):
 
@@ -55,9 +53,6 @@ class Multi_Range_Defn(object):
 
   def deriv2(self, r):
     return self._deriv2_callable(r)
-
-  
-
 
 def create_Multi_Range_Potential_Form(*range_tuples, **kwargs):
   """Creates Multi_Range_Potential_Form or sub-class instance, from list of Multi_Range_Defn
@@ -99,7 +94,7 @@ class Multi_Range_Potential_Form(object):
   This allows different potential functions to be defined for different 
   distance ranges when the potential is called"""
 
-  def __init__(self, *range_tuples, **kwargs):
+  def __init__(self, *range_defns, **kwargs):
     """Define potential form from a list of `Multi_Range_Defn_Tuple` objects.
 
     Each named tuple provides a callable (each accepting a single argument) that should be used for a particular range.
@@ -131,11 +126,11 @@ class Multi_Range_Potential_Form(object):
         raise ValueError("Unknown keyword arguments: {}".format(",".join(sorted(keys))))
 
     self.default_value = kwargs.get('default_value', 0.0)
-    self._range_tuples = None
-    self.range_tuples = range_tuples
+    self._range_defns = None
+    self.range_defns = range_defns
 
   def _range_search(self, r):
-    rt = self.range_tuples
+    rt = self.range_defns
     if not rt or r < rt[0].start or (r == rt[0].start and rt[0].range_type == '>'):
       return None
 
@@ -152,14 +147,14 @@ class Multi_Range_Potential_Form(object):
       return last
 
   @property
-  def range_tuples(self):
-    return self._range_tuples
+  def range_defns(self):
+    return self._range_defns
 
-  @range_tuples.setter
-  def range_tuples(self, range_tuples):
-    tuples = list(range_tuples)
-    tuples.sort(key = _tuple_key )
-    self._range_tuples = tuples
+  @range_defns.setter
+  def range_defns(self, range_defns):
+    tuples = list(range_defns)
+    tuples.sort(key = _range_defn_key )
+    self._range_defns = tuples
 
   def __call__(self, r):
     rt = self._range_search(r)

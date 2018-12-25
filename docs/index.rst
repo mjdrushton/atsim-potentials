@@ -11,8 +11,9 @@ Classical simulation codes typically contain a good selection of analytical form
 
 The following codes are supported for pair-potential tabulation:
 
-* `LAMMPS`_ 
 * `DL_POLY`_ 
+* `GULP`_
+* `LAMMPS`_ 
 
     
 Embedded Atom Model (EAM) potential tabulation is supported in the following formats:
@@ -32,7 +33,7 @@ Contents
     potentials/pair_potential_tabulation
     potentials/eam_tabulation
     examples
-    reference
+    apidoc/modules
     credits
     changes
     license
@@ -51,3 +52,4 @@ Indices and tables
 
 .. _LAMMPS: http://lammps.sandia.gov
 .. _DL_POLY: https://www.scd.stfc.ac.uk/Pages/DL_POLY.aspx
+.. _GULP: http://gulp.curtin.edu.au/gulp/
