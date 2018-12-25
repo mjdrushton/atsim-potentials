@@ -176,6 +176,81 @@ def test_polynomial():
   pf = potentialforms.polynomial(1.1, 2.43, 1.82, -2.4)
   assert pytest.approx(pf(r)) == expect
 
+
+def test_tang_toennies():
+  # Old implementation
+  def f2n(x, n):
+    v = 0.0
+    for k in range(2*n+1):
+      v += x**float(k) / math.factorial(k)
+    return 1.0 - math.exp(-x) * v
+
+
+  def _ttSecondTerm(r, b, C_6, C_8, C_10):
+    n_3 = f2n(b*r, 3) * C_6/r**6.0
+    n_4 = f2n(b*r, 4) * C_8/r**8.0
+    n_5 = f2n(b*r, 5) * C_10/r**10.0
+    return n_3 + n_4 + n_5
+
+
+  def tangToennies(A, b, C_6, C_8, C_10):
+    def f(r):
+      # Convert r from angstrom to a.u.
+      f = A * math.exp(-b*r)
+      s = _ttSecondTerm(r, b, C_6, C_8, C_10)
+      v = f-s
+      # Convert energy in a.u. to eV
+      return v
+    return f
+
+  def auConvertWrap(func):
+    def wrapped(r):
+      r /= 0.5292
+      v = func(r)
+      return v * 27.211
+    return wrapped
+
+  A = 832.4
+  b = 1.865
+  C_6 = 129.6
+  C_8 = 4187.0
+  C_10 = 155500.0
+  Kr_Kr_expect = auConvertWrap(tangToennies(A, b, C_6, C_8, C_10))
+  d1 = gradient(Kr_Kr_expect)
+  d2 = gradient(d1)
+
+  # Check the sympy implementation
+  sp_expression = potentialfunctions.tang_toennies._as_sympy()
+  for r in range(2, 100):
+    r = float(r) /10.0
+    expect = pytest.approx(Kr_Kr_expect(r))
+    actual = sp_expression.subs({"A" : A, "b": b, 
+      "C_6" : C_6, "C_8" : C_8,
+      "C_10" : C_10, "r" : r })
+    assert expect == actual
+
+  # New implementation
+  for r in range(2, 100):
+    r = float(r) /10.0
+
+    expect = pytest.approx(Kr_Kr_expect(r))
+    actual = potentialfunctions.tang_toennies(r, A, b, C_6, C_8, C_10)
+
+    assert expect == actual
+
+  # First and second derivatives
+  for r in range(10, 40):
+    r = float(r) /10.0
+
+    expect = pytest.approx(d1(r), rel=1e-3)
+    actual = potentialfunctions.tang_toennies.deriv(r, A, b, C_6, C_8, C_10)
+    assert expect == actual
+
+    expect = pytest.approx(d2(r), rel = 1e-3)
+    actual = potentialfunctions.tang_toennies.deriv2(r, A, b, C_6, C_8, C_10)
+    assert expect == actual
+
+
 class PotentialFunctionsCaller(object):
   """Helper used in test_deriv, this is for testing the functions from atsim.potentialfunctions"""
 
@@ -224,6 +299,7 @@ def test_deriv(caller):
       ((479.9553, -1372.5304, 1562.2233, -881.9685,  246.4347,  -27.2447), -2.10212479999882, -3.86283999999978),
       (tuple(), 0.0, 0.0),
     ],
+    tang_toennies = ((832.4, 1.865, 129.6, 4187.0, 155500.0), -271.564487468955, 973.169664930065),
     sqrt = ((3.0,), 1.1858541226, -0.370579413300982),
     zbl = ((92, 8), -40.4739253056137, 142.687518894378),
     zero = (tuple(), 0.0, 0.0)
