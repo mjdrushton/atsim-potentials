@@ -10,6 +10,7 @@ from . import _query_actions
 from . import _actions
 
 from ...config import ConfigParserOverrideTuple, ConfigParser, FilteredConfigParser
+from ...config._common import ConfigurationException
 
 def _parse_command_line():
   p = argparse.ArgumentParser(description = "Tabulate potential models for common atomistic simulation codes. This is part of the atsim.potentials package.")
@@ -29,7 +30,7 @@ def _parse_command_line():
   fmutex_group.add_argument("--exclude-species", nargs = '*', metavar = "SPECIES", help = "SPECIES given provided to this option will NOT be included in tabulation.")
 
   override_group = p.add_argument_group("Override", "Add or override values in the configuration file")
-  override_group.add_argument("--override-item", "-e", nargs='*', metavar = "SECTION_NAME:KEY=VALUE", help = "Use VALUE for item SECTION_NAME:KEY instead of the in the configuration file")
+  override_group.add_argument("--override-item", "-e", nargs='*', metavar = "SECTION_NAME:KEY=VALUE", help = "Use VALUE for item SECTION_NAME:KEY instead of value contained in the configuration file")
   override_group.add_argument("--add-item", "-a", nargs='*', metavar = "SECTION_NAME:KEY=VALUE", help = "Add item to configuration file")
   override_group.add_argument("--remove-item", "-r", nargs='*', metavar = "SECTION_NAME:KEY", help = "Remove item from configuration file")
 
@@ -80,11 +81,8 @@ def _make_config_parser(cfg_file, overrides, additional, remove, species, exclud
 def _setup_logging():
   logging.basicConfig(level = logging.INFO, format = "%(message)s")
 
-def main():
-  _setup_logging()
+def _do_tabulation(p, args):
   logger = logging.getLogger(__name__).getChild("main")
-  p, args = _parse_command_line()
-
   species_list = None
   exclude_flag = False
   if args.include_species:
@@ -115,6 +113,17 @@ def main():
     p.error("Path of OUTPUT_FILE for tabulation not specified.")
   _actions.action_tabulate(cp, args.out_filename)
   sys.exit(0)
+
+def main():
+  _setup_logging()
+  logger = logging.getLogger(__name__).getChild("main")
+  p, args = _parse_command_line()
+
+  try:
+    _do_tabulation(p, args)
+  except ConfigurationException as e:
+    p.error("configuration error - {}".format(e))
+
 
 if __name__ == '__main__':
   main()

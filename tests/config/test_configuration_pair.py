@@ -247,6 +247,8 @@ O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
 def test_dlpoly_pair_configuration():
   cfg_string = u"""[Tabulation]
 target : DLPOLY
+nr : 1000
+cutoff : 9.99
   
 [Pair]
 O-O = as.buck 1000.0 0.3 32.0
@@ -256,9 +258,9 @@ U-O = as.buck 2000.0 0.2 0.0
   cfgobj = Configuration()
   tabulation = cfgobj.read(io.StringIO(cfg_string))
   
-  assert tabulation.nr == 1001
+  assert tabulation.nr == 1000
   assert tabulation.dr == 0.01
-  assert tabulation.cutoff == 10.0
+  assert tabulation.cutoff == 9.99
 
   assert tabulation.type == "Pair"
   assert tabulation.target == "DLPOLY"

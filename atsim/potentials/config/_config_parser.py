@@ -75,7 +75,8 @@ class _TabulationSection(object):
   """Represents the [Tabulation] section of a config file"""
 
   _target_synonyms = {
-    'lammps_eam_alloy' : 'setfl'
+    'lammps_eam_alloy' : 'setfl',
+    'DL_POLY' : 'DLPOLY'
   }
 
   def __init__(self, cp):

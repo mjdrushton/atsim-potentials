@@ -33,7 +33,7 @@ class Configuration(object):
       tabulation_target = "LAMMPS"
 
     if not tabulation_target in self._tabulation_factories:
-      errormsg = "Unknown tabulation target specified: '{}'".format(tabulation_target)
+      errormsg = "[Tabulation].tabulation-target - unknown tabulation target specified : '{}'".format(tabulation_target)
       logger.error(errormsg)
       raise ConfigurationException(errormsg)
     else:

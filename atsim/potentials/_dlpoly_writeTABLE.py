@@ -23,7 +23,7 @@ def _writePotential(potential, cutoff, gridPoints, meshResolution, out ):
 
   #Check that number of grid points is divisible by 4
   if gridPoints%4 != 0:
-    raise WritePotentialException("Number of grid points needs to be divisible by 4")
+    raise WritePotentialException("The number of rows in a DL_POLY TABLE file needs to be divisible by 4. Number of rows specified = {} ".format(gridPoints))
 
   outputbuilder = StringIO()
 
