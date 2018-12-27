@@ -5,6 +5,7 @@ import argparse
 import logging
 import sys
 import collections
+import itertools
 
 from . import _query_actions
 from . import _actions
@@ -12,7 +13,7 @@ from . import _actions
 from ...config import ConfigParserOverrideTuple, ConfigParser, FilteredConfigParser
 from ...config._common import ConfigurationException
 
-def _parse_command_line():
+def _parse_command_line(cli_args = None):
   p = argparse.ArgumentParser(description = "Tabulate potential models for common atomistic simulation codes. This is part of the atsim.potentials package.")
 
   p.add_argument("config_file", metavar = "POTENTIAL_DEFN_FILE", type=argparse.FileType('r'), help = "File containing definition of potential model.")
@@ -30,11 +31,11 @@ def _parse_command_line():
   fmutex_group.add_argument("--exclude-species", nargs = '*', metavar = "SPECIES", help = "SPECIES given provided to this option will NOT be included in tabulation.")
 
   override_group = p.add_argument_group("Override", "Add or override values in the configuration file")
-  override_group.add_argument("--override-item", "-e", nargs='*', metavar = "SECTION_NAME:KEY=VALUE", help = "Use VALUE for item SECTION_NAME:KEY instead of value contained in the configuration file")
-  override_group.add_argument("--add-item", "-a", nargs='*', metavar = "SECTION_NAME:KEY=VALUE", help = "Add item to configuration file")
-  override_group.add_argument("--remove-item", "-r", nargs='*', metavar = "SECTION_NAME:KEY", help = "Remove item from configuration file")
+  override_group.add_argument("--override-item", "-e", nargs='*', action="append", metavar = "SECTION_NAME:KEY=VALUE", help = "Use VALUE for item SECTION_NAME:KEY instead of value contained in the configuration file")
+  override_group.add_argument("--add-item", "-a", nargs='*', action="append", metavar = "SECTION_NAME:KEY=VALUE", help = "Add item to configuration file")
+  override_group.add_argument("--remove-item", "-r", nargs='*', action="append", metavar = "SECTION_NAME:KEY", help = "Remove item from configuration file")
 
-  args = p.parse_args()
+  args = p.parse_args(args = cli_args)
   return p, args
 
 def _create_override_tuple(key, has_value = True):
@@ -50,13 +51,13 @@ def _create_override_tuple(key, has_value = True):
 def _make_config_parser(cfg_file, overrides, additional, remove, species, exclude_flag):
   override_dict = collections.OrderedDict()
   if not overrides is None:
-    for override in overrides:
+    for override in itertools.chain.from_iterable(overrides):
       over_tuple = _create_override_tuple(override)
       k = (over_tuple.section, over_tuple.key)
       override_dict[k] = over_tuple
 
   if not remove is None:
-    for override in remove:
+    for override in itertools.chain.from_iterable(remove):
       over_tuple = _create_override_tuple(override, False)
       k = (over_tuple.section, over_tuple.key)
       override_dict[k] = over_tuple
@@ -65,7 +66,7 @@ def _make_config_parser(cfg_file, overrides, additional, remove, species, exclud
 
   additional_list = []
   if not additional is None:
-    for add in additional:
+    for add in itertools.chain.from_iterable(additional):
       over_tuple = _create_override_tuple(add)
       additional_list.append(over_tuple)
 

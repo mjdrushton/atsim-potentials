@@ -112,3 +112,30 @@ A -> B : test"""
     items = _query_actions._list_items(cp)
     items.sort()
     assert expect == items
+
+
+@pytest.mark.parametrize('cli_option, cli_attr', [('--override-item', 'override_item'), ('--add-item', 'add_item'), ('--remove-item', 'remove_item')])
+def test_comandline_multiple_overrides(cli_option, cli_attr):
+  from atsim.potentials.tools.potable import _parse_command_line
+
+  cli_args = [__file__, "OUT", cli_option, "Tabulation:target=GULP"]
+  p, args = _parse_command_line(cli_args)
+
+  argval = getattr(args, cli_attr)
+  assert len(argval) == 1
+  assert argval == [["Tabulation:target=GULP"]]
+
+  cli_args = [__file__, "OUT", cli_option, "Tabulation:target=GULP", cli_option, "Tabulation:cutoff=20"]
+  p, args = _parse_command_line(cli_args)
+
+  argval = getattr(args, cli_attr)
+  assert len(argval) == 2
+  assert argval == [["Tabulation:target=GULP"], ["Tabulation:cutoff=20"]]
+
+  cli_args = [__file__, "OUT", cli_option, "Tabulation:target=GULP", "Tabulation:cutoff=20"]
+  p, args = _parse_command_line(cli_args)
+
+  argval = getattr(args, cli_attr)
+  assert len(argval) == 1
+  assert argval == [["Tabulation:target=GULP", "Tabulation:cutoff=20"]]
+
