@@ -5,6 +5,7 @@ import collections
 from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation, GULP_PairTabulation
 from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation
 
+from ._common import ConfigurationException
 from ._potential_form_registry import Potential_Form_Registry
 from ._modifier_registry import Modifier_Registry
 from ._pair_potential_builder import Pair_Potential_Builder
@@ -20,29 +21,22 @@ def _create_pair_objects(potential_form_registry, modifier_registry, cp):
   return pots
 
 class PairTabulationFactory(object):
+  """Factory class for Tabulation objects such as those in the atsim.potentials.pair_tabulation module.
+
+  The role of this class is to extract data from an atsim.potentials.config.ConfigParser and together
+  with other builder classes, create atsim.potentials.Potential objects and extract the cutoff values that
+  can be used to instantiate a Tabulation object.
+  
+  The key method for clients of this object is .create_tabulation().
+
+  Other public methods are provided to allow customisation in sub-classes.
+  
+  """
 
   def __init__(self, tabulation_target, tabulation_class):
     self.tabulation_target = tabulation_target
     self.tabulation_class = tabulation_class
     self.tabulation_type = "pair-potential"
-
-  def _get_cutoffs(self, cp):
-    logger = logging.getLogger(__name__).getChild("PairTabulationFactory._get_cutoffs")
-
-    # Get cutoff and gridpoints
-    if cp.tabulation.cutoff is None:
-      cutoff = 10.0
-      logger.warning("Cutoff not specified using a default of {}".format(cutoff))
-    else:
-      cutoff = cp.tabulation.cutoff
-    
-    if cp.tabulation.nr is None:
-      nr = 1001
-      logger.warning("nr not specified using a default of {}".format(nr))
-    else:
-      nr = cp.tabulation.nr
-
-    return RCutoffTuple(cutoff, nr)
 
   def _log_cutoffs(self, logger, r_cutoff, **kwargs):
     logger.info("  * cutoff: {}".format(r_cutoff.cutoff))
@@ -69,21 +63,75 @@ class PairTabulationFactory(object):
     self._log_pair_potentials(logger, potobjs, **kwargs)
     self._log_more(logger, r_cutoff, potobjs, **kwargs)
 
-  def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
+  def extract_cutoffs(self, cp):
+    """Called by .create_tabulation() to determine the maximum separation cutoff for the tabulation.
+
+    :param cp: atsim.potentials.config.ConfigParser instance representing parsed configuration file.
+    :return: RCutoffTuple (or object providing .cutoff and .nr properties)"""
+
+    logger = logging.getLogger(__name__).getChild("PairTabulationFactory.extract_cutoffs")
+
+    # Get cutoff and gridpoints
+    if cp.tabulation.cutoff is None:
+      cutoff = 10.0
+      logger.warning("Cutoff not specified using a default of {}".format(cutoff))
+    else:
+      cutoff = cp.tabulation.cutoff
+    
+    if cp.tabulation.nr is None:
+      nr = 1001
+      logger.warning("nr not specified using a default of {}".format(nr))
+    else:
+      nr = cp.tabulation.nr
+
+    return RCutoffTuple(cutoff, nr)
+
+  def extract_potential_objects(self, cp, potential_form_registry, modifier_registry):
+    """Method called by .create_tabulation() to create a list of atsim.potentials.Potential objects.
+    
+    :param cp: atsim.potentials.config.ConfigParser instance representing parsed configuration file.
+    :param potential_form_registry: atsim.potentials.config.Potential_Form_Registry object.
+    :param modifier_registry: atsim.potentials.config.Modifier_Registry instance.
+
+    :return: List of atsim.potentials.Potential objects.
+    """
+
+    potobjs = _create_pair_objects(potential_form_registry,modifier_registry, cp)
+    return potobjs
+
+  def extract_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
+    """Extract and prepare arguments to be passed to Tabulation class constructor.
+
+    Returns a list of arguments suitable for passing to Tabulation class constructor. Typically these are: 
+    ``[potobjs, cutoff, nr]`` 
+
+    Where:
+      * ``potobjs`` is a list of :class:`atsim.potentials.Potential` instances.
+      * ``cutoff`` is a float giving the maximum separation for the tabulation.
+      * ``nr`` the number of rows to be used in the tabulation.
+
+    :param cp: atsim.potentials.config.ConfigParser instance representing parsed configuration file.
+    :param r_cutoff: Float giving the maximum separation for tabulation (as extracted from configuration).
+    :param potobjs: List of atsim.potentials.Potential objects to be tabulated.
+    :param potential_form_registry: atsim.potentials.config.Potential_Form_Registry object.
+    :param modifier_registry: atsim.potentials.config.Modifier_Registry instance.
+    
+    :return: List containing Tabulation class constructor arguments. """
+
     return [potobjs, r_cutoff.cutoff, r_cutoff.nr]
 
   def create_tabulation(self,cp):
     logger = logging.getLogger(__name__).getChild("PairTabulationFactory.create_tabulation")
-    r_cutoff = self._get_cutoffs(cp)
+    r_cutoff = self.extract_cutoffs(cp)
 
     # Get pair potentials
     potential_form_registry = Potential_Form_Registry(cp, True)
     modifier_registry = Modifier_Registry()
-    potobjs = _create_pair_objects(potential_form_registry,modifier_registry, cp)
+    
+    potobjs = self.extract_potential_objects(cp, potential_form_registry, modifier_registry)
     self._log_tabulation_details(r_cutoff, potobjs)
 
-    tabulationargs = self._make_tabulation_args(cp, r_cutoff, potobjs, potential_form_registry, modifier_registry)
-
+    tabulationargs = self.extract_tabulation_args(cp, r_cutoff, potobjs, potential_form_registry, modifier_registry)
     tabulation = self.tabulation_class(*tabulationargs)
     return tabulation
 
@@ -96,9 +144,9 @@ class EAMTabulationFactory(PairTabulationFactory):
     self.eam_builder_class = eam_builder_class
     self.tabulation_type = "EAM"
 
-  def _get_cutoffs(self, cp):
+  def extract_cutoffs(self, cp):
     logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._get_cutoffs")
-    r_cutoff = super(EAMTabulationFactory, self)._get_cutoffs(cp)
+    r_cutoff = super(EAMTabulationFactory, self).extract_cutoffs(cp)
 
     # Get cutoff and gridpoints
     if cp.tabulation.cutoff_rho is None:
@@ -119,7 +167,7 @@ class EAMTabulationFactory(PairTabulationFactory):
     rd = Reference_Data(extra_rd)
     return rd
 
-  def _make_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
+  def extract_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
     logger = logging.getLogger(__name__).getChild("EAMTabulationFactory._make_tabulation_args")
     rd = self._create_reference_data(cp)
     eam_builder =  self.eam_builder_class(cp, potential_form_registry, modifier_registry, rd)
@@ -152,10 +200,20 @@ class EAMTabulationFactory(PairTabulationFactory):
     logger.info("  * cutoff_rho: {}".format(r_cutoff.cutoff_rho))
     logger.info("  * nrho: {}".format(r_cutoff.nrho))
 
+class DLPOLY_PairTabulationFactory(PairTabulationFactory):
+  """PairTabulationFactory that performs extra checks required by DL_POLY TABLEs and raises ConfigException if errors are found"""
+
+  def extract_cutoffs(self, cp):
+    cutoffs = super(DLPOLY_PairTabulationFactory, self).extract_cutoffs(cp)
+    if cutoffs.nr % 4 != 0:
+      raise ConfigurationException("The number of rows in a DL_POLY TABLE file needs to be divisible by 4. Number of rows specified = {} ".format(cutoffs.nr))
+    return cutoffs
+
+
 """Target name to factory objects"""
 TABULATION_FACTORIES = {
   "LAMMPS"       :  PairTabulationFactory("LAMMPS", LAMMPS_PairTabulation),
-  "DLPOLY"       :  PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),
+  "DLPOLY"       :  DLPOLY_PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),
   "GULP"         :  PairTabulationFactory("GULP", GULP_PairTabulation),
   "setfl"        :  EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation),    
   "setfl_fs"     :  EAMTabulationFactory("setfl/lammps_eam_fs", SetFL_FS_EAMTabulation, EAM_Potential_Builder_FS),

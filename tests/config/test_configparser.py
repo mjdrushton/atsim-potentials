@@ -290,6 +290,12 @@ def test_overrides():
       cp = ConfigParser(infile, overrides = [
         ConfigParserOverrideTuple(u"Tabulation", u"nr", None),
       ])
+      
+  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+    with pytest.raises(ConfigOverrideException):
+      cp = ConfigParser(infile, overrides = [
+        ConfigParserOverrideTuple(u"Tabulation", u"no-exist", None),
+      ])
 
   expect = [u'target', u'cutoff', ]
   actual = list(cp.raw_config_parser[u'Tabulation'])
