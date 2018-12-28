@@ -1,24 +1,29 @@
-.. atsim_potentials documentation master file, created by
-   sphinx-quickstart on Thu Mar 13 22:54:46 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-****************
-atsim.potentials
-****************
+***************************************************************************
+`atsim.potentials` - Potential Model Tabulation for Atomic Scale Simulation
+***************************************************************************
 
 Classical simulation codes typically contain a good selection of analytical forms for describing atomic interactions. Sometimes however, you may need to use a  potential that is not directly supported by the code. Luckily, most simulation codes allow you to provide tabulated potentials in which energies and forces, for a range of interatomic separations, are pre-calculated and specified as rows within a text file. The ``atsim.potentials`` package provides python modules to make the specification and tabulation of pair- and many-body potentials straightforward and consistent.
 
-The following codes are supported for pair-potential tabulation:
+Features
+========
 
-* `LAMMPS`_ 
-* `DL_POLY`_ 
+  * **Pair-Potential Tabulation:** Effective pair-potentials can be tabulated for multiple codes including:
 
-    
-Embedded Atom Model (EAM) potential tabulation is supported in the following formats:
+    + `GULP`_
+    + `LAMMPS`_ 
+    + `DL_POLY`_ 
 
-* DYNAMO - as used by `LAMMPS`_ and several other codes.
-* `DL_POLY`_
+  * **Many-Bodied Potentials:** Embedded Atom Model (EAM) potential tabulation is supported in the following formats:
+    + DYNAMO - as used by `LAMMPS`_ and several other codes:
+   
+      - Support for `LAMMPS`_ `eam`, `eam/fs`, `eam/alloy` pair-styles.
+
+    + `DL_POLY`_\ : write `TABEAM` formatted files.
+
+  * **No programming required:** ``atsim.potentials`` can be driven using its own potential definition format. Using simple configuration files complex models can be defined and tabulated without requiring any programming experience.
+  * **Batteries included:** comes pre-loaded with a wide range of common-potential types.
+  * **Potential Splining:** join different potentials together with splines.
+  * **Flexible:** the ``atsim.potentials`` potential definition format allows the use of arbitrary mathematical formulae to define new potential functions. If this isn't sufficient it also provides a powerful Python API which should allow most tabulation tasks to be achieved.  
 
 
 Contents
@@ -28,14 +33,18 @@ Contents
     :maxdepth: 2
 
     installation
-    quickstart
-    potentials/pair_potential_tabulation
-    potentials/eam_tabulation
+    quick_start/quickstart
+    user_guide/user_guide
+    reference/reference
     examples
-    reference
     credits
     changes
     license
+
+.. todolist::
+
+
+
 
 Contact
 =======
@@ -51,3 +60,4 @@ Indices and tables
 
 .. _LAMMPS: http://lammps.sandia.gov
 .. _DL_POLY: https://www.scd.stfc.ac.uk/Pages/DL_POLY.aspx
+.. _GULP: https://nanochemistry.curtin.edu.au/gulp/

@@ -1,6 +1,17 @@
-*************
-API Reference
-*************
+**********
+Python API
+**********
+
+.. todo::
+
+	Update this to reflect new API structure
+
+
+.. todo::
+
+	Potential object doesn't talk about handling of derivatives correctly - this needs to be updated.
+
+
 
 
 .. py:module:: atsim.potentials

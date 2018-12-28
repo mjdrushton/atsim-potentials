@@ -1,4 +1,4 @@
-.. _quick_start:
+.. _python_api_quick_start:
 
 ***********
 Quick-Start
