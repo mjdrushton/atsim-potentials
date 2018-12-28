@@ -7,7 +7,7 @@ Command Line Tools
 `potable`
 =========
 
-The `potable` tool is the interface for working with potential definition files. In addition to converting a potential model definition into a tabulation it allows their contents to be queried, filtered, overridden and plotted.
+The :program:`potable` tool is the interface for working with potential definition files. In addition to converting a potential model definition into a tabulation it allows their contents to be queried, filtered, overridden and plotted.
 
 Usage
 -----
@@ -37,36 +37,60 @@ Positional Arguments:
 Optional Arguments:
 ~~~~~~~~~~~~~~~~~~~
 
-  * ``-h, --help``            show this help message and exit
+.. option:: -h, --help
 
-Query:
-++++++
+  show this help message and exit
+
+
+.. rubric:: Query
+
 
 Query items in the configuration file
 
-  * ``--list-items``, ``-l``      List items in configuration file to STD_OUT. One is
-                        listed per line with format ``SECTION_NAME:KEY=VALUE``
-  * ``--list-item-labels``    List item in configuration file to STD_OUT. One item
-                        per line with format ``SECTION_NAME:KEY``
-  * ``--item-value SECTION_NAME:KEY``
-                        Return the value for given item in configuration file
+.. option:: --list-items, -l
 
-Filter:
-+++++++
+      List items in configuration file to STD_OUT. One is listed per line with format ``SECTION_NAME:KEY=VALUE``
+
+.. option:: --list-item-labels
+
+    List item in configuration file to STD_OUT. One item per line with format ``SECTION_NAME:KEY``
+
+
+.. option:: --item-value SECTION_NAME:KEY
+
+    Return the value for given item in configuration file
+
+.. rubric:: Filter
+
 
 Filter items from the configuration file
 
-  * ``--include-species [SPECIES [SPECIES ...]]`` If specified, only those ``SPECIES`` provided will be included in tabulation.
-  * ``--exclude-species [SPECIES [SPECIES ...]]`` ``SPECIES`` provided to this option will NOT be included in tabulation.
 
-Override:
-+++++++++
+.. option:: --include-species [SPECIES [SPECIES ...]]
+
+   If specified, only those ``SPECIES`` provided will be included in tabulation.
+
+.. option:: --exclude-species [SPECIES [SPECIES ...]]
+
+   ``SPECIES`` provided to this option will NOT be included in tabulation.
+
+
+.. rubric:: Override
+
 
 Add or override values in the configuration file
 
-  * ``--override-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]]``\ , ``-e [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]]`` Use ``VALUE`` for item ``SECTION_NAME:KEY`` instead of value contained in the configuration file
-  * ``--add-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]]``\ , ``-a [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]]`` Add item to configuration file 
-  * ``--remove-item [SECTION_NAME:KEY [SECTION_NAME:KEY ...]]``\ , ``-r [SECTION_NAME:KEY [SECTION_NAME:KEY ...]]`` Remove item from configuration file
+.. option:: --override-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] , -e [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] 
+
+  Use ``VALUE`` for item ``SECTION_NAME:KEY`` instead of value contained in the configuration file
+
+.. option:: --add-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] , -a [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] 
+
+  Add item to configuration file 
+
+.. option:: --remove-item [SECTION_NAME:KEY [SECTION_NAME:KEY ...]] , -r [SECTION_NAME:KEY [SECTION_NAME:KEY ...]]
+
+   Remove item from configuration file
 
 
 Examples:

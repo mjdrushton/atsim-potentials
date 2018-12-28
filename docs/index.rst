@@ -32,8 +32,8 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    installation
     quick_start/quickstart
+    installation
     user_guide/user_guide
     reference/reference
     examples
