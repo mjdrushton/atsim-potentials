@@ -1,6 +1,10 @@
-*******************************************************************
-Potential Tabulation Using `potable` and Potential Definition Files
-*******************************************************************
+**********************************************
+Using `potable` and Potential Definition Files
+**********************************************
+
+.. toctree:
+
+	combining_potentials
 
 .. todo::
 

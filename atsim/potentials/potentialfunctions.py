@@ -85,7 +85,7 @@ class bornmayer(object):
 
     .. math ::
 
-      U(r_{ij}) = A \exp \left( \\frac{-r_{ij}}{\\rho} \\right)
+      V(r_{ij}) = A \exp \left( \\frac{-r_{ij}}{\\rho} \\right)
 
     :param r: Atomic separation.
     :param A: Potential parameter
@@ -128,7 +128,7 @@ class coul(object):
 
     .. math ::
 
-      U(r_{ij}) = \\frac{ q_i q_j }{4 \pi \epsilon_0 r_{ij} }
+      V(r_{ij}) = \\frac{ q_i q_j }{4 \pi \epsilon_0 r_{ij} }
 
     .. note:: Constant value appropriate for :math:`r_{ij}` in angstroms and energy in eV.
 
@@ -164,7 +164,7 @@ class constant(object):
   """Callable that returns a constant"""
 
   def __call__(self,r, constant):
-    """Function that simply returns the function that is passed to it.
+    """Function that simply returns the value that is passed to it.
 
     :param r: Separation.
     :param constant: The value to be returned by this function.
@@ -207,7 +207,7 @@ class hbnd(object):
 
     .. math::
 
-      U(r_{ij}) = \\frac{A}{r_{ij}^{12}} - \\frac{B}{r_{ij}^{10}}
+      V(r_{ij}) = \\frac{A}{r_{ij}^{12}} - \\frac{B}{r_{ij}^{10}}
 
     :param r: Atomic separation.
     :param A: Potential A parameter
@@ -239,7 +239,7 @@ class hbnd(object):
 hbnd = hbnd()
 
 class lj(object):
-  """Callable for Lennar-Jones 12-6 potential"""
+  """Callable for Lennard-Jones 12-6 potential"""
 
   def _as_sympy(self):
     import sympy
@@ -251,7 +251,7 @@ class lj(object):
 
     .. math ::
 
-      U(r_{ij}) = 4 \epsilon \left( \\frac{\sigma^{12}}{r_{ij}^{12}} - \\frac{\sigma^6}{r_{ij}^6} \\right)
+      V(r_{ij}) = 4 \epsilon \left( \\frac{\sigma^{12}}{r_{ij}^{12}} - \\frac{\sigma^6}{r_{ij}^6} \\right)
 
     :param r: Atomic separation.
     :param epsilon: Epsilon parameter :math:`\epsilon`
@@ -295,7 +295,7 @@ class morse(object):
 
     .. math ::
 
-      U(r_{ij}) = D  \left[ \exp \left( -2 \gamma (r_{ij} - r_*) \\right) - 2 \\exp \left( -\gamma (r - r_*) \\right) \\right]
+      V(r_{ij}) = D  \left[ \exp \left( -2 \gamma (r_{ij} - r_*) \\right) - 2 \\exp \left( -\gamma (r - r_*) \\right) \\right]
 
     :param r: Atomic separation.
     :param gamma: Potential parameter :math:`\gamma`
@@ -338,7 +338,7 @@ class polynomial(object):
 
     .. math::
 
-      U(r_{ij}) = C_0 + C_1 r_{ij} + C_2 r_{ij}^2 + \dots + C_n r_{ij}^n
+      V(r_{ij}) = C_0 + C_1 r_{ij} + C_2 r_{ij}^2 + \dots + C_n r_{ij}^n
 
     This function accepts a variable number of arguments - the first is :math:`r_{ij}`
     and with the remainder being :math:`C_0, C_1, \dots, C_n` respectively.

@@ -80,11 +80,13 @@ Filter items from the configuration file
 
 Add or override values in the configuration file
 
-.. option:: --override-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] , -e [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] 
+.. _cmdoption-override-item:
+
+.. option:: --override-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] , -e [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]]
 
   Use ``VALUE`` for item ``SECTION_NAME:KEY`` instead of value contained in the configuration file
 
-.. option:: --add-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] , -a [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] 
+.. option:: --add-item [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]] , -a [SECTION_NAME:KEY=VALUE [SECTION_NAME:KEY=VALUE ...]]
 
   Add item to configuration file 
 

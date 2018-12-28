@@ -6,14 +6,14 @@ Quick-Start
 
 The following provides a quick example of how a pair potential model can be defined and then tabulated for different simulation codes. For more advanced features such as EAM potentials, defining custom potential forms, splining or using the python interface, please see :ref:`user-guide`\ .
 
-In this example we will define  Basak's [#basak03]_  potential model for UO\ :sub:`2`\ . This has been chosen as it presents an issue that is often solved by using tabulated potentials. The U-O interaction combines Buckingham and Morse potential forms. Although most simulation codes natively provide these as analytical forms, some don't then allow them to be used in combination for the same pair-interaction. As a result, it becomes necessary to combine them externally and feed them into the code in tabulated form. This tutorial will show how this can be achieved using ``atsim.potentials``\ .
+In this example we will define  Basak's [Basak2003]_  potential model for UO\ :sub:`2`\ . This has been chosen as it presents an issue that is often solved by using tabulated potentials. The U-O interaction combines Buckingham and Morse potential forms. Although most simulation codes natively provide these as analytical forms, some don't then allow them to be used in combination for the same pair-interaction. As a result, it becomes necessary to combine them externally and feed them into the code in tabulated form. This tutorial will show how this can be achieved using ``atsim.potentials``\ .
 
 #. **Installation** (see :ref:`installation` for more detail)::
 
 	pip install atsim.potentials
 
 #. **Write input file**
-	* In the Basak model [#basak03]_  the O-O and U-U interactions are defined entirely using the Buckingham potential form. Whilst the O-U pair is the sum of a Buckingham and Morse potential (see :ref:`below <basak-potential-model>` for full details of the potential model). Both forms are provided by ``atsim.potentials`` and are specified as:
+	* In the Basak model [Basak2003]_  the O-O and U-U interactions are defined entirely using the Buckingham potential form. Whilst the O-U pair is the sum of a Buckingham and Morse potential (see :ref:`below <basak-potential-model>` for full details of the potential model). Both forms are provided by ``atsim.potentials`` and are specified as:
 
 	.. math::
 		:label: basak_short_components_standard_form
@@ -91,7 +91,7 @@ Potential model
 Before moving on to the tabulation procedure, it is useful to understand what it is we're trying to tabulate.
 
 
-Basak's [#basak03]_ model employs the following potential form:
+Basak's [Basak2003]_ model employs the following potential form:
 
 .. math::
 	:label: basak_eq1
@@ -110,7 +110,7 @@ Where :math:`\epsilon_0` is the permittivity of free space.
 
 In a periodic system like UO\ :sub:`2`\ , it is necessary to employ various mathematical tricks to get the Coulomb sum to converge quickly and reliably (see for instance Ewald, cell-multipole or particle-mesh methods). As a result the Coulomb part of a potential model isn't normally included in a tabulation file and therefore it won't appear further in this example.
 
-This leaves the short-range components of :math:`V(r_{ij})` from eqn. :eq:`basak_eq1` for us to bother about, namely :math:`V_\mathrm{Buck}(r_{ij})` and :math:`V_\mathrm{Morse}(r_{ij})`. In Basak's [#basak03]_ paper these are defined as follows:
+This leaves the short-range components of :math:`V(r_{ij})` from eqn. :eq:`basak_eq1` for us to bother about, namely :math:`V_\mathrm{Buck}(r_{ij})` and :math:`V_\mathrm{Morse}(r_{ij})`. In Basak's [Basak2003]_ paper these are defined as follows:
 
 .. math::
 	:label: basak_short_components
@@ -120,7 +120,7 @@ This leaves the short-range components of :math:`V(r_{ij})` from eqn. :eq:`basak
 
 The :math:`f_0`, :math:`a_{ij}`, :math:`b_{ij}`, :math:`C_{ij}`, :math:`D_{ij}`, :math:`\gamma_{ij}` and :math:`r_{ij}^*` specifying each pair interaction are given in the following table.
 
-.. table:: Potential parameters for Basak model taken from original paper [#basak03]_ (units have been converted for certain values).
+.. table:: Potential parameters for Basak model taken from original paper [Basak2003]_ (units have been converted for certain values).
   :name: table_basak_params
 
   +------------------------------------------+----------+----------+----------+
@@ -200,12 +200,12 @@ This file contains two configuration blocks:
 	  - Where ``SPECIES_A`` and ``SPECIES_B`` define each pair of interacting species.
 	  - ``POTENTIAL_FORM`` is a label identifying the functional form of the interaction. Here the ``as.buck`` and ``as.morse`` types are used. The ``as.`` prefix indicates these are standard forms provided by ``atsim.potentials`` (see :ref:`list-of-potential-forms` for a complete list).
 
-The ``as.buck`` potential takes three parameters, separated by spaces::
+The  :ref:`potform-buck` potential takes three parameters, separated by spaces::
 
 	as.buck A ⍴ C
 
 
-And the ``as.morse`` parameters are::
+And the :ref:`potform-morse` parameters are::
 
 	as.morse ɣ r* D
 
@@ -261,7 +261,7 @@ An example of how to use this file in LAMMPS is given here: :ref:`using-table-in
 GULP
 ----
 
-In the previous section a new tabulation target was specified by editing the :download:`basak.aspot` file. For temporary changes, the :ref:`potable <potable-tool>` allows configuration options to be overridden from the command line. Let's do this now to make a table file suitable for GULP. This is achieved with the ``--override-item`` option, like this::
+In the previous section a new tabulation target was specified by editing the :download:`basak.aspot` file. For temporary changes, the :ref:`potable <potable-tool>` allows configuration options to be overridden from the command line. Let's do this now to make a table file suitable for GULP. This is achieved with the :ref:`--override-item <cmdoption-override-item>` option, like this::
 
 	potable --override-item Tabulation:target=GULP basak.aspot potentials.lib
 
@@ -275,7 +275,5 @@ The ``potentials.lib`` file can be used with the following GULP input file to ru
   ../basak_tabulate_lammps/using_table_in_lammps
 
 
-
-
-.. [#basak03] Basak, C. (2003). Classical molecular dynamics simulation of UO2 to predict thermophysical properties. *Journal of Alloys and Compounds*, **360** (1-2), 210–216. http://dx.doi.org/doi:10.1016/S0925-8388(03)00350-5
+ 
 .. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx

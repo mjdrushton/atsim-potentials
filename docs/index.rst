@@ -40,6 +40,7 @@ Contents
     credits
     changes
     license
+    references
 
 .. todolist::
 
