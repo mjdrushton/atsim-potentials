@@ -22,7 +22,15 @@ from ._multi_range_parser import multi_range_parser
 def _get_or_none(k, d, t):
   v = d.get(k, None)
   if not v is None:
-    v = t(v)
+    try:
+      v = t(v)
+    except ValueError:
+      msg = "Could not convert configuration option [{section_name}].{attr_name} into '{type}'. Value is = {value}".format(
+        type=t.__name__, 
+        section_name = d.name, 
+        value = v, 
+        attr_name = k)
+      raise ConfigParserException(msg)
   return v
 
 ConfigParserOverrideTuple = collections.namedtuple("ConfigParserOverrideTuple", ["section", "key", "value"])
@@ -60,6 +68,7 @@ class _TabulationCutoff(object):
     elif cutoff and dr:
       # Set nr
       nr = (cutoff/dr) + 1
+      nr = int(nr)
     elif not dr is None:
       raise ConfigParserException("'{dr}' cannot be specified without either '{nr}' or '{cutoff}' in [Tabulation] section of potential definition.".format(**self._template_dict))
 

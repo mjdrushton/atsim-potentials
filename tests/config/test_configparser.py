@@ -72,6 +72,7 @@ dr : 1.0
   parsed = ConfigParser(io.StringIO(cfg_string))
   assert 10.0 == parsed.tabulation.cutoff
   assert parsed.tabulation.nr == 11
+  assert type(parsed.tabulation.nr) is int
 
   cfg_string = u"""[Tabulation]
 nr : 11
