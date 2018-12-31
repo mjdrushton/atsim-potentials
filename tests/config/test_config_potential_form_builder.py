@@ -6,11 +6,11 @@ from atsim.potentials.config._modifier_registry import Modifier_Registry
 from atsim.potentials.config import ConfigParser
 from atsim.potentials.config._common import PotentialFormInstanceTuple, SpeciesTuple
 from atsim.potentials.config._common import MultiRangeDefinitionTuple
+from atsim.potentials.config._common import Potential_Form_Exception
 from atsim.potentials import Multi_Range_Defn
 from atsim.potentials._multi_range_potential_form import Multi_Range_Potential_Form
 
 import atsim.potentials.potentialfunctions as pforms
-
 
 import io
 
@@ -32,7 +32,6 @@ def test_potential_form_builder():
   potential_func = pfb.create_potential_function(in_tuple)
   r = 2.0
   assert pytest.approx(-1.2 + 1.3*r + 32.0*r**2) == potential_func(2.0)
-
 
 def test_bad_arguments_to_multi_range_potential_form():
   Rdt = Multi_Range_Defn
@@ -58,7 +57,6 @@ def test_bad_arguments_to_multi_range_potential_form():
     
   with pytest.raises(ValueError):
     Multi_Range_Potential_Form(*list(tuples), blah = 2.0)
-
 
 def test_multirange_potential_range_search():
   Rdt = Multi_Range_Defn
@@ -97,7 +95,6 @@ def test_multirange_potential_range_search():
   actual = mrpf._range_search(1.0)
   assert actual.potential_form == "one"
 
-
 def test_multirange_potential_set_range_tuples():
   # Check that range tuples appear in ascending order
   Rdt = Multi_Range_Defn
@@ -119,7 +116,6 @@ def test_multirange_potential_set_range_tuples():
   mrpf.range_defns = tuples
   actual = [rt.potential_form for rt in  mrpf.range_defns]
   assert expect == actual
-  
 
 def test_multirange_potential_form_builder():
   # Populate potential form registry
@@ -173,3 +169,30 @@ def test_sum_modifier():
   assert pytest.approx(10.5) == potential_func(2.1)
   assert pytest.approx(0.0) == potential_func(3.1)
 
+def test_bad_params_inside_expression():
+  """Check that configuration exceptions thrown when the wrong number of arguments are used with a potentialfunction inside a
+  cexprtk function"""
+
+  cp = ConfigParser(io.StringIO("""
+
+[Potential-Form]
+bad(r) = as.buck(1.0, 2.0)
+bad_parse(r) = exp() + 5.0
+  
+  """))
+  pfr = Potential_Form_Registry(cp, register_standard = True)
+
+  buck = pfr["as.buck"]
+  buck(1000.0, 0.2, 32.0)
+
+  with pytest.raises(Potential_Form_Exception):
+    buck(1.0, 2.0)
+  
+  bad_func = pfr["bad"]()
+  with pytest.raises(Potential_Form_Exception):
+    bad_func(1.0)
+
+  # Test for cexpr parse failure:
+  bad_parse = pfr["bad_parse"]()
+  with pytest.raises(Potential_Form_Exception):
+    bad_parse(1.0)

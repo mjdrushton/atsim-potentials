@@ -146,7 +146,6 @@ dispersion(r, C) = - C/r^6
   assert pytest.approx(pf.bornmayer.deriv(1.6, 1000.0, 0.1)) == potdict[('C', 'D')].potentialFunction.deriv(1.6)
   assert pytest.approx(pf.buck.deriv(3.2, 0, 1.0, 32.0)) == potdict[('C', 'D')].potentialFunction.deriv(3.2)
 
-
 def test_pair_deriv():
   """Test that pair potentials defined in potentialfunctions expose their .deriv() functions"""
 
@@ -242,7 +241,6 @@ O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
 
   expect = pf.buck(2.0, 1000.0, 0.1, 32.0) + pf.morse(2.0, 0.3, 2.0, 10.0)
   assert pytest.approx(expect) == energy
-    
 
 def test_dlpoly_pair_configuration():
   cfg_string = u"""[Tabulation]
@@ -340,7 +338,6 @@ O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
 
   expect = pf.buck(2.0, 1000.0, 0.1, 32.0) + pf.morse(2.0, 0.3, 2.0, 10.0)
   assert pytest.approx(expect) == energy
-
 
 @needsGULP
 def test_gulp_pair_configuration_tabulate(tmpdir):

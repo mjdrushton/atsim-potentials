@@ -2,6 +2,12 @@ import logging
 
 from .._multi_range_potential_form import create_Multi_Range_Potential_Form, Multi_Range_Defn
 
+class UnknownModifierException(KeyError):
+  pass
+
+class UnknownPotentialFormException(KeyError):
+  pass
+
 class Potential_Form_Builder(object):
   """Class that instantiates potential function callables from PotentialFormInstanceTuple"""
 
@@ -16,10 +22,18 @@ class Potential_Form_Builder(object):
 
     # Is pform_instance a modifier or a potential_instance?
     if hasattr(pform_instance, "modifier"):
-      pform_factory = self.modifier_registry[pform_instance.modifier]
+      try:
+        pform_factory = self.modifier_registry[pform_instance.modifier]
+      except KeyError as e:
+        raise UnknownModifierException(*e.args)
+      
       pform  = pform_factory(pform_instance.potential_forms, self)
     else:
-      pform_factory = self.potential_form_registry[pform_instance.potential_form]
+      try:
+        pform_factory = self.potential_form_registry[pform_instance.potential_form]
+      except KeyError as e:
+        raise UnknownPotentialFormException(*e.args)
+        
       params = pform_instance.parameters
       pform = pform_factory(*params)
 
