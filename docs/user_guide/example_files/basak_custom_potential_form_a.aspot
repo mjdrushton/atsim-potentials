@@ -1,0 +1,16 @@
+[Tabulation]
+target :  LAMMPS
+nr : 1000
+dr : 0.01
+
+[Pair]
+O-O : basak_buck 0.042203 3.82 0.327022 3.948787
+U-U : basak_buck 0.042203 3.26 0.327022 0.0
+O-U : sum(
+        basak_buck  0.042203 3.54 0.327022 0.0,
+        basak_morse 0.042203 13.6765 1.65 2.369)
+
+
+[Potential-Form]
+basak_buck(r,f0,a,b,c) = f0*b*exp((a-r)/b) - c/r^6
+basak_morse(r, f0, d, gamma, r_star) = as.morse(r,gamma, r_star, f0*d)

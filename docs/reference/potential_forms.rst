@@ -72,7 +72,7 @@ Four-range Buckingham potential due to B. Vessal et al. [Vessal1989]_\, [Vessal1
     \begin{cases}
       A \exp(-r_{ij}/\rho)                                                 , & 0 \leq r_{ij} \leq  r_\text{detach}\\
       a_0 + a_1 r_{ij} +a_2 r_{ij}^2+a_3 r_{ij}^3+a_4 r_{ij}^4+a_5 r_{ij}^5, & r_\text{detach} < r_{ij} < r_\text{min}\\
-      b_0 +b_1 *r_{ij}+b_2*r_{ij}^2+b_3*r_{ij}^3                           , & r_\text{min} \leq r_{ij} < r_\text{attach}\\
+      b_0 +b_1 r_{ij}+b_2 r_{ij}^2+b_3 r_{ij}^3                           , & r_\text{min} \leq r_{ij} < r_\text{attach}\\
       -\frac{C}{r_{ij}^6}                                                  , & r_{ij} \geq r_\text{attach}\\
     \end{cases}
 
@@ -228,7 +228,7 @@ Square Root (sqrt)
 
 Potential function is:
 
-.. math ::
+.. math::
 
 	U(r_{ij}) = G\sqrt{r_{ij}}
 
@@ -241,17 +241,17 @@ Potential function is:
 Tang-Toennies (tang_toennies)
 =============================
 
-This potential form was derived to describe the Van der Waal's interactions between the noble gases (He to Rn) by Tang and Toennies [Tang2003]
+This potential form was derived to describe the Van der Waal's interactions between the noble gases (He to Rn) by Tang and Toennies [Tang2003]_\ .
 
 This has the following form:
 
-.. :math::
+.. math::
 
 	V(r) = A \exp(-br) - \sum_{n=3}^N f_{2N} (bR) \frac{C_{2N}}{R^{2N}}
 
 Where:
 
-.. :math::
+.. math::
 
 	f_{2N}(x) = 1- \exp(-x) \sum_{k=0}^{2n} \frac{x^k}{k!}
 
@@ -266,7 +266,7 @@ Zero (zero)
 
 Potential form which returns zero for all separations.
 
-.. :math::
+.. math::
 
 	V(r) = 0
 
@@ -279,7 +279,7 @@ Potential form which returns zero for all separations.
 Ziegler-Biersack-Littmark (zbl)
 ===============================
 
-Ziegler-Biersack-Littmark screened nuclear repulsion for describing high energy interactions.
+Ziegler-Biersack-Littmark screened nuclear repulsion for describing high energy interactions [Ziegler2015]_\ .
 
 .. math::
 

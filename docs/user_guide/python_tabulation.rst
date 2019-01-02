@@ -1,3 +1,5 @@
+.. _python-api:
+
 ********************
 Using the Python API
 ********************

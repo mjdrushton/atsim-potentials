@@ -1,3 +1,5 @@
+.. _combining-potentials:
+
 ********************
 Combining potentials
 ********************

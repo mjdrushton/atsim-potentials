@@ -10,9 +10,11 @@ import unittest
 import pytest
 import imp
 import shutil
+import py.path
 
 from atsim.potentials import Potential, EAMPotential
 import atsim.potentials
+import atsim.potentials.config
 
 from ._tempfiletestcase import TempfileTestCase
 from ._runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS
@@ -539,3 +541,27 @@ class zbl_splineTestCase(TempfileTestCase):
     finally:
       os.chdir(oldpwd)
 
+basak_aspot_files = py.path.local(__file__).dirpath("..", "docs", "user_guide", "example_files").listdir("basak*.aspot")
+
+@needsLAMMPS
+@pytest.mark.parametrize("aspotfile", basak_aspot_files)
+def test_basak_files(tmpdir, aspotfile):
+  # Copy files in from example directory 
+  srcdir = py.path.local(__file__).dirpath("..", "docs", "basak_tabulate_lammps")
+  srcdir.join("UO2.lmpstruct").copy(tmpdir.join("UO2.lmpstruct"))
+
+  input_file = py.path.local(_getLAMMPSResourceDirectory()).join("basak_energy.lmpin")
+  input_file.copy(tmpdir.join("calc_energy.lmpin"))
+
+  # Generate table file
+  config = atsim.potentials.config.Configuration()
+  tabulation = config.read(aspotfile.open())
+  
+  with tmpdir.join("Basak.lmptab").open("w") as outfile:
+    tabulation.write(outfile)
+
+  expect_e = pytest.approx(-172.924, abs = 1e-3)
+  runLAMMPS(cwd = tmpdir.strpath)
+  actual_e = extractLAMMPSEnergy(cwd = tmpdir.strpath)
+
+  assert expect_e == actual_e

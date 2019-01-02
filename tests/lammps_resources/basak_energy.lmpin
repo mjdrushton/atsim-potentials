@@ -1,0 +1,26 @@
+boundary p p p
+atom_style full
+units metal
+
+read_data UO2.lmpstruct
+
+
+variable SR_CUTOFF equal 9.99
+
+variable O equal 1
+variable U equal 2
+
+set type $O charge -1.2
+set type $U charge 2.4
+
+kspace_style pppm 1.0e-8
+
+pair_style hybrid/overlay coul/long ${SR_CUTOFF} table linear 1000 pppm
+pair_coeff * * coul/long
+pair_coeff $O $O table Basak.lmptab O-O
+pair_coeff $O $U table Basak.lmptab O-U
+pair_coeff $U $U table Basak.lmptab U-U
+
+run 0
+variable E equal etotal
+print ENERGY:${E}

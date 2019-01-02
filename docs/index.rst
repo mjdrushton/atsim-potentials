@@ -21,8 +21,8 @@ Features
     + `DL_POLY`_\ : write `TABEAM` formatted files.
 
   * **No programming required:** ``atsim.potentials`` can be driven using its own potential definition format. Using simple configuration files complex models can be defined and tabulated without requiring any programming experience.
-  * **Batteries included:** comes pre-loaded with a wide range of common-potential types.
-  * **Potential Splining:** join different potentials together with splines.
+  * **Potential forms:** comes pre-loaded with a wide range of common-potential types.
+  * **Potential splining:** join different potentials together with splines.
   * **Flexible:** the ``atsim.potentials`` potential definition format allows the use of arbitrary mathematical formulae to define new potential functions. If this isn't sufficient it also provides a powerful Python API which should allow most tabulation tasks to be achieved.  
 
 

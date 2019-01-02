@@ -1,0 +1,16 @@
+[Tabulation]
+target :  LAMMPS
+nr : 1000
+dr : 0.01
+
+[Pair]
+O-O : basak_buck 0.042203 3.82 0.327022 3.948787
+U-U : basak_buck 0.042203 3.26 0.327022 0.0
+O-U : basak_buckmorse 0.042203 3.54 0.327022 0.0 13.6765 1.65 2.369
+
+
+[Potential-Form]
+A_ij(f0, a,b) = f0*b*exp(a/b)
+basak_buck(r,f0,a,b,c) = as.buck(r, A_ij(f0,a,b), b, c)
+basak_morse(r, f0, d, gamma, r_star) = as.morse(r,gamma, r_star, f0*d)
+basak_buckmorse(r,f0,a,b,c,d,gamma,r_star) = basak_buck(r,f0,a,b,c) + basak_morse(r, f0,d,gamma,r_star)

@@ -4,12 +4,15 @@
 User Guide
 **********
 
-.. todo::
 
-	Write introduction to user-guide
+This user-guide is broadly split into two sections. The first (:ref:`using-potable`\ ) is for users of the :ref:`potable <potable-tool>`\ . This tool allows potential tabulation without knowledge of Python and this section of the user-guide is aimed at describing :ref:`potable <potable-tool>`\ input files and how they can be used to describe a wide-range of potential models.
+
+The second half (:ref:`python-api`\ ) describes the python interface to ``atsim.potentials``. This is provided to allow tabulation tasks to be automated, included in other scripts or for when :ref:`potable <potable-tool>` is not expressive enough.
+
 
 
 .. toctree::
+	:maxdepth: 2
 
-	potential_definition_files.rst
-	python_tabulation.rst
+	potential_definition_files
+	python_tabulation

@@ -116,7 +116,7 @@ This leaves the short-range components of :math:`V(r_{ij})` from eqn. :eq:`basak
 	:label: basak_short_components
 
 	V_\mathrm{Buck}(r_{ij}) & = f_0 b_{ij} \exp\left( \frac{a_{ij} - r_{ij}}{b_{ij}}\right) - \frac{C_{ij}}{r_{ij}^6} \\
-	V_\mathrm{Morse}(r_{ij}) & = f_0 d_{ij} \left[ \exp \{ - 2 \gamma_{ij} (r_{ij} - r_{ij}^* \} - 2 \exp \{ - \gamma_{ij} (r_{ij} - r_{ij}^* \} \right] \\
+	V_\mathrm{Morse}(r_{ij}) & = f_0 d_{ij} \left[ \exp \{ - 2 \gamma_{ij} (r_{ij} - r_{ij}^*) \} - 2 \exp \{ - \gamma_{ij} (r_{ij} - r_{ij}^*) \} \right] \\
 
 The :math:`f_0`, :math:`a_{ij}`, :math:`b_{ij}`, :math:`C_{ij}`, :math:`D_{ij}`, :math:`\gamma_{ij}` and :math:`r_{ij}^*` specifying each pair interaction are given in the following table.
 
@@ -212,7 +212,7 @@ And the :ref:`potform-morse` parameters are::
 	
 By comparing the :ref:`input file <basak_aspot>` and :numref:`table_basak_parameters_standard_form`, it should be apparent how the pair-interactions have been parametrised.
 
-The O-U interaction makes use of a :ref:`potential modifier <potential_modifiers>` to combine the ``as.buck`` and ``as.morse`` forms. This is achieved using the :ref:`sum() <sum_modifier>` modifier which adds up all the contributions of the comma separated list of potentials defined inside the brackets.
+The O-U interaction makes use of a :ref:`potential modifier <potential-modifiers>` to combine the ``as.buck`` and ``as.morse`` forms. This is achieved using the :ref:`sum() <modifier-sum>` modifier which adds up all the contributions of the comma separated list of potentials defined inside the brackets.
 
 
 Generating the tabulation
