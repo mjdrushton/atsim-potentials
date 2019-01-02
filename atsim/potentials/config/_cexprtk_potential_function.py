@@ -1,5 +1,8 @@
 import cexprtk
 
+from ._common import Potential_Form_Exception
+
+
 class _Cexptrk_Potential_Function(object):
   """Callable that can be added to cexprtk symbol_table. 
 
@@ -31,7 +34,24 @@ class _Cexptrk_Potential_Function(object):
     for (pn, v) in zip(parameter_names, args):
       self._local_symbol_table.variables[pn] = v
 
-    if not self._expression:
-      self._expression = cexprtk.Expression(self._potential_form_tuple.expression, self._local_symbol_table)
-    retval = self._expression()
-    return retval
+    try:
+      if not self._expression:
+        try:
+          self._expression = cexprtk.Expression(self._potential_form_tuple.expression, self._local_symbol_table)
+        except cexprtk.ParseException as pe:
+          raise Potential_Form_Exception("mathematical expression couldn't be parsed {}".format(pe))
+      retval = self._expression()
+      return retval
+    except Potential_Form_Exception as e:
+      msg = e.args[0]
+      sig = ",".join(self._potential_form_tuple.signature.parameter_names)
+      sig = "{label}({sig})".format(label = self._potential_form_tuple.signature.label, sig = sig)
+      msg = "In potential-form '{sig} = {expression}': {msg}".format(
+        msg = msg, 
+        sig = sig, 
+        expression = self._potential_form_tuple.expression)
+      raise Potential_Form_Exception(msg)
+      
+
+
+

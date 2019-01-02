@@ -30,8 +30,11 @@ class ConfigParserException(ConfigurationException):
 class ConfigParserMissingSectionException(ConfigParserException):
   pass
 
-class Potential_Form_Registry_Exception(Exception):
+class ConfigParserDuplicateEntryException(ConfigParserException):
   pass
 
-class Potential_Form_Exception(Exception):
+class Potential_Form_Registry_Exception(ConfigurationException):
+  pass
+
+class Potential_Form_Exception(ConfigurationException):
   pass

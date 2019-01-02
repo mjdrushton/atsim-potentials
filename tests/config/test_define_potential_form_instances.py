@@ -87,7 +87,6 @@ B->C : density2 2000.0 0.2 2.0
   actual = parsed.eam_density_fs
   assert DeepDiff(expect, actual) == {}
 
-
 def test_multi_range_potential_form():
   """Tests definition of multiple ranges for potential-form definitions"""
 
@@ -164,7 +163,6 @@ def test_multi_range_potential_form():
   # actual = parser._parse_multi_range(k, v)
   # assert actual.potential_form_instance.start == ('>', 0.01)
 
-
 def test_sum_modifier():
   """Test instantiation of potential forms that use the sum() modifier and multiple ranges"""
   k = u"A"
@@ -232,7 +230,6 @@ def test_sum_modifier_fs_start():
   parser = ConfigParser(io.StringIO())
   actual = parser._parse_multi_range(k,v)
   assert DeepDiff(MultiRangeDefinitionTuple(u">=",0), actual.potential_form_instance.start) == {}
-
 
 def test_modifier_parse_exceptions():
   """Check that a ConfigException is raised when parse errors are encountered"""

@@ -68,7 +68,7 @@ class Potential_Form_Registry(object):
     potential_forms = {}
     for d in definitions:
       if d.signature.label in potential_forms:
-        raise Potential_Form_Registry_Exception("Two potential forms have the same label: '{0}'".format(d.signature.label))
+        raise Potential_Form_Registry_Exception("Two potential forms have the same label in [Potential-Form] section: '{0}'".format(d.signature.label))
       func = _Cexptrk_Potential_Function(d)
       pf = Potential_Form(func)
       potential_forms[d.signature.label] = pf

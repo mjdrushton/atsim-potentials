@@ -11,6 +11,7 @@ from atsim.potentials.config import ConfigOverrideException
 from atsim.potentials.config._config_parser import _RawConfigParser
 from atsim.potentials.config._common import SpeciesTuple
 from atsim.potentials.config._common import EAMFSDensitySpeciesTuple, PotentialFormTuple, PotentialFormSignatureTuple
+from atsim.potentials.config._common import ConfigurationException, ConfigParserDuplicateEntryException
 
 from ._common import _get_lammps_resource_dir, _get_dlpoly_resource_dir
 
@@ -402,3 +403,46 @@ def test_filtered_config_parser_finnis_sinclair():
     EDST("Al", "Al") ]
   actual = [p[0] for p in filtered_cp.eam_density_fs]
   assert DeepDiff(expect, actual) == {}
+
+def test_duplicate_entries():
+  assert issubclass(ConfigParserDuplicateEntryException, ConfigParserException)
+  assert issubclass(ConfigParserDuplicateEntryException, ConfigurationException)
+
+  aspot = u"""
+
+[Pair]
+U-U : as.buck 1000.0 0.1 32.0
+U-U : as.buck 1000.0 0.2 32.0"""
+
+  with pytest.raises(ConfigParserDuplicateEntryException):
+    cp = ConfigParser(io.StringIO(aspot))
+
+
+  aspot = u"""
+
+[Pair]
+O-U : as.buck 1000.0 0.1 32.0
+U-O : as.buck 1000.0 0.2 32.0"""
+
+  with pytest.raises(ConfigParserDuplicateEntryException):
+    cp = ConfigParser(io.StringIO(aspot))
+
+  aspot = u"""
+
+[Pair]
+O-U : as.buck 1000.0 0.1 32.0
+U-U : as.buck 2000.0 0.2 16.0"""
+
+  with pytest.raises(ConfigParserDuplicateEntryException):
+    cp = ConfigParser(io.StringIO(aspot), additional=[ConfigParserOverrideTuple(u"Pair", u"O-U", "as.buck 1000.0 0.1 32.0")])
+
+  aspot = u"""
+
+[Pair]
+O-U : as.buck 1000.0 0.1 32.0
+U-U : as.buck 2000.0 0.2 16.0"""
+
+  with pytest.raises(ConfigParserDuplicateEntryException):
+    cp = ConfigParser(io.StringIO(aspot), additional=[ConfigParserOverrideTuple(u"Pair", u"U-O", "as.buck 1000.0 0.1 32.0")])
+
+

@@ -15,7 +15,7 @@ from ._common import PotentialFormSignatureTuple, \
   EAMEmbedTuple, \
   EAMDensityTuple 
 from ._common import ConfigParserException
-from ._common import ConfigParserMissingSectionException
+from ._common import ConfigParserMissingSectionException, ConfigParserDuplicateEntryException
 
 from ._multi_range_parser import multi_range_parser
 
@@ -36,6 +36,9 @@ def _get_or_none(k, d, t):
 ConfigParserOverrideTuple = collections.namedtuple("ConfigParserOverrideTuple", ["section", "key", "value"])
 
 class ConfigOverrideException(ConfigParserException):
+  pass
+
+class ConfigOverrideDuplicateException(ConfigOverrideException, ConfigParserDuplicateEntryException):
   pass
 
 class _TabulationCutoff(object):
@@ -204,13 +207,19 @@ class ConfigParser(object):
     :param additional: List of `ConfigParserOverrideTuple` instances defining section, key and value of entries that should be
                       created in the configuration file before parsing by this class."""
     self._config_parser = self._init_config_parser(fp, overrides, additional)
+    self._check_for_duplicates()
+
     self._tabulation_section = None
     self._default_range_start = MultiRangeDefinitionTuple(u">", 0.0)
 
   def _init_config_parser(self, fp, overrides, additional):
     cp = _RawConfigParser()
     # cp.readfp(fp)
-    cp.read_file(fp)
+
+    try:    
+      cp.read_file(fp)
+    except configparser.DuplicateOptionError as e:
+      raise ConfigParserDuplicateEntryException(e.message)
 
     # Process overrides
     for override in overrides:
@@ -230,7 +239,7 @@ class ConfigParser(object):
     # Add additional values
     for override in additional:
       if cp.has_option(override.section, override.key):
-        raise ConfigOverrideException(
+        raise ConfigOverrideDuplicateException(
           "Entry [{section}]: '{key}' already exists in configuration file whilst adding value = {value}".format(
           section = override.section, key = override.key, value = override.value))
 
@@ -239,6 +248,19 @@ class ConfigParser(object):
       cp[override.section][override.key] = override.value
 
     return cp
+
+  def _check_for_duplicates(self):
+    """Check the config parser for duplicate pair entries"""
+
+    if self._config_parser.has_section("Pair"):
+      seen = set()
+      for k in self._config_parser["Pair"]:
+        p = self._pair_species_func(k)
+        rev_p = tuple(reversed(list(p)))
+        if (p in seen) or (rev_p in seen):
+          raise ConfigParserDuplicateEntryException("Multiple entries for the pair {A}-{B} found in [Pair] section.".format(A= p[0], B=p[1]))
+        seen.add(p)
+
 
   def _descend_potential_modifier(self, modifier_node, sibling_iterator, range_defn):
 
@@ -333,15 +355,16 @@ class ConfigParser(object):
       species_tuple = k.strip()
     return self._parse_multi_range(species_tuple, value, tuple_type)
 
-  def _parse_pair_line(self, k, value):
-    def species_func(k):
-      species_a, species_b = k.split("-")
-      species_a = species_a.strip()
-      species_b = species_b.strip()
-      return  SpeciesTuple(species_a, species_b)
+  def _pair_species_func(self, k):
+    species_a, species_b = k.split("-")
+    species_a = species_a.strip()
+    species_b = species_b.strip()
+    return  SpeciesTuple(species_a, species_b)
 
+
+  def _parse_pair_line(self, k, value):
     try:
-      return self._parse_label_type_params_line(k, value, species_func, PairPotentialTuple)
+      return self._parse_label_type_params_line(k, value, self._pair_species_func, PairPotentialTuple)
     except ConfigParserException:
       raise ConfigParserException("[Pair] potential parameter lines should be of the form 'SPECIES_A-SPECIES_B : POTENTIAL_FORM PARAMS...'")
 
