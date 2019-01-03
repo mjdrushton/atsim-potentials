@@ -4,7 +4,7 @@
 Using `potable`
 ***************
 
-.. toctree:
+.. toctree::
 
 	combining_potentials
 
@@ -185,10 +185,12 @@ Potential-modifiers take the input or output of other potentials and produce out
 	Produce list of potential modifiers.
 
 
+.. _multi-range-potentials:
+
 Multi-range potentials
 ++++++++++++++++++++++
 
-The potential definition syntax used in the ``[Pair]`` section supports an extension which allows a series of potential-forms to be concatenated to each other, allowing each to act over a particular range of separations. These are defined as multi-range potentials. Concrete examples of where they are useful are provided in :ref:`combining-potentials` however the basic syntax defining multi-range potentials is introduced here. 
+The potential definition syntax used in the ``[Pair]`` section supports an extension which allows a series of potential-forms to be concatenated to each other, allowing each to act over a particular range of separations. These are defined as multi-range potentials. Concrete examples of where they are useful are provided in :ref:`multi-range-potential-examples` however the basic syntax defining multi-range potentials is introduced here. 
 
 Suppose we want to define a potential acting between Mg and O using two potential-forms: ``pot_A`` and ``pot_B``.  The first is to be parametrised with values of 5.3 and 1.2 and ``pot_B`` with 9.6 and 2.4. Now say we want ``pot_A`` to act over the separations :math:`0 \geq r_{ij} \leq 3` and ``pot_B`` :math:`3 < r_{ij} \leq 8` and for the pair-potential to evaluate to zero when :math:`r_{ij} > 8`\ .
 
@@ -350,8 +352,6 @@ The potential-forms used in the previous example could have been defined in a nu
 
 	.. literalinclude:: example_files/basak_custom_potential_form_d.aspot
 	    :emphasize-lines: 13,14
-
-
 
 
 .. _potable-many-body-models:

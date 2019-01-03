@@ -1,0 +1,12 @@
+[Tabulation]
+target : GULP
+cutoff : 10.0
+dr : 0.01
+
+[Pair]
+Si-O : soft 10.0 1.6 
+O-O  : soft  5.0 2.4
+
+[Potential-Form]
+cos_form(r, A, rc) = A * (1+cos((pi*r)/rc))
+soft(r, A, rc) = if(r>rc, 0, cos_form(r, A, rc))

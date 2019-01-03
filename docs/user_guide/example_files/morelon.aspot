@@ -1,0 +1,14 @@
+[Tabulation]
+target : LAMMPS
+cutoff : 10.0
+nr : 1001
+
+[Pair]
+O-U : as.bornmayer 566.498 0.42056
+O-O : as.bornmayer 11272.6 0.1363
+      >1.2 
+          as.polynomial 479.955 -1372.53 1562.22 -881.969 246.435 -27.2447
+      >2.1
+          as.polynomial 42.8917 -55.4965 23.0774 -3.13140
+      >2.6
+          as.buck 0.0 1.0 134.0
