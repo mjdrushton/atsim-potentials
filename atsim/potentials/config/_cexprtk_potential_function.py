@@ -17,7 +17,7 @@ class _Cexptrk_Potential_Function(object):
     self._expression = None
 
   def _init_symbol_table(self):
-    local_symbol_table = cexprtk.Symbol_Table({})
+    local_symbol_table = cexprtk.Symbol_Table({}, add_constants = True)
     parameter_names = self._potential_form_tuple.signature.parameter_names
     for pn in parameter_names:
       local_symbol_table.variables[pn] = 1.0
