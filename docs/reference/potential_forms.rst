@@ -93,7 +93,7 @@ and the function must have a stationary point at :math:`r_{min}`\ . The spline c
 
 .. seealso::
 
-		* :ref:`potform-buck4`
+		* :ref:`spline-buck4`
 		* :ref:`aspot-splining`
 
 .. _potform-constant:
@@ -147,6 +147,7 @@ Where :math:`B_0`\ , :math:`B_1`\ , :math:`B_2`\ , :math:`B_3`\ , :math:`B_4`\ ,
 
 .. seealso::
 
+	* :ref:`spline-exp_spline`
 	* :ref:`aspot-splining`
 
 
@@ -219,6 +220,10 @@ This function accepts a variable number of arguments which are :math:`C_0, C_1, 
 
 :potable signatures: ``as.polynomial`` :math:`C_0 ... C_n`
 :Features: potential-form, potential-function, deriv, deriv2
+
+.. seealso::
+
+	* :ref:`potable-published-spline-coefficients`
 
 
 .. _potform-sqrt:

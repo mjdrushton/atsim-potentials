@@ -9,9 +9,9 @@ The :func:`atsim.potentials.writePotentials` function is used to tabulate pair-p
 
 The process by which :func:`writePotentials() <atsim.potentials.writePotentials>` is used can be summmarised as follows:
     
-    1.  Define python functions describing energy of interactions (see :ref:`instantiate_potential_object` and :ref:`predefined_potential_forms`)
-    2.  Wrap these functions in :class:`.Potential` objects.
-    3.  Call :func:`.writePotentials` with list of :class:`.Potential` objects choosing:
+    #.  Define python functions describing energy of interactions (see :ref:`instantiate_potential_object` and :ref:`predefined_potential_forms`)
+    #.  Wrap these functions in :class:`.Potential` objects.
+    #.  Call :func:`.writePotentials` with list of :class:`.Potential` objects choosing:
         
         *   Tabulation type
         *   Potential cut-off

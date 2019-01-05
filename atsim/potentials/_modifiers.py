@@ -159,7 +159,17 @@ def spline(potential_forms, potential_form_builder):
     detach_point, attach_point))
 
   # Now build the spline object
-  spline = spline_factory.build_spline(detach_point, attach_point, pot2)
+  try:
+    spline = spline_factory.build_spline(detach_point, attach_point, pot2)
+  except ImportError as ie:
+    raise_e = ConfigurationException("When using the '{}' spline type an additional package is required. Please install. {}".format(
+        pot2.potential_form,
+        str(ie.args[0])
+    ))
+    raise raise_e
+
+
+  
   spot_obj = Custom_SplinePotential(spline)
   return spot_obj
 

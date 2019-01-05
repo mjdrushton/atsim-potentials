@@ -1,0 +1,13 @@
+[Tabulation]
+target : LAMMPS
+cutoff : 10.0
+dr : 0.01
+
+[Pair]
+O-U : as.bornmayer 566.498 0.42056
+O-O : spline(
+            as.bornmayer 11272.6 0.1363
+             >1.2
+               buck4_spline 2.1
+             >2.6
+               as.buck 0.0 1.0 134.0 )

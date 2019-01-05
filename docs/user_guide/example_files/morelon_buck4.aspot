@@ -1,0 +1,8 @@
+[Tabulation]
+target : LAMMPS
+cutoff : 10.0
+dr : 0.01
+
+[Pair]
+O-U : as.bornmayer 566.498 0.42056
+O-O : as.buck4 11272.6 0.1363 134.0 1.2 2.1 2.6

@@ -1,0 +1,12 @@
+[Tabulation]
+target : GULP
+cutoff : 10.0
+dr : 0.01
+
+[Pair]
+Si-O : spline(
+                    as.zbl 14 8 
+              >=0.8 
+                    exp_spline 
+              >=1.4 
+                    as.buck 18003.7572 0.205204 133.5381 )
