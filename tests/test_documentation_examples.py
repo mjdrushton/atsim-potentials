@@ -19,6 +19,7 @@ import atsim.potentials.config
 from ._tempfiletestcase import TempfileTestCase
 from ._runlammps import needsLAMMPS, extractLAMMPSEnergy, runLAMMPS
 from ._rundlpoly import needsDLPOLY, extractDLPOLYEnergy, runDLPoly
+from ._rungulp import needsGULP, gulp_uo2_energy_fixture
 
 def _getDocsDirectory():
   """Returns absolute path to docs/ directory"""
@@ -565,3 +566,28 @@ def test_basak_files(tmpdir, aspotfile):
   actual_e = extractLAMMPSEnergy(cwd = tmpdir.strpath)
 
   assert expect_e == actual_e
+
+morelon_files = py.path.local(__file__).dirpath("..", "docs", "user_guide", "example_files").listdir("morelon*.aspot")
+
+@needsGULP
+@pytest.mark.parametrize("charges", [[-1.613626, 3.227252]])
+@pytest.mark.parametrize("aspot", morelon_files)
+def test_morelon_files(aspot, gulp_uo2_energy_fixture):
+  tmpdir = gulp_uo2_energy_fixture
+  # aspot = py.path.local(__file__).dirpath("..", "docs", "user_guide", "example_files").join("morelon.aspot")
+
+  CPT = atsim.potentials.config.ConfigParserOverrideTuple
+  # overrides = [ CPT("Tabulation", "target", "GULP"), CPT("Tabulation", "cutoff", "10.0"), CPT("Tabulation", "nr", "1001")] 
+  overrides = [ CPT("Tabulation", "target", "GULP")]
+
+  with aspot.open() as infile:
+    cp = atsim.potentials.config.ConfigParser(infile, overrides = overrides)
+    tabulation = atsim.potentials.config.Configuration().read_from_parser(cp)
+
+  with tmpdir.join("potentials.lib").open("w") as tabfile:
+    tabulation.write(tabfile)
+
+  expect = pytest.approx(-263.60598484)
+  actual_energy = gulp_uo2_energy_fixture.energy()
+
+  assert expect == actual_energy
