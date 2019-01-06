@@ -36,11 +36,11 @@ include potentials.lib"""
     tabulation.write(potfile)
 
   # Reproduce a buckingham potential at sepns of 0.1 1.1 2.1 and 3.1
-  for x in [0.1, 1.1, 2.1, 3.1]:
+  for x in [0.6, 1.1, 2.1, 3.1]:
     gulp_infile = io.StringIO(gulp_input.format(x+25.0))
     gulp_infile.seek(0)
 
-    expect  = pytest.approx(buck(x))
+    expect  = pytest.approx(buck(x), rel = 1e-4)
 
     gulp_outfile = io.StringIO()
     runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
@@ -224,7 +224,7 @@ O-U = sum(as.buck 693.650933805978 0.327022 0.0,
 
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)
-  assert pytest.approx(expect) == actual
+  assert pytest.approx(expect, rel=1e-4) == actual
 
   tmpdir.join("potentials.lib").remove()
   assert not tmpdir.join("potentials.lib").exists()

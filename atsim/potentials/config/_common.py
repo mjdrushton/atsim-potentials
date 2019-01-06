@@ -1,6 +1,8 @@
 import collections
 import sys
 
+from funcsigs import signature, Parameter
+
 SpeciesTuple = collections.namedtuple("SpeciesTuple", ["species_a", "species_b"])
 EAMFSDensitySpeciesTuple = collections.namedtuple("EAMFSDensitySpeciesTuple", ["from_species", "to_species"])
 
@@ -38,3 +40,27 @@ class Potential_Form_Registry_Exception(ConfigurationException):
 
 class Potential_Form_Exception(ConfigurationException):
   pass
+
+
+
+def _is_vararg_signature(sig):
+  for p in sig.parameters.values():
+    if not p.kind == Parameter.VAR_POSITIONAL:
+      return False
+  return True
+
+def make_potential_form_tuple_from_function(name, pyfunc):
+  sig = signature(pyfunc)
+  
+  # Is this a varargs function?
+  varargs = _is_vararg_signature(sig)
+  args = []
+
+  if not varargs:
+    for param in sig.parameters.values():
+      args.append(param.name)
+
+  d = PotentialFormTuple(signature = PotentialFormSignatureTuple(name, args, varargs), expression = "")
+
+  return d
+

@@ -126,3 +126,16 @@ buck_morse(r, A, rho, C, gamma, r_star, D) : buck(r,A,rho,C) + as.morse(r, gamma
   actual = buck_morse(1.4)
   assert pytest.approx(expect) == actual
 
+def test_pot_in_potforms_but_not_potfuncs():
+  cfg = ConfigParser(io.StringIO())
+  pfr = Potential_Form_Registry(cfg, True)
+
+  # The buck4 potential is defined in potentialforms but not potentialfunctions
+  # check that it's still accesible from the Potential_Form_Registry
+
+  assert "as.buck" in pfr.registered
+  assert PotentialFormSignatureTuple(label = "as.buck", parameter_names = ["r", "A", "rho", "C"], is_varargs=False) == pfr["as.buck"].signature
+
+  assert "as.buck4" in pfr.registered
+  assert PotentialFormSignatureTuple(label= "as.buck4", parameter_names = ["r", "A", "rho", "C", "r_detach", "r_min", "r_attach"], is_varargs=False) == pfr["as.buck4"].signature
+

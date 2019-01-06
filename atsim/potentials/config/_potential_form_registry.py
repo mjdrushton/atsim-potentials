@@ -5,19 +5,22 @@ from ._common import PotentialFormTuple
 from ._common import PotentialFormSignatureTuple
 from ._common import Potential_Form_Registry_Exception
 from ._common import ConfigParserMissingSectionException
+from ._common import make_potential_form_tuple_from_function
 
 from ._python_potential_function import _Python_Potential_Function
-from ._potential_form import Potential_Form
+from ._potential_form import Potential_Form, Existing_Potential_Form
 from ._cexprtk_potential_function import _Cexptrk_Potential_Function
 from ._potential_form import Potential_Form
 
 from ..potentialforms import _iscallable
 
-from funcsigs import signature, Parameter
+
 
 class Potential_Form_Registry(object):
   """Factory class that takes [Potential-Form] definitions
   from ConfigParser and turns them into Potential_Form objects"""
+
+  _standard_namespace = "as."
 
   def __init__(self, cfg, register_standard = False):
     """:param cfg: ConfigParser instance.
@@ -37,32 +40,31 @@ class Potential_Form_Registry(object):
     except ConfigParserMissingSectionException:
       pass
 
-  def _is_vararg_signature(self, sig):
-    for p in sig.parameters.values():
-      if not p.kind == Parameter.VAR_POSITIONAL:
-        return False
-    return True
+    if register_standard:
+      self._register_from_potentialforms(self._potential_forms)
+
+  def _make_standard_name(self, name):
+    return self._standard_namespace + name
 
   def _register_standard(self):
     from .. import potentialfunctions
     potential_forms = {}
     for name, pyfunc in inspect.getmembers(potentialfunctions, _iscallable):
-      name = "as."+name
-      sig = signature(pyfunc)
-      
-      # Is this a varargs function?
-      varargs = self._is_vararg_signature(sig)
-      args = []
-
-      if not varargs:
-        for param in sig.parameters.values():
-          args.append(param.name)
-
-      d = PotentialFormTuple(signature = PotentialFormSignatureTuple(name, args, varargs), expression = "")
+      name = self._make_standard_name(name)      
+      d = make_potential_form_tuple_from_function(name, pyfunc)
       func = _Python_Potential_Function(d, pyfunc)
       pf = Potential_Form(func)
       potential_forms[name] = pf
     return potential_forms
+
+  def _register_from_potentialforms(self, potential_forms):
+    # import pdb; pdb.set_trace()
+    from .. import potentialforms
+    for name, potential_form in inspect.getmembers(potentialforms, _iscallable):
+      name = self._make_standard_name(name)      
+      if not name in potential_forms:
+        pf = Existing_Potential_Form(name, potential_form)
+        potential_forms[name] = pf
 
   def _build_potential_forms(self, definitions):
     potential_forms = {}
@@ -78,7 +80,6 @@ class Potential_Form_Registry(object):
     # So that each function can rely on other custom functions, add each function to every other
     # function's symbol table
     pairs = list(itertools.permutations(self._potential_forms.values(), 2))
-    # print([(a.signature.label, b.signature.label) for (a,b) in pairs])
     for a,b in pairs:
       a.potential_function.register_function(b.potential_function)
 

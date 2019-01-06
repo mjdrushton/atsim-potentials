@@ -343,7 +343,7 @@ O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
 def test_gulp_pair_configuration_tabulate(tmpdir):
   cfg_string = u"""[Tabulation]
 target : GULP
-nr : 500
+dr: 0.01
 cutoff : 15.0
 
 [Pair]

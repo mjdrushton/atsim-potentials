@@ -14,11 +14,21 @@ try:
 except ImportError:
   from collections import Callable
 
+def potential(func):
+  """Decorator for callables that should be tagged as potential-forms or potential-functions"""
+  func.is_potential = True
+  return func
+
+def is_potential(obj):
+  """Identifies if an object is a potential-form or potential-function"""
+  return hasattr(obj, "is_potential") and obj.is_potential
 
 def _iscallable(obj):
-  return (not obj is Callable) and isinstance(obj, Callable) and (not inspect.isclass(obj))
+  return (not obj is Callable) and isinstance(obj, Callable) and (not inspect.isclass(obj)) and is_potential(obj)
 
 class _FunctionFactory(object):
+
+  is_potential = True
 
   def __init__(self, func):
     self._func = func
@@ -43,7 +53,7 @@ def _populate_module():
 _populate_module()
 
 
-
+@potential
 def buck4(A, rho, C, r_detach, r_min, r_attach):
   """Returns a potential form describing the four-range Buckingham potential.
 

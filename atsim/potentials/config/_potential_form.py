@@ -1,4 +1,6 @@
 from ._common import Potential_Form_Exception
+from ._common import make_potential_form_tuple_from_function
+
 from ..potentialforms import _FunctionFactory
 
 
@@ -51,6 +53,8 @@ class _Check_Call(object):
 
 
 class Potential_Form(object):
+  """Wraps cexprtk and python functions so that they can be used
+  as potential-form style function factories in Potential_Form_Registry"""
   
   def __init__(self, potential_function):
     """Create Potential_Form object.
@@ -77,4 +81,39 @@ class Potential_Form(object):
   def __call__(self, *args):
     self._check_call(*args)
     f = self._functionfactory(*args)
+    return f
+
+
+class Existing_Potential_Form(object):
+  """Wraps an object from the atsim.potentials.potentialforms module so that 
+  it can be registered directly with Potential_Form_Registry and so used from
+  config files. 
+  
+  This is the case for objects that are registered in potentialforms
+  but not in the potentialfunctions module"""
+
+
+  def __init__(self, name, potential_form):
+    """:param name: String giving potential form name (without namespace prexfix)
+       :param potential_form: Function factory of the kind provided in potentialforms module"""
+    self._potential_form = potential_form
+    self.potential_definition = self._make_definition(name)
+    self._check_call = _Check_Call(self.signature)
+
+  def _make_definition(self, name):
+    pft = make_potential_form_tuple_from_function(name, self._potential_form)
+    orig_params = pft.signature.parameter_names
+    withr_params = ["r"]
+    withr_params.extend(orig_params)
+    signature = pft.signature._replace(parameter_names = withr_params)
+    pft = pft._replace(signature = signature)
+    return pft
+
+  @property
+  def signature(self):
+    return self.potential_definition.signature
+
+  def __call__(self, *args):
+    self._check_call(*args)
+    f = self._potential_form(*args)
     return f

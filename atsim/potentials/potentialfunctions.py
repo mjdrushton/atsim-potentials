@@ -1,6 +1,6 @@
 """Functions for different potential forms.
 
-Most of the potentials in this module are implemented as callable objects. The potential energy
+Most of the potentials in this module are implemented as callable _Potential_Function_Bases. The potential energy
 is evaluated by calling one of these objects. By convention the first argument of each is the
 atomic separation `r`, with other potential parameters following after. For instance, to
 evaluate a Buckingham potential at `r` = 2.0 the following could be called for `A`, `rho` and `C` values 
@@ -28,7 +28,11 @@ from __future__ import division
 
 import math
 
-class buck(object):
+class _Potential_Function_Base(object):
+  is_potential = True
+
+
+class buck(_Potential_Function_Base):
   """Callable object for evaluating the Buckingham potential"""
 
   def _as_sympy(self):
@@ -72,7 +76,7 @@ class buck(object):
 
 buck = buck()
 
-class bornmayer(object):
+class bornmayer(_Potential_Function_Base):
   """Callable object for evaluating Born-Mayer Potential"""
 
   def _as_sympy(self):
@@ -114,7 +118,7 @@ class bornmayer(object):
 bornmayer = bornmayer()
 
 
-class coul(object):
+class coul(_Potential_Function_Base):
   """Callable representing Coulomb potential (including :math:`4\pi \epsilon_0` term)"""
 
   def _as_sympy(self):
@@ -160,7 +164,7 @@ class coul(object):
 
 coul = coul()
 
-class constant(object):
+class constant(_Potential_Function_Base):
   """Callable that returns a constant"""
 
   def __call__(self,r, constant):
@@ -194,7 +198,7 @@ class constant(object):
 
 constant = constant()
 
-class hbnd(object):
+class hbnd(_Potential_Function_Base):
   """DL_POLY `hbnd` potential type"""
   
   def _as_sympy(self):
@@ -238,7 +242,7 @@ class hbnd(object):
 
 hbnd = hbnd()
 
-class lj(object):
+class lj(_Potential_Function_Base):
   """Callable for Lennard-Jones 12-6 potential"""
 
   def _as_sympy(self):
@@ -280,7 +284,7 @@ class lj(object):
 lj = lj()
 
 
-class morse(object):
+class morse(_Potential_Function_Base):
   """Callable representing the Morse potential"""
 
   def _as_sympy(self):
@@ -327,7 +331,7 @@ class morse(object):
 morse = morse()
 
 
-class polynomial(object):
+class polynomial(_Potential_Function_Base):
   """Callable for polynomials"""
 
   def _split_args(self, args):
@@ -374,7 +378,7 @@ class polynomial(object):
 polynomial = polynomial()
 
 
-class sqrt(object):
+class sqrt(_Potential_Function_Base):
   """Callable representing a square root potential form"""
 
   def _as_sympy(self):
@@ -420,7 +424,7 @@ class sqrt(object):
     
 sqrt = sqrt()
 
-class tang_toennies(object):
+class tang_toennies(_Potential_Function_Base):
   """Callable for Tang-Toennies potential form"""
 
   def _f2n(self, x, n):
@@ -555,7 +559,7 @@ class tang_toennies(object):
 
 tang_toennies = tang_toennies()
 
-class zbl(object):
+class zbl(_Potential_Function_Base):
   """Callable representing ZBL potential."""
 
   Ck1=0.1818
@@ -643,7 +647,7 @@ class zbl(object):
 zbl = zbl()
 
 
-class zero(object):
+class zero(_Potential_Function_Base):
   """Callable that returns 0.0 for any given input"""
 
   def __call__(self, r):
@@ -664,7 +668,7 @@ class zero(object):
 
 zero = zero()
 
-class exp_spline(object):
+class exp_spline(_Potential_Function_Base):
   """Callable representing exponential spline"""
 
   def _as_sympy(self):
