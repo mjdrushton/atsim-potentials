@@ -65,9 +65,9 @@ Here ``sum()`` takes two basic pair-definitions (one for :ref:`as.buck <potform-
 
 Potential-modifiers take the input or output of other potentials and produce outputs that have been altered in some way. A number of modifiers are provided with ``atsim.potentials`` and these are listed.
 
-.. todo:: 
-	
-	Produce list of potential modifiers.
+.. sealso::
+
+	See :ref:`list-of-potential-modifiers`\ .
 
 
 .. _multi-range-potentials:
@@ -112,6 +112,6 @@ The syntax for a multi-range potential can be summarised as:
 		>=0 POTENTIAL_DEFN
 
 
-.. todo::
+.. seealso::
 
-	Include see-also section for multi-range potentials.
+	* Examples of multi-range potentials can be found here: :ref:`multi-range-potential-examples`

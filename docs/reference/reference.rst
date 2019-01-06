@@ -7,6 +7,7 @@ Reference
 
   potential_forms
   potable_input
+  potential_modifiers
   tools
   python_api
 

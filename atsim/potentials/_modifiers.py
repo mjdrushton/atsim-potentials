@@ -48,7 +48,7 @@ class _Exp_Spline_Factory(object):
   def build_spline(self, detach_point, attach_point, spline_defn):
       if spline_defn.parameters:
         raise ConfigurationException("spline modifier 'exp_spline' middle potential form does not take any parameters. The following parameters were specified: {}".format(pot2.parameters))
-      
+
       spline = Exp_Spline(detach_point, attach_point)
       return spline
 
@@ -61,7 +61,7 @@ class _Buck4_Spline_Factory(object):
   def build_spline(self, detach_point, attach_point, spline_defn):
       if not len(spline_defn.parameters) == 1:
         raise ConfigurationException("spline modifier with 'buck4_spline' requires a single parameter to define r_min. The following parameters were specified: {}".format(pot2.parameters))
-      
+
       r_min = spline_defn.parameters[0]
 
       if not r_min < attach_point.r and not r_min > detach_point.r:
@@ -78,15 +78,15 @@ def spline(potential_forms, potential_form_builder):
   """Modifier that smoothly splines between two potential forms by linking them with an intermediate spline.
 
   The `potential_forms` list must contain a single `PotentialFormInstanceTuple` entre. The tuple
-  must only define three sections - potential form A -> exp_spline -> potential form B. The spline is defined for the region where exp_spline starts and potential form B starts. 
+  must only define three sections - potential form A -> spline -> potential form B. The extent of the spline is defined by where the middle region starts and potential form B starts.
 
-  As a configuration string this might be define as:
+  As a configuration string this might be defined as:
 
   `>0 as.zbl 14 8 >=0.8 exp_spline >=1.4 as.buck 180003 0.3 32.0`
 
   Which would create a `zbl` and Buckingham potential connected by a spline when `r` is between 0.8 and 1.4.
 
-  At present the potential form label for the spline must be `exp_spline` or `buck4_spline`.  
+  At present the potential form label for the spline must be `exp_spline` or `buck4_spline`.
 
   :param potential_forms: List of tuples that can be passed to `atsim.potentials.config._potential_form_builder.Potential_Form_Builder.create_potential_function()` to create potential callables.
   :param potential_form_builder: `atsim.potentials.config._potential_form_builder.Potential_Form_Builder` used to create potential instances.
@@ -133,12 +133,12 @@ def spline(potential_forms, potential_form_builder):
   # Determine detachment point
   if not pot1.start.start < pot2.start.start:
     raise ConfigurationException("spline modifier range error. Start of 1st potential should be less than start of 2nd ! {} < {}".format(
-      pot1.start.start, 
+      pot1.start.start,
       pot2.start.start))
 
   if not pot2.start.start < pot3_old_start:
     raise ConfigurationException("spline modifier range error. Start of 2nd potential (exp_spline) should be less than start of 3rd ! {} < {}".format(
-      pot2.start.start, 
+      pot2.start.start,
       pot3_old_start))
 
   detach_point_r = pform.next.start.start
@@ -153,9 +153,9 @@ def spline(potential_forms, potential_form_builder):
   spline_factory = [s for s in spline_factories if s.spline_keyword == pot2.potential_form ][0]
 
   logger.debug("spline modifier: connecting '{}' with {} to '{}' in range {} to {}".format(
-    pot1.potential_form, 
+    pot1.potential_form,
     pot2.potential_form,
-    pot2.potential_form, 
+    pot2.potential_form,
     detach_point, attach_point))
 
   # Now build the spline object
@@ -168,8 +168,6 @@ def spline(potential_forms, potential_form_builder):
     ))
     raise raise_e
 
-
-  
   spot_obj = Custom_SplinePotential(spline)
   return spot_obj
 

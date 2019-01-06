@@ -17,8 +17,10 @@ This allows for potential-forms that are not described in the standard file itse
 
 Examples will now be given.
 
-Example
-+++++++
+.. _potable-potential-form-basak-example:
+
+Example: using custom-potential forms to define Basak potential
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 We will revisit the Basak [Basak2003]_ UO\ :sub:`2` model. In the :ref:`quick-start`\ guide you will have seen that the published potential parameters required considerable manipulation to make them compatible with the :ref:`potform-buck` and :ref:`potform-morse` potential-forms defined in ``atsim.potentials`` (see :ref:`basak-potential-model`\ ). Rather than transforming model parameters in this way, it may be easier to use the pair-potential equations and parameters directly as they appear in a paper. The ``[Potential-Form]`` section is the mechanism by which this may be achieved.
 

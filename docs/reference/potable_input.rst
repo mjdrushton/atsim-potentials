@@ -5,9 +5,6 @@
 ``potable`` input format
 ************************
 
-.. contents::
-	:local:
-
 .. _ref-potable-input-tabulation:
 
 [Tabulation]
@@ -51,3 +48,41 @@ target
 :Format: str
 :Valid Options: ``DL_POLY|DLPOLY``, ``DLPOLY_EAM_fs`` ``DLPOLY_EAM``, ``GULP``, ``LAMMPS_eam_alloy|setfl``, ``LAMMPS``, ``setfl_fs``
 :Description: Specifies the format that tabulation will be written in.
+
+
+.. _ref-potable-input-pair:
+
+[Pair]
+======
+
+Pair-potentials are defined in this section of the file. See :ref:`potable-pair-section` for full description.
+
+.. seealso::
+  
+  See also:
+
+  * Potential-forms are parametrised in this section:
+      - :ref:`list-of-potential-forms` - reference list of pre-defined potential forms.
+      - Custom functions are defined in the ``[Potential-Form]`` section:
+
+          + :ref:`potable-potential-form` - custom potential-forms are introduced here.
+          + :ref:`ref-potential-form` - reference information for ``[Potential-Form]`` section.
+ 
+  * Potential-modifiers may be used in this section:
+
+      - :ref:`potential-modifiers` - are introduced here.
+      - :ref:`ref-potential-modifiers` - list of potential-modifiers.
+
+
+
+[Potential-Form]
+================
+
+Custom functional forms are defined in this section. See :ref:`potable-potential-form` where it is introduced.
+
+.. seealso::
+
+    * The syntax used by the mathematical expressions defined in the ``[Potential-Form]`` is `defined here <http://www.partow.net/programming/exprtk/index.html>`_\ .
+
+  
+

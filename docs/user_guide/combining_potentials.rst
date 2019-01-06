@@ -16,6 +16,8 @@ Methods for linking potential-forms using splines will then be considered.
 Multi-range potential examples
 ==============================
 
+This section shows how potential-forms can be combined using the multi-range syntax introduced here: :ref:`multi-range-potentials`\ .
+
 Example: truncating a potential
 -------------------------------
 
@@ -202,6 +204,8 @@ The exponential spline does not take any parameters.
 
 The functional form given in eqn. :eq:`eq_exp_spline` is also available as a potential-form. Although the user is then responsible for calculating their own spline-coefficients. See: :ref:`potform-exp_spline`\ .
 
+.. _spline-exp_spline-example:
+
 Example: splining to the ``zbl`` potential form using ``exp_spline``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -295,6 +299,8 @@ Where: ``A``, ``RHO`` and ``C`` are the potential parameters and ``R_DETACH``, `
 	
 In most cases users will prefer the ``as.buck4`` form unless they have a specific reason to change the initial and final potential functions.
 
+
+.. _spline-buck4_spline-example:
 
 Example: redefining the Morelon model using ``buck4_spline``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
