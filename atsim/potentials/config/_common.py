@@ -23,6 +23,8 @@ PotentialFormTuple = collections.namedtuple("PotentialFormTuple", ["signature", 
 MultiRangeDefinitionTuple = collections.namedtuple("MultiRangeDefinition", ["range_type", "start"])
 PotentialModifierTuple = collections.namedtuple("PotentialModifierTuple", ['modifier', 'potential_forms', 'start', 'next'])
 
+TableFormTuple = collections.namedtuple("TableFormTuple", ['name', 'interpolation', 'x', 'y'])
+
 class ConfigurationException(Exception):
   pass
 
@@ -41,7 +43,8 @@ class Potential_Form_Registry_Exception(ConfigurationException):
 class Potential_Form_Exception(ConfigurationException):
   pass
 
-
+class Table_Form_Exception(ConfigurationException):
+  pass
 
 def _is_vararg_signature(sig):
   for p in sig.parameters.values():

@@ -13,7 +13,9 @@ from ._common import PotentialFormSignatureTuple, \
   PotentialModifierTuple, \
   EAMFSDensitySpeciesTuple, \
   EAMEmbedTuple, \
-  EAMDensityTuple 
+  EAMDensityTuple, \
+  TableFormTuple
+
 from ._common import ConfigParserException
 from ._common import ConfigParserMissingSectionException, ConfigParserDuplicateEntryException
 
@@ -151,6 +153,139 @@ class _TabulationSection(object):
       cutoff_rho = self.cutoff_rho,
       nrho = self.nrho)
 
+class _TableFormSection(object):
+  """Extracts the [Table-Form:NAME] sections from configuration file.
+
+  These are parsed into TableFormTuple objects which are accessed through the
+  `table_forms` property."""
+
+  _section_name_prefix = "Table-Form"
+  _section_name_regex = re.compile("^{}:(.*)$".format(_section_name_prefix))
+
+  def __init__(self, cfg_parser):
+    self._cfg_parser = cfg_parser
+    self._table_forms = self._parse_table_forms()
+
+  def _parse_table_forms(self):
+    table_form_list = []
+    for section_name in self._cfg_parser.sections():
+      if self.is_relevant_section(section_name):
+        table_form = self._parse_section(section_name)
+        table_form_list.append(table_form)
+    return table_form_list
+
+  @classmethod
+  def _parse_name(cls, section_name):
+    m = cls._section_name_regex.match(section_name)
+    name = m.groups()[0]
+    name = name.strip()
+    return name
+
+  @classmethod
+  def is_relevant_section(cls, section_name):
+    return cls._section_name_regex.match(section_name) != None
+
+  def _parse_x_y(self, section_name, section):
+    x_string = section["x"]
+    y_string = section["y"]
+
+    try:
+      x = [float(v) for v in x_string.split()]
+    except ValueError as e:
+      raise ConfigParserException("Error converting value into a float whilst parsing the 'x' entry of '{}': {}".format(section_name, e.args[0]))
+
+    try:
+      y = [float(v) for v in y_string.split()]
+    except ValueError as e:
+      raise ConfigParserException("Error converting value into a float whilst parsing the 'y' entry of '{}': {}".format(section_name, e.args[0]))
+
+    if len(x) != len(y):
+      raise ConfigParserException("The number of data items given in the  'x' and 'y' entries of '{}' do not match ({} != {})".format(section_name, len(x), len(y)))
+
+    return (x,y)
+
+  def _parse_xy(self, section_name, section):
+    xy_string = section["xy"]
+
+    try:
+      xy = [float(v) for v in xy_string.split()]
+    except ValueError as e:
+      raise ConfigParserException("Error converting value into a float whilst parsing the 'xy' entry of '{}': {}".format(section_name, e.args[0]))
+
+    if len(xy) % 2 != 0:
+      raise ConfigParserException("The number of data items in 'xy' is not even for '{}'. This indicates a different number of 'x' and 'y' items".format(section_name))
+
+    even = True
+    x = []
+    y = []
+    for v in xy:
+      if even:
+        x.append(v)
+      else:
+        y.append(v)
+      even = not even
+
+    return (x,y)
+
+  @classmethod
+  def check_for_duplicate_table_forms(cls, cfg_parser):
+    seen = {}
+    for section_name in cfg_parser.sections():
+      if cls.is_relevant_section(section_name):
+        label = cls._parse_name(section_name)
+        seen.setdefault(label, []).append(section_name)
+    
+    for k, v in seen.items():
+      if len(v) > 1:
+        msg = "Duplicate '{}' sections found:  {}".format(
+          cls._section_name_prefix,
+          ",".join(["'"+str(s)+"'" for s in v]))
+        raise ConfigParserDuplicateEntryException(msg)
+
+
+  def _parse_data(self, section_name, section):
+
+    # First check that we have reasonable combinations of properties
+    # x and y
+    # xy
+
+    if "x" in section or "y" in section:
+      if not "x" and "y" in section:
+        raise ConfigParserException("Did not find both 'x' and 'y' entries whilst parsing the data for section '{}'".format(section_name))
+
+      if "xy" in section:
+        raise ConfigParserException("Data in a {} section can either be given using 'xy' or 'x' and 'y' entries. Not both. For section '{}'".format(self._section_name_prefix, section_name))
+
+      data = self._parse_x_y(section_name,section)
+    elif "xy" in section:
+      if "x" in section or "y" in section:
+        raise ConfigParserException("Data in a {} section can either be given using 'xy' or 'x' and 'y' entries. Not both. For section '{}'".format(self._section_name_prefix, section_name))
+
+      data = self._parse_xy(section_name, section)
+    else:
+      raise ConfigParserException("Could not parse data from '{}', neither 'xy' or 'x' and 'y' entries found.".format(section_name))
+
+    return data
+
+  def _parse_section(self, section_name):
+    name = self._parse_name(section_name)
+    section = self._cfg_parser[section_name]
+
+    interpolation = section.get("interpolation", "cubic_spline")
+    x,y = self._parse_data(section_name, section)
+
+    table_tuple = TableFormTuple(
+      name = name, 
+      interpolation = interpolation,
+      x = x,
+      y = y)
+
+    return table_tuple
+
+  @property
+  def table_forms(self):
+    return self._table_forms
+  
 
 class _ConfigParserDict(collections.OrderedDict):
   """Dictionary class used by `_RawConfigParser`,
@@ -178,6 +313,7 @@ class _RawConfigParser(configparser.RawConfigParser):
 
   def __init__(self):
     super(_RawConfigParser, self).__init__(dict_type = _ConfigParserDict)
+    self._sections = collections.OrderedDict()
 
   def optionxform(self, option):
     option = option.strip()
@@ -196,7 +332,8 @@ class ConfigParser(object):
                 'Pair' : 'pair',
                 'EAM-Embed' : 'eam_embed',
                 'Potential-Form' : 'potential_form',
-                'EAM-Density' : None}
+                'EAM-Density' : None,
+                'Table-Form' : 'table_form'}
 
   def __init__(self, fp, overrides = [], additional = []):
     """Construct ConfigParser.
@@ -210,6 +347,8 @@ class ConfigParser(object):
     self._check_for_duplicates()
 
     self._tabulation_section = None
+    self._table_form = None
+
     self._default_range_start = MultiRangeDefinitionTuple(u">", 0.0)
 
   def _init_config_parser(self, fp, overrides, additional):
@@ -218,7 +357,7 @@ class ConfigParser(object):
 
     try:    
       cp.read_file(fp)
-    except configparser.DuplicateOptionError as e:
+    except (configparser.DuplicateOptionError, configparser.DuplicateSectionError) as e:
       raise ConfigParserDuplicateEntryException(e.message)
 
     # Process overrides
@@ -250,6 +389,10 @@ class ConfigParser(object):
     return cp
 
   def _check_for_duplicates(self):
+    self._check_for_duplicate_pairs()
+    self._check_for_duplicate_table_forms()
+
+  def _check_for_duplicate_pairs(self):
     """Check the config parser for duplicate pair entries"""
 
     if self._config_parser.has_section("Pair"):
@@ -260,6 +403,9 @@ class ConfigParser(object):
         if (p in seen) or (rev_p in seen):
           raise ConfigParserDuplicateEntryException("Multiple entries for the pair {A}-{B} found in [Pair] section.".format(A= p[0], B=p[1]))
         seen.add(p)
+
+  def _check_for_duplicate_table_forms(self):
+    _TableFormSection.check_for_duplicate_table_forms(self._config_parser)
 
 
   def _descend_potential_modifier(self, modifier_node, sibling_iterator, range_defn):
@@ -453,6 +599,18 @@ class ConfigParser(object):
     return self._tabulation_section
 
   @property
+  def table_form(self):
+    """Returns parsed content of config file's [Table-Form] section.
+
+    This allows pre-tabulated data to be used within atsim.potentials.
+
+    :returns: List of TableFormTuple instance tuples."""
+    if self._table_form is None:
+      self._table_form = _TableFormSection(self._config_parser).table_forms
+    return self._table_form
+
+
+  @property
   def eam_embed(self):
     """Return the parsed contents of the configuration file's [EAM-Embed] section.
 
@@ -513,7 +671,7 @@ class ConfigParser(object):
     :returns: List of section labels."""
     sections = []
     for section_key in self._config_parser.sections():
-      if not section_key in self._section_map:
+      if not _TableFormSection.is_relevant_section(section_key ) and not section_key in self._section_map:
         sections.append(section_key)
     return sections
 

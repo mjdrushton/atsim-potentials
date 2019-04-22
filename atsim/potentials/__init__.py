@@ -26,6 +26,7 @@ from . import potentialfunctions
 from . import spline
 from . import pair_tabulation
 from . import eam_tabulation
+from . import tableforms
 
 from ._multi_range_potential_form import create_Multi_Range_Potential_Form, Multi_Range_Defn
 

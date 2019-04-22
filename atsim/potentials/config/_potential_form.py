@@ -83,7 +83,6 @@ class Potential_Form(object):
     f = self._functionfactory(*args)
     return f
 
-
 class Existing_Potential_Form(object):
   """Wraps an object from the atsim.potentials.potentialforms module so that 
   it can be registered directly with Potential_Form_Registry and so used from

@@ -12,7 +12,7 @@ dens4(r, A, B)              : A * (B-r)^4
 dens3(r, A, B)              : A * (B-r)^3                                                                     
 pp1(r, A,B,C,D,E,F,G,H,I)   : (A/r)  * (B*exp(C*r) + D*exp(E*r) + F*exp(G*r) + H*exp(I*r))                    
 pp2(r, A,B,C,D)             : exp(A + B*r + C*r^2 + D*r^3)                                                   
-pp3(r, cutoff, A,B,C,D,E) : A*(cutoff - r)^4 + B*(cutoff-r)^5 + C*(cutoff-r)^6 + D*(cutoff-r)^7 + E*(cutoff-r)^8
+pp3(r, cutoff, A,B,C,D,E)   : A*(cutoff - r)^4 + B*(cutoff-r)^5 + C*(cutoff-r)^6 + D*(cutoff-r)^7 + E*(cutoff-r)^8
 pp_cube(r, A, cutoff)       : A*(cutoff-r)^3                                                                  
 
 [EAM-Embed]

@@ -7,6 +7,7 @@ from ._common import Potential_Form_Registry_Exception
 from ._common import ConfigParserMissingSectionException
 from ._common import make_potential_form_tuple_from_function
 
+from ._table_form_builder import Table_Form_Builder
 from ._python_potential_function import _Python_Potential_Function
 from ._potential_form import Potential_Form, Existing_Potential_Form
 from ._cexprtk_potential_function import _Cexptrk_Potential_Function
@@ -15,9 +16,8 @@ from ._potential_form import Potential_Form
 from ..potentialforms import _iscallable
 
 
-
 class Potential_Form_Registry(object):
-  """Factory class that takes [Potential-Form] definitions
+  """Factory class that takes [Potential-Form] and [Table-Form] definitions
   from ConfigParser and turns them into Potential_Form objects"""
 
   _standard_namespace = "as."
@@ -32,13 +32,16 @@ class Potential_Form_Registry(object):
     if register_standard:
       self._potential_forms.update(self._register_standard())
     
+    self._potential_forms.update(self._build_table_forms(cfg.table_form))
+
     try:
       definitions = cfg.potential_form
       self._potential_forms.update(self._build_potential_forms(definitions))
-      self._register_with_each_other()
-      self._definitions = definitions
     except ConfigParserMissingSectionException:
-      pass
+      definitions = []
+
+    self._register_with_each_other()
+    self._definitions = definitions
 
     if register_standard:
       self._register_from_potentialforms(self._potential_forms)
@@ -58,7 +61,6 @@ class Potential_Form_Registry(object):
     return potential_forms
 
   def _register_from_potentialforms(self, potential_forms):
-    # import pdb; pdb.set_trace()
     from .. import potentialforms
     for name, potential_form in inspect.getmembers(potentialforms, _iscallable):
       name = self._make_standard_name(name)      
@@ -75,6 +77,20 @@ class Potential_Form_Registry(object):
       pf = Potential_Form(func)
       potential_forms[d.signature.label] = pf
     return potential_forms
+
+  def _build_table_forms(self, definitions):
+    table_forms = {}
+
+    builder = Table_Form_Builder()
+
+    for d in definitions:
+      if d.name in self._potential_forms:
+        raise Potential_Form_Registry_Exception("Two potential forms have the same label in [Potential-Form] section: '{0}'".format(d.signature.label))
+      
+      pf = builder.create_potential_form(d)
+      table_forms[d.name] = pf
+    return table_forms
+
 
   def _register_with_each_other(self):
     # So that each function can rely on other custom functions, add each function to every other
