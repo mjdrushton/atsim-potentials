@@ -125,7 +125,7 @@ class PairTabulationFactory(object):
     r_cutoff = self.extract_cutoffs(cp)
 
     # Get pair potentials
-    potential_form_registry = Potential_Form_Registry(cp, True)
+    potential_form_registry = Potential_Form_Registry(cp, register_standard = True, register_pymath_functions = True)
     modifier_registry = Modifier_Registry()
     
     potobjs = self.extract_potential_objects(cp, potential_form_registry, modifier_registry)

@@ -22,10 +22,11 @@ class Potential_Form_Registry(object):
 
   _standard_namespace = "as."
 
-  def __init__(self, cfg, register_standard = False):
+  def __init__(self, cfg, register_standard = False, register_pymath_functions = False):
     """:param cfg: ConfigParser instance.
        :param register_standard: If `True` then functions contained in atsim.potentials.potentialfunctions
-          are registered with this object with the `as.` namespace prefix."""
+          are registered with this object with the `as.` namespace prefix.
+       :param register_pymath_functions: If `True` make functions from the python math module available in cexprtk expressions."""
 
     self._potential_forms = {}
 
@@ -36,6 +37,10 @@ class Potential_Form_Registry(object):
       definitions = cfg.potential_form
       self._potential_forms.update(self._build_potential_forms(definitions))
       self._register_with_each_other()
+
+      if register_pymath_functions:
+        self._register_pymath_functions()
+
       self._definitions = definitions
     except ConfigParserMissingSectionException:
       pass
@@ -82,6 +87,27 @@ class Potential_Form_Registry(object):
     pairs = list(itertools.permutations(self._potential_forms.values(), 2))
     for a,b in pairs:
       a.potential_function.register_function(b.potential_function)
+
+  def _register_pymath_functions(self):
+    # mathfuncs = ["factorial"]
+    from . import _pymath
+
+    new_mathfuncs = []
+    # import pdb;pdb.set_trace()
+    namespace = "pymath"
+
+    for name, pyfunc in inspect.getmembers(_pymath, inspect.isfunction):
+      if name.startswith("_"):
+        continue
+      label = "{}.{}".format(namespace, name)
+      d = make_potential_form_tuple_from_function(label, pyfunc)
+      func = _Python_Potential_Function(d, pyfunc)
+      new_mathfuncs.append(func)
+
+    for pform in self._potential_forms.values():
+      for pyfunc in new_mathfuncs:
+        pform.potential_function.register_function(pyfunc)
+      
 
   @property
   def registered(self):
