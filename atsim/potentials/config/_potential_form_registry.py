@@ -22,25 +22,31 @@ class Potential_Form_Registry(object):
 
   _standard_namespace = "as."
 
-  def __init__(self, cfg, register_standard = False):
+  def __init__(self, cfg, register_standard = False, register_pymath_functions = False):
     """:param cfg: ConfigParser instance.
        :param register_standard: If `True` then functions contained in atsim.potentials.potentialfunctions
-          are registered with this object with the `as.` namespace prefix."""
+          are registered with this object with the `as.` namespace prefix.
+       :param register_pymath_functions: If `True` make functions from the python math module available in cexprtk expressions."""
 
     self._potential_forms = {}
 
     if register_standard:
       self._potential_forms.update(self._register_standard())
-    
+
     self._potential_forms.update(self._build_table_forms(cfg.table_form))
 
     try:
       definitions = cfg.potential_form
       self._potential_forms.update(self._build_potential_forms(definitions))
+      self._definitions = definitions
     except ConfigParserMissingSectionException:
       definitions = []
 
+    if register_pymath_functions:
+      self._register_pymath_functions()
+
     self._register_with_each_other()
+
     self._definitions = definitions
 
     if register_standard:
@@ -53,7 +59,7 @@ class Potential_Form_Registry(object):
     from .. import potentialfunctions
     potential_forms = {}
     for name, pyfunc in inspect.getmembers(potentialfunctions, _iscallable):
-      name = self._make_standard_name(name)      
+      name = self._make_standard_name(name)
       d = make_potential_form_tuple_from_function(name, pyfunc)
       func = _Python_Potential_Function(d, pyfunc)
       pf = Potential_Form(func)
@@ -63,7 +69,7 @@ class Potential_Form_Registry(object):
   def _register_from_potentialforms(self, potential_forms):
     from .. import potentialforms
     for name, potential_form in inspect.getmembers(potentialforms, _iscallable):
-      name = self._make_standard_name(name)      
+      name = self._make_standard_name(name)
       if not name in potential_forms:
         pf = Existing_Potential_Form(name, potential_form)
         potential_forms[name] = pf
@@ -86,7 +92,7 @@ class Potential_Form_Registry(object):
     for d in definitions:
       if d.name in self._potential_forms:
         raise Potential_Form_Registry_Exception("Two potential forms have the same label in [Potential-Form] section: '{0}'".format(d.signature.label))
-      
+
       pf = builder.create_potential_form(d)
       table_forms[d.name] = pf
     return table_forms
@@ -98,6 +104,27 @@ class Potential_Form_Registry(object):
     pairs = list(itertools.permutations(self._potential_forms.values(), 2))
     for a,b in pairs:
       a.potential_function.register_function(b.potential_function)
+
+  def _register_pymath_functions(self):
+    # mathfuncs = ["factorial"]
+    from . import _pymath
+
+    new_mathfuncs = []
+    # import pdb;pdb.set_trace()
+    namespace = "pymath"
+
+    for name, pyfunc in inspect.getmembers(_pymath, inspect.isfunction):
+      if name.startswith("_"):
+        continue
+      label = "{}.{}".format(namespace, name)
+      d = make_potential_form_tuple_from_function(label, pyfunc)
+      func = _Python_Potential_Function(d, pyfunc)
+      new_mathfuncs.append(func)
+
+    for pform in self._potential_forms.values():
+      for pyfunc in new_mathfuncs:
+        pform.potential_function.register_function(pyfunc)
+
 
   @property
   def registered(self):

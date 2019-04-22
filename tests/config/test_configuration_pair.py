@@ -414,4 +414,4 @@ include potentials.lib
 
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)
-  assert pytest.approx(expect) == actual
+  assert pytest.approx(expect, abs=1e-3) == actual

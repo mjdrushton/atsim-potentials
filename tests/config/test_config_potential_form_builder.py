@@ -173,7 +173,7 @@ def test_bad_params_inside_expression():
   """Check that configuration exceptions thrown when the wrong number of arguments are used with a potentialfunction inside a
   cexprtk function"""
 
-  cp = ConfigParser(io.StringIO("""
+  cp = ConfigParser(io.StringIO(u"""
 
 [Potential-Form]
 bad(r) = as.buck(1.0, 2.0)

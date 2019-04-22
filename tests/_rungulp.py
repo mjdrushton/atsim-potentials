@@ -23,7 +23,7 @@ def gulp_uo2_energy_fixture(tmpdir, charges):
   def run(charges):
     resource_path = py.path.local(_getResourceDirectory())
     gulpin = resource_path.join("uo2.gin")
-    template = gulpin.open().read()
+    template = gulpin.open(encoding = 'utf-8').read()
 
     ocharge, ucharge = charges
     charges = {"U_charge" : ucharge, "O_charge" : ocharge}
