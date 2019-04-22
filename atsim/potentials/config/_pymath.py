@@ -35,8 +35,12 @@ def log(*args):
 def log1p(x):
   return math.log1p(x)
 
-def log2(x):
-  return math.log2(x)
+if hasattr(math, "log2"):
+  def log2(x):
+    return math.log2(x)
+else:
+  def log2(x):
+    return math.log(x,2)
 
 def log10(x):
   return math.log10(x)
