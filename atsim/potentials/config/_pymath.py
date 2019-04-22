@@ -95,16 +95,8 @@ def sinh(x):
 def tanh(x):
   return math.tanh(x)
 
-
-# _currentmodule = sys.modules[__name__]
-
-# for name in _imports:
-#   # import pdb;pdb.set_trace()
-#   setattr(_currentmodule, name, getattr(math, name))
-
 def factorial(x):
   return math.factorial(x)
-
 
 if hasattr(math, "gcd"):
   _gcd = math.gcd

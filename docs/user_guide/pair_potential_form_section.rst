@@ -15,7 +15,22 @@ This allows for potential-forms that are not described in the standard file itse
 * ``ARG ...`` defines the function signature by naming the arguments it takes.
 * ``FORMULA`` mathematical expression defining the function.
 
-Examples will now be given.
+.. _potable-potential-form-formula-syntax:
+
+Formula syntax
+++++++++++++++
+
+The ``FORMULA`` strings used in this section of the configuration file support a rich range of mathematical expressions. These are parsed using the `cexprtk <https://pypi.org/project/cexprtk/>`_ python module which is built on top of the `exprtk <http://www.partow.net/programming/exprtk/>`_ library. As a result the supported operators and functions are `listed here <http://www.partow.net/programming/exprtk/>`_ .
+
+In addition, users can make use of functions from the python `math <https://docs.python.org/3/library/math.html>`_ module. In ``FORMULA`` definitions these are called with a ``pymath.*`` prefix. A list of the supported python math functions are given here: :ref:`ref-potable-input-pymath`.
+
+pymath formula example
+----------------------
+
+As an example of where a ``pymath`` function might be useful, ``exprtk`` does not natively provide a means of calculating factorials. Instead, the python `factorial() <https://docs.python.org/3/library/math.html#math.factorial>`_ function can be used in a ``FORMULA`` as shown in this potential form definition::
+
+	N(zeta, n) = (2*zeta)**n * sqrt((2*zeta)/pymath.factorial(2*n))
+
 
 .. _potable-potential-form-basak-example:
 

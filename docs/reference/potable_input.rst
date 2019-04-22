@@ -84,5 +84,44 @@ Custom functional forms are defined in this section. See :ref:`potable-potential
 
     * The syntax used by the mathematical expressions defined in the ``[Potential-Form]`` is `defined here <http://www.partow.net/programming/exprtk/index.html>`_\ .
 
-  
+.. _ref-potable-input-pymath:
 
+Python maths functions supported in mathematical expressions
+------------------------------------------------------------
+
+The mathematical expressions used in the ``[Potential-Form]`` section of ``potable`` input allow a subset of functions from the `math <https://docs.python.org/3/library/math.html>`_ module to be used. These are accesible via the ``pymath.*`` namespace prefix. An example of this is provided here: :ref:`potable-potential-form-formula-syntax`
+
+The list of functions accessible through ``pymath.*`` are below. In general, functions that return multiple values do not appear:
+
+    * `acos(x) <https://docs.python.org/3/library/math.html#math.acos>`_
+    * `acosh(x) <https://docs.python.org/3/library/math.html#math.acosh>`_
+    * `asinh(x) <https://docs.python.org/3/library/math.html#math.asinh>`_
+    * `atan(x) <https://docs.python.org/3/library/math.html#math.atan>`_
+    * `atan2(x,y) <https://docs.python.org/3/library/math.html#math.atan2>`_
+    * `atanh(x) <https://docs.python.org/3/library/math.html#math.atanh>`_
+    * `cos(x) <https://docs.python.org/3/library/math.html#math.cos>`_
+    * `cosh(x) <https://docs.python.org/3/library/math.html#math.cosh>`_
+    * `degrees(x) <https://docs.python.org/3/library/math.html#math.degrees>`_
+    * `exp(x) <https://docs.python.org/3/library/math.html#math.exp>`_
+    * `factorial(x) <https://docs.python.org/3/library/math.html#math.factorial>`_
+    * `fsum(*args) <https://docs.python.org/3/library/math.html#math.fsum>`_ 
+
+        + This function is called slightly differently than in native Python.
+        + In Python you pass in a single iterable to this function. This expression: ``math.fsum([1,2,3,4])`` would be written ``pymath.fsum(1,2,3,4)`` in a ``potable`` formula.
+
+    * `gcd(a,b) <https://docs.python.org/3/library/math.html#math.gcd>`_
+    * `hypot(x,y) <https://docs.python.org/3/library/math.html#math.hypot>`_
+    * `ldexp(a,b) <https://docs.python.org/3/library/math.html#math.ldexp>`_
+    * `log(*args) <https://docs.python.org/3/library/math.html#math.log>`_
+    * `log10(x) <https://docs.python.org/3/library/math.html#math.log10>`_
+    * `log1p(x) <https://docs.python.org/3/library/math.html#math.log1p>`_
+    * `log2(x) <https://docs.python.org/3/library/math.html#math.log2>`_
+    * `pow(x,a) <https://docs.python.org/3/library/math.html#math.pow>`_
+    * `radians(x) <https://docs.python.org/3/library/math.html#math.radians>`_
+    * `sin(x) <https://docs.python.org/3/library/math.html#math.sin>`_
+    * `sinh(x) <https://docs.python.org/3/library/math.html#math.sinh>`_
+    * `sqrt(x) <https://docs.python.org/3/library/math.html#math.sqrt>`_
+    * `sqrt(x) <https://docs.python.org/3/library/math.html#math.sqrt>`_
+    * `tan(x) <https://docs.python.org/3/library/math.html#math.tan>`_
+    * `tanh(x) <https://docs.python.org/3/library/math.html#math.tanh>`_
+    * `trunc(x) <https://docs.python.org/3/library/math.html#math.trunc>`_
