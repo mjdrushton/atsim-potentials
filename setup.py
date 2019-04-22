@@ -11,7 +11,8 @@ setup(name="atsim.potentials",
     "funcsigs",
     "pyparsing>=2.2.0",
     "cexprtk>=0.3.3",
-    "wrapt==1.10.11"],
+    "wrapt==1.10.11",
+    "scipy"],
 
   version = '0.3.0dev',
 
@@ -46,4 +47,5 @@ setup(name="atsim.potentials",
     "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
     "Topic :: Scientific/Engineering"])
