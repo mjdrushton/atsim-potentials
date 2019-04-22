@@ -580,11 +580,12 @@ def test_morelon_files(aspot, gulp_uo2_energy_fixture):
   # overrides = [ CPT("Tabulation", "target", "GULP"), CPT("Tabulation", "cutoff", "10.0"), CPT("Tabulation", "nr", "1001")] 
   overrides = [ CPT("Tabulation", "target", "GULP")]
 
-  with aspot.open() as infile:
+  # import io
+  with aspot.open('r', encoding = 'utf-8') as infile:
     cp = atsim.potentials.config.ConfigParser(infile, overrides = overrides)
     tabulation = atsim.potentials.config.Configuration().read_from_parser(cp)
 
-  with tmpdir.join("potentials.lib").open("w") as tabfile:
+  with tmpdir.join("potentials.lib").open("w", encoding = 'utf-8') as tabfile:
     tabulation.write(tabfile)
 
   expect = pytest.approx(-263.60598484)

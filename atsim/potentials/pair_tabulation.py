@@ -116,13 +116,13 @@ class GULP_PairTabulation(_PairTabulation_AbstractBase):
     header_template = u"{speciesA} {speciesB} {cutoff}\n"
     row_template = u"{energy:.10f} {sepn:.10f}\n"
 
-    fp.write("spline cubic\n")
+    fp.write(u"spline cubic\n")
     fp.write(header_template.format(speciesA = pot.speciesA, speciesB = pot.speciesB, cutoff= self.cutoff))
 
     for n in range(self.nr+1):
       r = float(n)* self.cutoff / (float(self.nr) -1)
       energy = pot.energy(r)
       fp.write(row_template.format(sepn = r, energy = energy))
-    fp.write("\n")
+    fp.write(u"\n")
 
   
