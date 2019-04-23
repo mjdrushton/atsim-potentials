@@ -8,6 +8,32 @@ Potential modifiers are described here: :ref:`potential-modifiers`\ .
 
 A list of available potential modifiers is provided here.
 
+.. _modifier-product:
+
+``product()``
+=============
+
+Modifier that takes the product of the potential-forms provided to it as arguments.
+
+If the potentials provide analytical derivatives the ``product()`` modifier will combine these correctly.
+
+Example:
+--------
+
+Any number of potential instances can be multiplied by each other::
+
+	[Pair]
+	# Evaluates to 16
+	A-A : product(as.constant 2.0, as.constant 2.0, as.constant 4.0)
+	
+	# Apply a soft-cutoff at 2.5 Angs to a Buckingham potential
+	# This defines a custom function in the [Potential-Form] section
+	# based on the complementary error function for this purpose. 
+	B-B : product(as.buck 1000.0 0.2 32.0,
+	              truncate 2.5)
+
+	[Potential-Form]
+	truncate(rij, cutoff) = erfc(4*(rij-cutoff))/2.0
 
 .. _modifier-spline:
 
