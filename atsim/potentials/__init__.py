@@ -85,6 +85,43 @@ def plus(a,b):
 
   return potential
 
+def product(a,b):
+  """Takes two functions and returns a third which when evaluated returns the result of a(r) * b(r)
+
+  This function is useful for combining existing potentials.
+
+  **Derivatives:**
+
+  If either of the potential callables (`a` and `b`) provide a .deriv() method the function returned by
+  `product()` will also have a `.deriv()` method. This allows analytical derivatives to be specified. If
+  only one of `a` or `b` provide `.deriv()` then the derivative of the other callable will be evaluated
+  numerically.
+
+  If neither function has a .deriv() method then the function returned here will also *not* have a .deriv()
+  method.
+
+  :param a: First callable
+  :param b: Second callable
+  :return: Function that when evaulated returns ``a(r) * b(r)``"""
+
+  def potential(r):
+    return a(r) * b(r)
+
+  # Set derivatives
+  if hasattr(a, 'deriv') or hasattr(b, 'deriv'):
+    deriv_a = gradient(a)
+    deriv_b = gradient(b)
+    def deriv(r):
+      return a(r) * deriv_b(r) + b(r) * deriv_a(r)
+    potential.deriv = deriv
+
+    if hasattr(deriv_a, 'deriv') or hasattr(deriv_b, 'deriv'):
+      deriv2_a = gradient(deriv_a)
+      deriv2_b = gradient(deriv_b)
+      def deriv2(r):
+        return deriv2_a(r) * b(r) + 2.0*deriv_a(r)*deriv_b(r) + a(r)*deriv2_b(r)
+      potential.deriv2 = deriv2
+  return potential
 
 class TableReader(object):
   """Callable that allows pretabulated data to be used with a Potential object."""

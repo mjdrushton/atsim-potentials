@@ -446,3 +446,42 @@ U-U : as.buck 2000.0 0.2 16.0"""
     cp = ConfigParser(io.StringIO(aspot), additional=[ConfigParserOverrideTuple(u"Pair", u"U-O", "as.buck 1000.0 0.1 32.0")])
 
 
+def test_indented_input():
+  single_line = u"""[Pair]
+O-O : sum( as.constant 1.0, as.constant 2.0 )
+  """
+
+  expect = ConfigParser(io.StringIO(single_line)).pair
+
+  cfg_string = u"""[Pair]
+O-O : sum(
+          as.constant
+                      1.0,
+          as.constant 2.0
+      )
+  """
+
+  cp = ConfigParser(io.StringIO(cfg_string))
+  actual = cp.pair
+
+  assert DeepDiff(expect, actual) == {}
+
+def test_indented_input_with_comment():
+  single_line = u"""[Pair]
+O-O : sum( as.constant 1.0, as.constant 2.0 )
+  """
+
+  expect = ConfigParser(io.StringIO(single_line)).pair
+  cfg_string = u"""[Pair]
+O-O : sum(
+          # Interleaved comment
+          as.constant
+                      1.0,
+          as.constant 2.0
+      )
+  """
+
+  cp = ConfigParser(io.StringIO(cfg_string))
+  actual = cp.pair
+
+  assert DeepDiff(expect, actual) == {}

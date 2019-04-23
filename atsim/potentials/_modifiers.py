@@ -18,6 +18,21 @@ def is_modifier(obj):
 # As we're about to shadow it - save the builtin sum to _sum so we can still access it.
 _sum = sum
 
+def _modifier_from_func_reduce(logger_name, func, potential_forms, potential_form_builder):
+  logger = logging.getLogger(__name__).getChild(logger_name)
+
+  logger.debug("Creating '{}' modifier for:".format(logger_name))
+  pot_callables = []
+  for i,pfi in enumerate(potential_forms):
+    logger.debug("  {}: {}".format(i+1, pfi))
+    pot_callable = potential_form_builder.create_potential_function(pfi)
+    pot_callables.append(pot_callable)
+
+  mod = functools.reduce(func, pot_callables)
+
+  return mod
+
+
 @modifier
 def sum(potential_forms, potential_form_builder):
   """Modifier that sums all the potential instances given as arguments.
@@ -26,18 +41,20 @@ def sum(potential_forms, potential_form_builder):
   :param potential_form_builder: `atsim.potentials.config._potential_form_builder.Potential_Form_Builder` used to create potential instances.
 
   :returns: Potential callable sums that values from a number of potential instances."""
-  logger = logging.getLogger(__name__).getChild("add")
+  mod = _modifier_from_func_reduce("sum", plus, potential_forms, potential_form_builder)
+  return mod
 
-  logger.debug("Creating 'add' modifier for:")
-  pot_callables = []
-  for i,pfi in enumerate(potential_forms):
-    logger.debug("  {}: {}".format(i+1, pfi))
-    pot_callable = potential_form_builder.create_potential_function(pfi)
-    pot_callables.append(pot_callable)
+@modifier
+def product(potential_forms, potential_form_builder):
+  """Modifier that takes the product of the potential instances given as arguments.
 
-  sum_mod = functools.reduce(plus, pot_callables)
+  :param potential_forms: List of tuples that can be passed to `atsim.potentials.config._potential_form_builder.Potential_Form_Builder.create_potential_function()` to create potential callables.
+  :param potential_form_builder: `atsim.potentials.config._potential_form_builder.Potential_Form_Builder` used to create potential instances.
 
-  return sum_mod
+  :returns: Potential callable that takes the product of a number of potential instances."""
+  from atsim.potentials import product
+  mod = _modifier_from_func_reduce("product", product, potential_forms, potential_form_builder)
+  return mod
 
 class _Exp_Spline_Factory(object):
   """Helper class used by spline_potential() modifier to instantiate :class:`Exp_Spline` objects when `exp_spline` spline type is specified in config file."""
