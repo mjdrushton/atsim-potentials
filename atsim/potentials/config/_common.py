@@ -46,6 +46,12 @@ class Potential_Form_Exception(ConfigurationException):
 class Table_Form_Exception(ConfigurationException):
   pass
 
+class Modifier_Exception(ConfigurationException):
+  pass
+
+class Unknown_Modifier_Exception(Modifier_Exception):
+  pass
+
 def _is_vararg_signature(sig):
   for p in sig.parameters.values():
     if not p.kind == Parameter.VAR_POSITIONAL:

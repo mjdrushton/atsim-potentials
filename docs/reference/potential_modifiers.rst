@@ -8,6 +8,39 @@ Potential modifiers are described here: :ref:`potential-modifiers`\ .
 
 A list of available potential modifiers is provided here.
 
+.. _modifier-pow:
+
+``pow()``
+=========
+
+Modifier that raises each potential-form to the power of the next.
+
+If the potentials provide analytical derivatives, the ``pow()`` modifier will combine these correctly.
+
+Example:
+--------
+
+To take the square of the :ref:`modifier-sum` of a series of potential forms you could use::
+
+	[Pair]
+	# This would evaluate to 0.16
+	A-B : pow(sum(as.constant -1, as.constant 0.1, as.constant 0.5),
+	          as.constant 2)
+
+
+``pow()`` can take more than two potential forms as its arguments::
+
+	[Pair]
+	# This would evaluate to 2^(2^3) = 256 
+	A-B : pow(as.constant 2, as.constant 3, as.constant 2)
+
+
+You aren't restricted to using constant values as arguments::
+
+	[Pair]
+	# This is equivalent to 2^(0.5r + r^2)
+	A-B : pow(as.constant 2, as.polynomial 0 0.5 1)
+
 .. _modifier-product:
 
 ``product()``

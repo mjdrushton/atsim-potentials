@@ -18,7 +18,8 @@ class Cubic_Spline_Table_Form(object):
     :param y_data: List of y data values."""
     
     from scipy.interpolate import InterpolatedUnivariateSpline
-    self._interpolant = InterpolatedUnivariateSpline(x_data, y_data)
+    # ext =1 means that a value of zero is returned outside the data range. 
+    self._interpolant = InterpolatedUnivariateSpline(x_data, y_data, ext =1)
     self._deriv = self._interpolant.derivative()
     self._deriv2 = self._deriv.derivative()
 

@@ -71,7 +71,7 @@ Pair-potentials are defined in this section of the file. See :ref:`potable-pair-
   * Potential-modifiers may be used in this section:
 
       - :ref:`potential-modifiers` - are introduced here.
-      - :ref:`ref-potential-modifiers` - list of potential-modifiers.
+      - :ref:`list-of-potential-modifiers` - list of potential-modifiers.
 
 
 

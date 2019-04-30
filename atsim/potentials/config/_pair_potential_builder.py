@@ -5,7 +5,7 @@ from .._potential import Potential
 from ._potential_form_builder import Potential_Form_Builder
 from ._potential_form_builder import UnknownModifierException, UnknownPotentialFormException
 
-from ._common import ConfigurationException
+from ._common import ConfigurationException, Unknown_Modifier_Exception
 
 class Pair_Potential_Builder(object):
   """Uses the output of ConfigParser.pair and .potentialforms properties to build
@@ -30,7 +30,7 @@ class Pair_Potential_Builder(object):
           modifier_name = ume.args[0],
           species_a = potrow.species.species_a,
           species_b = potrow.species.species_b)
-        raise ConfigurationException(msg)
+        raise Unknown_Modifier_Exception(msg)
       except UnknownPotentialFormException as upe:
         msg = "Unknown potential form '{potform_name}' for {species_a}-{species_b} in [Pair] section".format(
           potform_name = upe.args[0],

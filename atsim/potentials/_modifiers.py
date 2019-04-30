@@ -56,6 +56,23 @@ def product(potential_forms, potential_form_builder):
   mod = _modifier_from_func_reduce("product", product, potential_forms, potential_form_builder)
   return mod
 
+@modifier
+def pow(potential_forms, potential_form_builder):
+  """Modifier that takes two arguments and raises the first potential-form to the power of the second.
+
+  e.g. pow(as.buck 1000.0 0.2 32.0, as.constant 2.0)
+
+       Would square the given Buckingham potential.
+
+  :param potential_forms: List of tuples that can be passed to `atsim.potentials.config._potential_form_builder.Potential_Form_Builder.create_potential_function()` to create potential callables.
+  :param potential_form_builder: `atsim.potentials.config._potential_form_builder.Potential_Form_Builder` used to create potential instances.
+
+  :returns: Potential callable that takes the product of a number of potential instances."""
+  from atsim.potentials import pow
+  mod = _modifier_from_func_reduce("pow", pow, potential_forms, potential_form_builder)
+  return mod
+
+
 class _Exp_Spline_Factory(object):
   """Helper class used by spline_potential() modifier to instantiate :class:`Exp_Spline` objects when `exp_spline` spline type is specified in config file."""
 

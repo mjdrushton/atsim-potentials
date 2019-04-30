@@ -31,6 +31,7 @@ from . import tableforms
 from ._multi_range_potential_form import create_Multi_Range_Potential_Form, Multi_Range_Defn
 
 import sys
+import math
 
 def plus(a,b):
   """Takes two functions and returns a third which when evaluated returns the result of a(r) + b(r)
@@ -120,6 +121,56 @@ def product(a,b):
       deriv2_b = gradient(deriv_b)
       def deriv2(r):
         return deriv2_a(r) * b(r) + 2.0*deriv_a(r)*deriv_b(r) + a(r)*deriv2_b(r)
+      potential.deriv2 = deriv2
+  return potential
+
+def pow(a,b):
+  """Takes two functions and returns a third which when evaluated returns the result of a(r)**b(r)
+
+  This function is useful for combining existing potentials.
+
+  **Derivatives:**
+
+  If either of the potential callables (`a` and `b`) provide a .deriv() method the function returned by
+  `pow()` will also have a `.deriv()` method. This allows analytical derivatives to be specified. If
+  only one of `a` or `b` provide `.deriv()` then the derivative of the other callable will be evaluated
+  numerically.
+
+  If neither function has a .deriv() method then the function returned here will also *not* have a .deriv()
+  method.
+
+  :param a: First callable
+  :param b: Second callable
+  :return: Function that when evaulated returns ``a(r)**b(r)`` (a to the power of b)"""
+
+  def potential(r):
+    return a(r)**b(r)
+
+  # Set derivatives
+  if hasattr(a, 'deriv') or hasattr(b, 'deriv'):
+    deriv_a = gradient(a)
+    deriv_b = gradient(b)
+    def deriv(r):
+      ar = a(r)
+      return potential(r) * (deriv_b(r) * math.log(ar) + b(r) * deriv_a(r)/ar)
+    potential.deriv = deriv
+
+    if hasattr(deriv_a, 'deriv') or hasattr(deriv_b, 'deriv'):
+      deriv2_a = gradient(deriv_a)
+      deriv2_b = gradient(deriv_b)
+      def deriv2(r):
+        ar = a(r)
+        br = b(r)
+        dr = deriv(r)
+        p = potential(r)
+        da = deriv_a(r)
+        db = deriv_b(r)
+        d2a = deriv2_a(r)
+        d2b = deriv2_b(r)
+
+        # value = (deriv_b(r)*log(a(r)) + b(r)*deriv_a(r)/a(r))*deriv(r) + (math.log(a(r))*deriv2_b(r) + b(r)*deriv2_a(r)/a(r) + deriv_a(r)*deriv2_b(r)/a(r) + deriv_b(r)*deriv2_a(r)/a(r) - b(r)*deriv_a(r)*deriv2_a(r)/a(r)**2)*potential(r)
+        value = (db*math.log(ar) + (br*da)/ar)*dr + (math.log(ar)*d2b + (br*d2a)/ar + (da*db)/ar + (db*da)/ar - (br*da*da)/(ar**2))*p
+        return value
       potential.deriv2 = deriv2
   return potential
 
