@@ -163,8 +163,8 @@ def test_config_parser(cfgstring):
 
   expect = [
     TableFormTuple(
-      name = 'cubic_spline',
-      interpolation = 'cubic_spline',
+      name = u'cubic_spline',
+      interpolation = u'cubic_spline',
       x = [0.0, 0.01370, 0.02740, 0.05481, 0.06303],
       y = [0.0, -2.9239, -4.2953, -2.8523, 0.0])
   ]

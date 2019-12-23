@@ -434,7 +434,7 @@ O-U : as.buck 1000.0 0.1 32.0
 U-U : as.buck 2000.0 0.2 16.0"""
 
   with pytest.raises(ConfigParserDuplicateEntryException):
-    cp = ConfigParser(io.StringIO(aspot), additional=[ConfigParserOverrideTuple(u"Pair", u"O-U", "as.buck 1000.0 0.1 32.0")])
+    cp = ConfigParser(io.StringIO(aspot), additional=[ConfigParserOverrideTuple(u"Pair", u"O-U", u"as.buck 1000.0 0.1 32.0")])
 
   aspot = u"""
 
@@ -443,7 +443,7 @@ O-U : as.buck 1000.0 0.1 32.0
 U-U : as.buck 2000.0 0.2 16.0"""
 
   with pytest.raises(ConfigParserDuplicateEntryException):
-    cp = ConfigParser(io.StringIO(aspot), additional=[ConfigParserOverrideTuple(u"Pair", u"U-O", "as.buck 1000.0 0.1 32.0")])
+    cp = ConfigParser(io.StringIO(aspot), additional=[ConfigParserOverrideTuple(u"Pair", u"U-O", u"as.buck 1000.0 0.1 32.0")])
 
 
 def test_indented_input():

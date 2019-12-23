@@ -3,24 +3,25 @@ import logging
 from .._eam_potential import EAMPotential
 from ._common import ConfigurationException
 from ._potential_form_builder import Potential_Form_Builder
+from ..potentialforms import zero
 
 from ..referencedata import Reference_Data, Reference_Data_Exception
 
 class EAM_Potential_Builder(object):
-  """Uses the output ConfigParser.eam_density and .eam_embed propoerties and builds
+  """Uses the output ConfigParser.eam_density and .eam_embed properties and builds
   EAMPotential instances"""
 
-  def __init__(self, cp, potential_form_registry, modifier_registry, reference_data = Reference_Data()):
+  def __init__(self, cp, potential_form_registry, modifier_registry, reference_data = Reference_Data(), add_undefined = True):
     """:param cp: atsim.potentials.config.ConfigParser instance.
     :param potential_form_register: Potential_Form_Registry
     :param modifier_register: Modifier_Registry
-    :param reference_data: Reference_Data object used to provide atomic number, masses and default lattices."""
+    :param reference_data: Reference_Data object used to provide atomic number, masses and default lattices.
+    :param add_undefined: Add null embedding functions and density function for missing interactions. This allows underspecified systems to be tabulatd more easily."""
     self._reference_data = reference_data
+    self.add_undefined = add_undefined
     self._potlist = self._init_eampotentials(cp, potential_form_registry, modifier_registry)
 
   def _init_eampotentials(self, cp, potential_form_registry, modifier_registry):
-    pots = []
-
     # Gather the embedding functions
     embed = self._extract_embed(cp)
     # Gather the density functions
@@ -32,7 +33,7 @@ class EAM_Potential_Builder(object):
 
     diff = embed_species ^ density_species
 
-    if diff:
+    if diff and not self.add_undefined:
       embed_species = ",".join(sorted(embed_species))
       density_species = ",".join(sorted(density_species))
       diff_species = ",".join(sorted(diff))
@@ -48,12 +49,61 @@ class EAM_Potential_Builder(object):
     embed_dict = self._embed_to_potential_form_dict(embed, potential_form_builder)
     density_dict = self._density_to_potential_form_dict(density, potential_form_builder)
 
+    if self.add_undefined:
+      self._add_null_functions(cp, embed_dict, density_dict)
+
     # Now instantiate EAM potential objects
     potlist = []
     for species in embed_dict:
       pot = self._create_eam_potential(species, embed_dict, density_dict)
       potlist.append(pot)
     return potlist
+
+  def _add_null_functions(self, cp, embed_dict, density_dict):
+    # Add default no-op embedding and density functions for species defined in configuration file but that
+    # have not been included in embed_dict and density_dict at this point in potential building
+    self._add_null_embedding_functions(cp, embed_dict, density_dict)
+    self._add_null_density_functions(cp, embed_dict, density_dict)
+
+  def _pp_species(self, cp):
+    pair_species = set()
+    for pp_tup in cp.pair:
+      pair_species.add(pp_tup.species.species_a)
+      pair_species.add(pp_tup.species.species_b)
+    return pair_species
+
+  def _add_null_embedding_functions(self, cp, embed_dict, density_dict):
+    # Get set of currently defined embedding functions
+    defined = set(embed_dict.keys())
+
+    # Get set of species defined for pair potentials
+    # pair_species = self._pp_species(cp)
+    
+    # Get set of species defined by density functions
+    density = self._extract_density(cp)
+    density_species = self._density_species(density)
+
+    # null_embed_species = (pair_species | density_species) - defined
+    null_embed_species = density_species - defined
+
+    # Create the zero functions for null_embed_species.
+    null = zero()
+    for s in null_embed_species:
+      embed_dict[s] = null
+
+
+  def _add_null_density_functions(self, cp, embed_dict, density_dict):
+    embed_species = set(embed_dict.keys())
+    # pair_species = self._pp_species(cp)
+    density = self._extract_density(cp)
+    density_species = self._density_species(density)
+    # all_species = embed_species | pair_species | density_species
+    all_species = embed_species | density_species
+
+    null = zero()
+    for s in all_species:
+      other_dict = density_dict.setdefault(s, null)
+
 
   def _extract_embed(self, cp):
     return cp.eam_embed
@@ -162,3 +212,17 @@ class EAM_Potential_Builder_FS(EAM_Potential_Builder):
 
       add_to[t_species] = pot_func
     return outdict
+
+  def _add_null_density_functions(self, cp, embed_dict, density_dict):
+    embed_species = set(embed_dict.keys())
+    # pair_species = self._pp_species(cp)
+    density = self._extract_density(cp)
+    density_species = self._density_species(density)
+    # all_species = embed_species | pair_species | density_species
+    all_species = embed_species | density_species
+
+    null = zero()
+    for s in all_species:
+      other_dict = density_dict.setdefault(s, {})
+      for o in all_species:
+        other_dict.setdefault(o, null)

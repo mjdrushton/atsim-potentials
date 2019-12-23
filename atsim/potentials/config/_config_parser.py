@@ -271,7 +271,7 @@ class _TableFormSection(object):
     name = self._parse_name(section_name)
     section = self._cfg_parser[section_name]
 
-    interpolation = section.get("interpolation", "cubic_spline")
+    interpolation = section.get(u"interpolation", u"cubic_spline")
     x,y = self._parse_data(section_name, section)
 
     table_tuple = TableFormTuple(

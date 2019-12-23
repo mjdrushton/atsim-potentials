@@ -2,6 +2,12 @@ import logging
 
 import collections
 
+try:
+  import collections.abc
+  Mapping = collections.abc.Mapping
+except ImportError:
+  Mapping = collections.Mapping
+
 from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation, GULP_PairTabulation
 from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation
 
@@ -121,7 +127,7 @@ class PairTabulationFactory(object):
     return [potobjs, r_cutoff.cutoff, r_cutoff.nr]
 
   def create_tabulation(self,cp):
-    logger = logging.getLogger(__name__).getChild("PairTabulationFactory.create_tabulation")
+    # logger = logging.getLogger(__name__).getChild("PairTabulationFactory.create_tabulation")
     r_cutoff = self.extract_cutoffs(cp)
 
     # Get pair potentials
@@ -177,13 +183,13 @@ class EAMTabulationFactory(PairTabulationFactory):
     any_dict = False
     for eam_potential in eam_potentials:
       logger.info("      + {}".format(eam_potential.species))
-      if isinstance(eam_potential.electronDensityFunction, collections.Mapping):
+      if isinstance(eam_potential.electronDensityFunction, Mapping):
         any_dict = True
     
     if any_dict:
       logger.info("  * Tabulation will contain the folowing density functions:")
       for eam_potential in eam_potentials:
-        if isinstance(eam_potential.electronDensityFunction, collections.Mapping):
+        if isinstance(eam_potential.electronDensityFunction, Mapping):
           other_species = sorted(eam_potential.electronDensityFunction.keys())
           for s in other_species:
             logger.info("      + {}->{}".format(eam_potential.species, s))

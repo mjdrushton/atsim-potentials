@@ -3,6 +3,7 @@
 from atsim.potentials.config import Configuration
 from atsim.potentials.config._config_parser import ConfigParser
 from atsim.potentials.config._configuration import Configuration
+from atsim.potentials.potentialforms import zero
 
 from .test_configuration_eam import _get_lammps_resource_dir
 
@@ -16,6 +17,15 @@ from .._eam_fs_AlFe import feAlDensFunction
 from .._eam_fs_AlFe import ppfuncAlAl, ppfuncAlFe, ppfuncFeFe
 
 import pytest
+import py
+
+import itertools
+
+def _get_resource_dir():
+  rd = py.path.local(__file__).dirpath()
+  rd = rd.join('config_resources')
+  return rd
+
 
 def test_fs_AlFe():
   cfg_file_path = _get_lammps_resource_dir().join("AlFe_setfl_fs.aspot")
@@ -103,3 +113,67 @@ def test_fs_AlFe():
       expect = expect_pp(r)
       actual = actual_pp.energy(r)
       assert pytest.approx(expect) == actual
+
+def test_add_zeroed_interactions_fs():
+  with _get_resource_dir().join("spinel.aspot").open() as infile:
+    cfg = Configuration()
+    tab = cfg.read(infile)
+
+    # Check that eam potential exist
+    # expect_embed = set(['Ga', 'In', 'O', 'Mg', 'Al'])
+    expect_embed = set(['Ga', 'In', 'O'])
+    actual_embed = set([ep.species for ep in tab.eam_potentials])
+    assert expect_embed == actual_embed
+
+    # Check that the defaulted embedding functions are instances of as.zero
+    zero_type = type(zero().func)
+    as_zero_func_species = set([ep.species for ep in tab.eam_potentials if hasattr(ep.embeddingFunction, "func") and type(ep.embeddingFunction.func) == zero_type ])
+    # assert set(['O', 'Mg', 'Al']) == as_zero_func_species
+    assert set(['O']) == as_zero_func_species
+
+    # Check that null-density functions exist.
+    expect_density = set(itertools.product(expect_embed, expect_embed))
+
+    actual_density = set()
+    for ep in tab.eam_potentials:
+      a = ep.species
+      for b, func in ep.electronDensityFunction.items():
+        actual_density.add( (a,b))
+    
+    assert expect_density == actual_density
+
+    # Check that tabulation can complete.
+    import io
+    outfile = io.StringIO()
+    tab.write(outfile)
+
+    
+def test_add_zeroed_interactions():
+  with _get_resource_dir().join("setfl.aspot").open() as infile:
+    cfg = Configuration()
+    tab = cfg.read(infile)
+
+    # Check that eam potential exist
+    expect_embed = set(['Ga', 'In', 'O'])
+    actual_embed = set([ep.species for ep in tab.eam_potentials])
+    assert expect_embed == actual_embed
+
+    # Check that the defaulted embedding functions are instances of as.zero
+    zero_type = type(zero().func)
+    as_zero_func_species = set([ep.species for ep in tab.eam_potentials if hasattr(ep.embeddingFunction, "func") and type(ep.embeddingFunction.func) == zero_type ])
+    # assert set(['O', 'Mg', 'Al']) == as_zero_func_species
+    assert set(['O']) == as_zero_func_species
+
+    # Check that null-density functions exist.
+    expect_density = expect_embed
+
+    actual_density = set()
+    for ep in tab.eam_potentials:
+      a = ep.species
+      actual_density.add(a)
+    assert expect_density == actual_density
+
+    # Check that tabulation can complete.
+    import io
+    outfile = io.StringIO()
+    tab.write(outfile)

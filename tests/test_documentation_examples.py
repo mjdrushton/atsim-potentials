@@ -8,9 +8,9 @@ from builtins import str
 import os
 import unittest
 import pytest
-import imp
 import shutil
 import py.path
+import sys
 
 from atsim.potentials import Potential, EAMPotential
 import atsim.potentials
@@ -33,12 +33,32 @@ def _getLAMMPSResourceDirectory():
 def _getDLPolyResourceDirectory():
   return os.path.join(os.path.dirname(__file__), 'dl_poly_resources')
 
-def _loadModule(scriptname):
-  name = os.path.basename(scriptname)
-  name = os.path.splitext(name)[0]
-  with open(scriptname) as infile:
-    mod = imp.load_module(name,infile, scriptname, ('.py', 'U', 1))
-  return mod
+if sys.version_info.major == 3 and sys.version_info.minor >= 5:
+
+  import importlib.util
+
+  def _loadModule(scriptname):
+    name = os.path.basename(scriptname)
+    name = os.path.splitext(name)[0]
+    spec = importlib.util.spec_from_file_location(name, scriptname)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+elif sys.version_info.major == 2:
+
+  import imp
+
+  def _loadModule(scriptname):
+    name = os.path.basename(scriptname)
+    name = os.path.splitext(name)[0]
+    with open(scriptname) as infile:
+      mod = imp.load_module(name,infile, scriptname, ('.py', 'U', 1))
+      # mod = importlib.load_module(name,infile, scriptname, ('.py', 'U', 1))
+    return mod
+
+else:
+  raise Exception("No implementation of _loadModule for python version {}".format(sys.version))
 
 #basak_tabulate.py
 class basak_tabulateTestCase(TempfileTestCase):
