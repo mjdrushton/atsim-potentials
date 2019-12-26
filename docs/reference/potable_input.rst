@@ -66,7 +66,7 @@ Pair-potentials are defined in this section of the file. See :ref:`potable-pair-
       - Custom functions are defined in the ``[Potential-Form]`` section:
 
           + :ref:`potable-potential-form` - custom potential-forms are introduced here.
-          + :ref:`ref-potential-form` - reference information for ``[Potential-Form]`` section.
+          + :ref:`ref-potable-potential-form` - reference information for ``[Potential-Form]`` section.
  
   * Potential-modifiers may be used in this section:
 
@@ -74,6 +74,7 @@ Pair-potentials are defined in this section of the file. See :ref:`potable-pair-
       - :ref:`list-of-potential-modifiers` - list of potential-modifiers.
 
 
+.. _ref-potable-potential-form:
 
 [Potential-Form]
 ================
@@ -125,3 +126,86 @@ The list of functions accessible through ``pymath.*`` are below. In general, fun
     * `tan(x) <https://docs.python.org/3/library/math.html#math.tan>`_
     * `tanh(x) <https://docs.python.org/3/library/math.html#math.tanh>`_
     * `trunc(x) <https://docs.python.org/3/library/math.html#math.trunc>`_
+
+[Table-Form]
+============
+
+The ``[Table-Form]`` section is used to define functions from pre-tabulated data that may be used in the same way as a custom ``[Potentia-Form]``\ . Data is specified using the ``x`` and ``y`` options or the ``xy`` option.
+
+To provide a continuous function interpolation is performed between data points, the interpolation method is set using the ``interpolation`` option.
+
+Naming Table Form
+-----------------
+
+To allow a ``[Table-Form]`` to be used in sections such as ``[Pair]``\ , ``[EAM-Embed]`` and ``[EAM-Density]`` it is necessary to give it a unique label. This is done by including it in the section header following a colon::
+
+    [Table-Form:NAME]
+
+Therefore to create a ``[Table-Form]`` named ``tabulated`` the following definition could be used::
+
+    [Table-Form:tabulated]
+    interpolation: cubic_spline
+    x : 0.0 1.0 2.0 3.0
+    y : 0.0 2.0 3.0 4.0
+
+
+This could then be referenced in another section using this name. e.g. ::
+
+    [Pair]
+    Si-O : tabulated
+
+
+.. _ref-potable-input-table-form-interpolation:
+
+interpolation
+-------------
+
+:Item: ``interpolation``
+:Format: Currently this option only accepts ``cubic_spline``
+:Description: Sets interpolation type.
+
+
+.. _ref-potable-input-table-form-x:
+
+x
+-
+
+:Item: ``x``
+:Format: List of space separated float values.
+:Description: Define x values of tabulated data. Must be used with ``y`` option.
+:Example: To define a linear function the following could be used:
+
+::
+
+    [Table-Form:linear]
+    interpolation: cubic_spline
+    x : 0.0 1.0 2.0 3.0
+    y : 0.0 2.0 3.0 4.0
+
+
+.. _ref-potable-input-table-form-xy:
+
+xy
+--
+
+:Item: ``xy``
+:Format: List of space separated float values.
+:Description: Allows x and y values of data to be specified as series of pairs.
+:Example: To define a linear function the following could be used:
+
+::
+
+    [Table-Form:linear]
+    interpolation: cubic_spline
+    xy: 0.0 0.0
+        1.0 2.0
+        2.0 3.0
+        3.0 4.0
+
+y
+-
+
+:Item: ``y``
+:Format: List of space separated float values.
+:Description: Define y values of tabulated data. Must be used with ``x`` option.
+:Example: See documentation for :ref:`ref-potable-input-table-form-x` option.

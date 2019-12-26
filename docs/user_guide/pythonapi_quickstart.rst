@@ -99,7 +99,7 @@ A set of DL_POLY files are provided allowing a simple NPT molecular dynamics equ
 Quick-Start: LAMMPS
 -------------------
 
-Once the potential model has been defined as a series of :class:`~atsim.potentials.Potential` creating tabulations for different codes in different formats is fairly simple. The script described in this example is given in :download:`basak_tabulate_lammps.py`. This contains the same potential definition as the :ref:`previous example <quick_start>`, however the ``main()`` function has been modified to create a table suitable for `LAMMPS`_ :
+Once the potential model has been defined as a series of :class:`~atsim.potentials.Potential` creating tabulations for different codes in different formats is fairly simple. The script described in this example is given in :download:`basak_tabulate_lammps.py`. This contains the same potential definition as the :ref:`previous example <python_api_quick_start>`, however the ``main()`` function has been modified to create a table suitable for `LAMMPS`_ :
 
 .. literalinclude:: basak_tabulate_lammps.py
 	:pyobject: main

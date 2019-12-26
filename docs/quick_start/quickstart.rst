@@ -230,7 +230,7 @@ For an example of how this ``TABLE`` file can be used in a ``DL_POLY`` simulatio
 .. toctree::
   :hidden:
 
-  ../basak_tabulate_dlpoly/using_table_in_dlpoly
+  basak_tabulate_dlpoly/using_table_in_dlpoly
 
 
 .. _specifying-other-tabulation-targets:
@@ -272,8 +272,6 @@ The ``potentials.lib`` file can be used with the following GULP input file to ru
 .. toctree::
   :hidden:
 
-  ../basak_tabulate_lammps/using_table_in_lammps
-
-
+  basak_tabulate_lammps/using_table_in_lammps
  
 .. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx

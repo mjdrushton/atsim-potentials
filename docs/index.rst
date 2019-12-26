@@ -14,11 +14,12 @@ Features
     + `DL_POLY`_ 
 
   * **Many-Bodied Potentials:** Embedded Atom Model (EAM) potential tabulation is supported in the following formats:
+    
     + DYNAMO - as used by `LAMMPS`_ and several other codes:
    
-      - Support for `LAMMPS`_ `eam`, `eam/fs`, `eam/alloy` pair-styles.
+      - Support for `LAMMPS`_ ``eam``, ``eam/fs``, ``eam/alloy`` pair-styles.
 
-    + `DL_POLY`_\ : write `TABEAM` formatted files.
+    + `DL_POLY`_\ : write ``TABEAM`` formatted files.
 
   * **No programming required:** ``atsim.potentials`` can be driven using its own potential definition format. Using simple configuration files complex models can be defined and tabulated without requiring any programming experience.
   * **Potential forms:** comes pre-loaded with a wide range of common-potential types.
@@ -50,7 +51,7 @@ Contents
 Contact
 =======
 
-``atsim.potentials`` was developed by Michael Rushton, if you have any problems, suggestions or queries please get in touch at m.rushton@bangor.ac.uk
+``atsim.potentials`` was developed by Michael Rushton, if you have any problems, suggestions or queries please get in touch at m.j.d.rushton@gmail.com
 
 Indices and tables
 ==================

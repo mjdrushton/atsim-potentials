@@ -7,8 +7,8 @@ Using ``Basak.lmptab`` in LAMMPS
 
 `LAMMPS`_ input files are provided for use with the table file:
 
-	* :download:`UO2.lmpstruct <basak_tabulate_lammps/UO2.lmpstruct>`: structure file for single UO\ :sub:`2` cell, that can be read with `read_data <http://lammps.sandia.gov/doc/read_data.html>`_ when `atom_style <http://lammps.sandia.gov/doc/atom_style.html>`_ ``full`` is used.
-	* :download:`equilibrate.lmpin <basak_tabulate_lammps/equilibrate.lmpin>`: input file containing `LAMMPS`_ instructions. Performs 10ps of 300K NPT equilibration, creating  a 4×4×4 super-cell.
+	* :download:`UO2.lmpstruct <UO2.lmpstruct>`: structure file for single UO\ :sub:`2` cell, that can be read with `read_data <http://lammps.sandia.gov/doc/read_data.html>`_ when `atom_style <http://lammps.sandia.gov/doc/atom_style.html>`_ ``full`` is used.
+	* :download:`equilibrate.lmpin <equilibrate.lmpin>`: input file containing `LAMMPS`_ instructions. Performs 10ps of 300K NPT equilibration, creating  a 4×4×4 super-cell.
 
 Copy these files into the same directory as ``Basak.lmptab``, the simulation can then be run using:
 
@@ -17,7 +17,7 @@ Copy these files into the same directory as ``Basak.lmptab``, the simulation can
 		lammps -in equilibrate.lmpin -log equilibrate.lmpout -echo both 
 
 
-The section of :download:`equilibrate.lmpin <basak_tabulate_lammps/equilibrate.lmpin>` which defines the potential model and makes use of the table file is as follows:
+The section of :download:`equilibrate.lmpin <equilibrate.lmpin>` which defines the potential model and makes use of the table file is as follows:
 
 	.. literalinclude:: equilibrate.lmpin
 		:lines: 14-26
@@ -35,7 +35,7 @@ The section of :download:`equilibrate.lmpin <basak_tabulate_lammps/equilibrate.l
 
 		3. Uses the `hybrid/overlay`_ ``pair_style`` to combine the `coul/long`_ and `table`_ styles. 
 
-			.. literalinclude:: basak_tabulate_lammps/equilibrate.lmpin
+			.. literalinclude:: equilibrate.lmpin
 				:lines: 22
 
 		   	* The `coul/long`_ style is used to calculate electrostatic interactions using the `pppm`_ ``kspace_style`` defined previously.
@@ -48,13 +48,13 @@ The section of :download:`equilibrate.lmpin <basak_tabulate_lammps/equilibrate.l
 
 		4. 	Means that electrostatic interactions should be calculated between all pairs of ions.
 
-		   	.. literalinclude:: basak_tabulate_lammps/equilibrate.lmpin
+		   	.. literalinclude:: equilibrate.lmpin
 				:lines: 23
 		  	
 		
 		5. Each ``pair_coeff`` reads an interaction from the ``Basak.lmptab`` file. 
 
-		  	.. literalinclude:: basak_tabulate_lammps/equilibrate.lmpin
+		  	.. literalinclude:: equilibrate.lmpin
 				:lines: 24-26
 		   	
 			* The general form is:

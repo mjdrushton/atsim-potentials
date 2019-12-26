@@ -65,7 +65,7 @@ Here ``sum()`` takes two basic pair-definitions (one for :ref:`as.buck <potform-
 
 Potential-modifiers take the input or output of other potentials and produce outputs that have been altered in some way. A number of modifiers are provided with ``atsim.potentials`` and these are listed.
 
-.. sealso::
+.. seealso::
 
 	See :ref:`list-of-potential-modifiers`\ .
 

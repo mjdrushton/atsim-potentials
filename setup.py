@@ -14,7 +14,7 @@ setup(name="atsim.potentials",
     "wrapt==1.11.2",
     "scipy"],
 
-  version = '0.3.0dev',
+  version = '0.3.0',
 
   entry_points = {
         'console_scripts' : [
@@ -44,7 +44,6 @@ setup(name="atsim.potentials",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",

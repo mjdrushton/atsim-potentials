@@ -54,9 +54,9 @@ We can write this as an entry in ``[Potential-Form]`` as::
 
 .. note::
 
-	You may have noticed in this equation that we defined one of the terms using ``r^6`` (r to the sixth power), where python syntax would define this as ``r**6``\ . This is because, the formulae defined in this section are parsed using the `exprtk`_ library (via its python wrapper `cexprtk`_\ ). 
+	You may have noticed in this equation that we defined one of the terms using ``r^6`` (r to the sixth power), where python syntax would define this as ``r**6``\ . This is because, the formulae defined in this section are parsed using the exprtk_ library (via its python wrapper `cexprtk`_\ ). 
 
-	To understand the functions, operators and syntax, supported for formulae please refer to the `exprtk`_ documentation. 
+	To understand the functions, operators and syntax, supported for formulae please refer to the exprtk_ documentation. 
 
 
 It is also possible to call the standard ``as.*`` :ref:`potential-forms <list-of-potential-forms>` in ``[Potential-Form]`` expressions. This is shown here to define a ``basak_morse`` function, where :ref:`as.morse <potform-morse>` will be used to provide a function that can be used directly with the parameters from the Basak paper (:numref:`table_basak_params`\ ). For reference, :ref:`as.morse <potform-morse> has the ``potable signature``\ :
@@ -125,7 +125,7 @@ The potential-forms used in the previous example could have been defined in a nu
 	    :emphasize-lines: 15
 
 
-* :download:`basak_custom_potential_form_c.aspot <example_files/basak_custom_potential_form_c.aspot>`. In this example the Morse potential is described directly rather than delegating to the``as.morse()`` function: 
+* :download:`basak_custom_potential_form_c.aspot <example_files/basak_custom_potential_form_c.aspot>`. In this example the Morse potential is described directly rather than delegating to the ``as.morse()`` function: 
 
 	.. literalinclude:: example_files/basak_custom_potential_form_c.aspot
 	    :emphasize-lines: 14
@@ -140,5 +140,4 @@ The potential-forms used in the previous example could have been defined in a nu
 
 
 
-.. _exprtk: http://www.partow.net/programming/exprtk/index.html
 .. _cexprtk: https://pypi.org/project/cexprtk/

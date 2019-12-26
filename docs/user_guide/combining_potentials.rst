@@ -50,7 +50,7 @@ To make this useful, the potential is truncated at :math:`r_c` (i.e. :math:`r_{i
 Now, having been suitably truncated, the potential will gently push atoms apart in an MD or energy minimisation run. This can be implemented for :ref:`potable <potable-tool>` as follows; first define the cosine function:
 
 .. literalinclude:: example_files/soft_a.aspot
-	:lines: 8,9
+	:lines: 10,11
 
 
 The truncation at :math:`r_c` can then be applied using a multi-range ``[Pair]`` deinition. 
@@ -59,7 +59,7 @@ The truncation at :math:`r_c` can then be applied using a multi-range ``[Pair]``
 	:lines: 6-8
 
 
-Here the Si-O interaction have :math:`A` = 10.0 and an :math:`r_c` value of 1.6Å (the position of the Si-O peak in a silica glass radial distribution function) after which the :ref:`potform-zero` potential-form takes over. Similarly, the O-O pair has a weaker repulsion (:math:`A`=5.0 \ ) and a cutoff-radius, :math:`r_c`\ , of 2.4Å (again this is about the position of the O-O peak in the RDF for silica glass).
+Here the Si-O interaction have :math:`A` = 10.0 and an :math:`r_c` value of 1.6Å (the position of the Si-O peak in a silica glass radial distribution function) after which the :ref:`potform-zero` potential-form takes over. Similarly, the O-O pair has a weaker repulsion (:math:`A=5.0`\ ) and a cutoff-radius, :math:`r_c`\ , of 2.4Å (again this is about the position of the O-O peak in the RDF for silica glass).
 
 In this way the cosine function has been truncated. Specifying an Si-Si interaction will be left as an exercise for the reader.
 
@@ -139,7 +139,7 @@ Using this information we can write the Morelon model as :ref:`potable <potable-
 
 There are a few features here that are worth noting:
 
-* The four distinct regions are defined a multi-range potentials.
+* The four distinct regions are defined as multi-range potentials.
 * The third and fifth order polynomials are both defined using the :ref:`as.polynomial <potform-polynomial>` form:
 
     - The order of the polynomial is implicitly defined by the number of parameters.
@@ -154,10 +154,10 @@ Splines are curves that are used to smoothly connect different functional forms 
 
 In the previous example (see :ref:`potable-published-spline-coefficients`\ ), spline coefficients were provided but their calculation can be quite involved. As a result ``potable`` provides services to make this easier. 
 
-Splining performed in the ``[Pair]`` section of the input through the ``spline()`` :ref:`potential-modifier <potential-modifiers>`\ . 
+Splining is performed in the ``[Pair]`` section of the input through the ``spline()`` :ref:`potential-modifier <potential-modifiers>`\ . 
 
 
-``spline()`` takes a single argument which has the form of a :ref:`multi-range potential definition <multi-range-potentials>`\ . It has three distinct parts, representing the three ranges of the splined potential:
+``spline()`` takes a single argument which has the form of a :ref:`multi-range potential definition <multi-range-potentials>`\ . This has three distinct parts, representing the three ranges of the splined potential:
 
 #. The region described by the starting potential.
 #. The interpolation region given by the spline.
@@ -179,7 +179,7 @@ Where:
 
 ``SPLINE_DEFN`` has the same format as a potential-definition: an identifying label followed by a list of parameters (**note:** some spline-types do not take any parameters)::
 
-	``SPLINE_LABEL PARAM_1 PARAM_2 ... PARAM_N``
+	SPLINE_LABEL PARAM_1 PARAM_2 ... PARAM_N
 
 Currently ``SPLINE_LABEL`` can be :ref:`exp_spline <spline-exp_spline>` or :ref:`buck4_spline <spline-buck4>`\ . These spline-types will now be described.
 
@@ -192,10 +192,10 @@ Exponential Spline ``exp_spline``
 The spline used when ``exp_spline`` is specified is given as:
 
 .. math::
-	:name: eq_exp_spline
-
+	:label: eq_exp_spline
     
-    V(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \right)
+
+	V(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \right)
 
 
 Where :math:`B_{0..5}` are the spline coefficients calculated automatically during splining. 
@@ -229,7 +229,7 @@ The plot in :numref:`fig_exp_spline_problem` shows the combined coulomb and shor
 
 	Plot showing Si-O pair-potential and its electrostatic and short-range components. A small separations it becomes attractive which is unphysical.
 
-The first step to using ``exp_spline`` is to choose appropriate detachment and attachment points. This is perhaps best done plotting the two potential functions to be splined. The :ref:`as.buck <potable-buck>` and :ref:`as.zbl <potable-zbl` curves in :numref:`fig_spline_components`\ a, show that detachment and attachment at separations of 0.8 and 1.4 may be appropriate. 
+The first step to using ``exp_spline`` is to choose appropriate detachment and attachment points. This is perhaps best done by plotting the two potential functions to be splined. The :ref:`as.buck <potform-buck>` and :ref:`as.zbl <potform-zbl>` curves in :numref:`fig_spline_components`\ a, show that detachment and attachment at separations of 0.8 and 1.4 may be appropriate. 
 
 .. figure:: figures/exp_spline_components.*
 	:name: fig_spline_components
@@ -278,7 +278,7 @@ The ``SPLINE_DEFN`` part of the ``spline()`` definition for ``buck4_spline`` is:
 Relationship to ``as.buck4`` potential-form
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As its name suggests, the ``buck4_spline`` is closely related to the :ref:`potform-buck4` potential-form. When used as a potential-form, the :math:`V_\text{PotA}(r_{ij})` and  :math:`V_\text{PotB}(r_{ij})` terms from eqn. :eq:`eq_buck4_spline` are pre-defined as the first and last terms of the :ref:`Buckingham <potable-buck>` potential:
+As its name suggests, the ``buck4_spline`` is closely related to the :ref:`potform-buck4` potential-form. When used as a potential-form, the :math:`V_\text{PotA}(r_{ij})` and  :math:`V_\text{PotB}(r_{ij})` terms from eqn. :eq:`eq_buck4_spline` are pre-defined as the first and last terms of the :ref:`Buckingham <potform-buck>` potential:
 
 .. math::
 
@@ -315,7 +315,7 @@ This model was discussed in a previous example: :ref:`potable-published-spline-c
 
 From this it can be seen that the O-U interaction is relatively simple whilst the O-O interaction four distinct parts (also defined in eqn. :eq:`eq_morelon-oo`\ ), and when examined more closely it can be seen it matches the four range Buckingham form.
 
-The polynomials terms, with their pre-supplied coefficients, can be replaced by using the ``spline()`` modifier with the ``buck4_spline``\ spline type. This is now shown and can be downloaded as: :download:`morelon_buck4_spline.aspot <example_files/morelon_buck4_spline.aspot>`
+The polynomial terms, with their pre-supplied coefficients, can be replaced by using the ``spline()`` modifier with the ``buck4_spline``\ spline type. This is now shown and can be downloaded as: :download:`morelon_buck4_spline.aspot <example_files/morelon_buck4_spline.aspot>`
 
 .. literalinclude:: example_files/morelon_buck4_spline.aspot
 	:lines: 6-13
