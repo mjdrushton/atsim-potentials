@@ -10,4 +10,5 @@ This section of the user-guide will start by first explaining :ref:`pair-potenti
 
 	pair_potential_models
 	many_body_models
+	potable_troubleshooting
 

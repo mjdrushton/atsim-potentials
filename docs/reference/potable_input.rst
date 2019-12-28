@@ -228,7 +228,16 @@ target
 
 :Item: ``target``
 :Format: str
-:Valid Options: ``DL_POLY|DLPOLY``, ``DLPOLY_EAM_fs`` ``DLPOLY_EAM``, ``GULP``, ``LAMMPS_eam_alloy|setfl``, ``LAMMPS``, ``setfl_fs``
+:Valid Options: ``DL_POLY|DLPOLY``, 
+    ``DLPOLY_EAM_fs``,
+    ``DLPOLY_EAM``, 
+    ``excel``,
+    ``excel_eam``,
+    ``excel_eam_fs``,
+    ``GULP``, 
+    ``LAMMPS_eam_alloy|setfl``,
+    ``LAMMPS``, 
+    ``setfl_fs``
 :Description: Specifies the format that tabulation will be written in.
 
 
