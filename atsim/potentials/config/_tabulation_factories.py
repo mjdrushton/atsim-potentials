@@ -8,8 +8,8 @@ try:
 except ImportError:
   Mapping = collections.Mapping
 
-from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation, GULP_PairTabulation
-from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation
+from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation, GULP_PairTabulation, Excel_PairTabulation
+from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation, Excel_EAMTabulation, Excel_FinnisSinclair_EAMTabulation
 
 from ._common import ConfigurationException
 from ._potential_form_registry import Potential_Form_Registry
@@ -221,8 +221,11 @@ TABULATION_FACTORIES = {
   "LAMMPS"       :  PairTabulationFactory("LAMMPS", LAMMPS_PairTabulation),
   "DLPOLY"       :  DLPOLY_PairTabulationFactory("DLPOLY", DLPoly_PairTabulation),
   "GULP"         :  PairTabulationFactory("GULP", GULP_PairTabulation),
+  "excel"        :  PairTabulationFactory("excel", Excel_PairTabulation),
   "setfl"        :  EAMTabulationFactory("setfl/lammps_eam_alloy", SetFL_EAMTabulation),    
   "setfl_fs"     :  EAMTabulationFactory("setfl/lammps_eam_fs", SetFL_FS_EAMTabulation, EAM_Potential_Builder_FS),
   "DL_POLY_EAM"  :  EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation),               
-  "DL_POLY_EAM_fs" :  EAMTabulationFactory("DL_POLY_EAM_fs", TABEAM_FinnisSinclair_EAMTabulation, EAM_Potential_Builder_FS)               
+  "DL_POLY_EAM_fs" :  EAMTabulationFactory("DL_POLY_EAM_fs", TABEAM_FinnisSinclair_EAMTabulation, EAM_Potential_Builder_FS),
+  "excel_eam"    :  EAMTabulationFactory("excel_eam", Excel_EAMTabulation),
+  "excel_eam_fs"    :  EAMTabulationFactory("excel_eam_fs", Excel_FinnisSinclair_EAMTabulation, EAM_Potential_Builder_FS)
 }

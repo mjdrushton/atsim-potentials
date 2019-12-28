@@ -1,8 +1,14 @@
 
-from .pair_tabulation import _PairTabulation_AbstractBase
+from .pair_tabulation import _PairTabulation_AbstractBase, Excel_PairTabulation, _r_value_iterator
 
 from ._lammpsWriteEAM import writeSetFL, writeSetFLFinnisSinclair
 from ._dlpoly_writeTABEAM import writeTABEAM, writeTABEAMFinnisSinclair
+
+def _rho_value_iterator(tabulation):
+  #for n in range(tabulation.nr+1):
+  for n in range(tabulation.nrho):
+    yield float(n)* tabulation.cutoff_rho / (float(tabulation.nrho) -1)
+
 
 class _EAMTabulationAbstractbase(_PairTabulation_AbstractBase):
   """Base class for EAMTabulation objects.
@@ -150,3 +156,99 @@ class TABEAM_FinnisSinclair_EAMTabulation(_EAMTabulationAbstractbase):
       self.potentials,
       out = fp)
 
+
+class Excel_EAMTabulation(_EAMTabulationAbstractbase):
+  """Class for dumping EAM model into a spreadsheet"""
+
+  _excel_tab_name = "excel_eam"
+
+  def __init__(self, potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho):
+    """Instantiate class for tabulation of setfl formatted embedded atom potential tables.
+
+    :params potentials: List of atsim.potentials.Potential objects.
+    :params eam_potentials: List of `atsim.potentials.EAMPotential` instances.
+    :params cutoff: Maximum separation to be tabulated.
+    :params nr: Number of points to be used in tabulation
+    :params cutoff_rho: Density cutoff.
+    :params nrho: Number of points to be used when discretising density range during EAM tabulation"""
+    super(Excel_EAMTabulation, self).__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, self._excel_tab_name )
+    self._inner_tabulation = None 
+
+  def _build_workbook(self):
+    self._inner_tabulation = Excel_PairTabulation(self.potentials, self.cutoff, self.nr)
+    wb = self._inner_tabulation.workbook
+    self._add_sheets(wb)
+
+  def _add_sheets(self, wb):
+    self._add_eam_density(wb)
+    self._add_eam_embed(wb)
+
+
+  def _add_eam_density(self, wb):
+    ws = wb.create_sheet("EAM-Density")
+
+    # Get sorted list of potentials
+    pot_dict = {}
+    for p in self.eam_potentials:
+      k = p.species
+      v = p.electronDensityFunction
+      pot_dict[k] = v
+    column_heads = sorted(pot_dict.keys())
+    self._inner_tabulation._populate_worksheet(ws, "r", _r_value_iterator(self), column_heads, pot_dict )
+
+  def _add_eam_embed(self, wb):
+    ws = wb.create_sheet("EAM-Embed")
+
+    # Get sorted list of potentials
+    pot_dict = {}
+    for p in self.eam_potentials:
+      k = p.species
+      v = p.embeddingFunction
+      pot_dict[k] = v
+    column_heads = sorted(pot_dict.keys())
+    self._inner_tabulation._populate_worksheet(ws, "rho", _rho_value_iterator(self), column_heads, pot_dict )
+
+  @property
+  def workbook(self):
+    if self._inner_tabulation is None:
+      self._build_workbook()
+    return self._inner_tabulation.workbook
+
+  def write(self, fp):
+    """Write the tabulation to the file object `fp`.
+
+    :param fp: File object into which data should be written."""
+    wb = self.workbook
+    self._inner_tabulation.write(fp)
+
+  @classmethod
+  def open_fp(cls, filename):
+    """Creates a file object with a given path suitable for writing potential data to.
+
+    :param filename: Filename of output file object.
+
+    :return: File object suitable for passing to write() method"""
+    return Excel_PairTabulation.open_fp(filename)
+
+
+class Excel_FinnisSinclair_EAMTabulation(Excel_EAMTabulation):
+  """Class for dumping EAM model into a spreadsheet"""
+
+  _excel_tab_name = "excel_eam_fs"
+    
+
+  def _add_eam_density(self, wb):
+    ws = wb.create_sheet("EAM-Density")
+
+    # Get sorted list of potentials
+    pot_dict = {}
+    for p in self.eam_potentials:
+      species_f = p.species
+      v = p.electronDensityFunction
+      for species_t, func in p.electronDensityFunction.items():
+        k = "{}->{}".format(species_f, species_t)
+        pot_dict[k] = func
+
+    column_heads = sorted(pot_dict.keys())
+    self._inner_tabulation._populate_worksheet(ws, "r", _r_value_iterator(self), column_heads, pot_dict )
+  

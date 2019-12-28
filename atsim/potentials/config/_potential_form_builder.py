@@ -7,12 +7,12 @@ from ._common import ConfigurationException
 class UnknownModifierException(ConfigurationException):
   
   def __str__(self):
-    return "unknown modifier '{}'".format(super().__str__())
+    return "unknown modifier '{}'".format(super(UnknownModifierException, self).__str__())
 
 class UnknownPotentialFormException(ConfigurationException):
 
   def __str__(self):
-    return "unknown potential form '{}'".format(super().__str__())
+    return "unknown potential form '{}'".format(super(UnknownPotentialFormException, self).__str__())
 
 class Potential_Form_Builder(object):
   """Class that instantiates potential function callables from PotentialFormInstanceTuple"""

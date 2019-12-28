@@ -1,6 +1,13 @@
 from ._lammps_writeTABLE import writePotentials as lmp_writePotentials
 from ._dlpoly_writeTABLE import writePotentials as dlpoly_writePotentials
 
+def _r_value_iterator(tabulation):
+  #for n in range(tabulation.nr+1):
+  for n in range(tabulation.nr):
+    yield float(n)* tabulation.cutoff / (float(tabulation.nr) -1)
+
+
+
 class _PairTabulation_AbstractBase(object):
   """Base class for PairTabulation objects. 
 
@@ -11,10 +18,10 @@ class _PairTabulation_AbstractBase(object):
   def __init__(self, potentials, cutoff, nr, target):
     """Create pair tabulation for LAMMPS.
 
-    :params potentials: List of atsim.potentials.Potential objects.
-    :params cutoff: Maximum separation to be tabulated.
-    :params nr: Number of points to be used in tabulation.
-    :params target: Label identifying the code for which this object creates tables."""
+    :param potentials: List of atsim.potentials.Potential objects.
+    :param cutoff: Maximum separation to be tabulated.
+    :param nr: Number of points to be used in tabulation.
+    :param target: Label identifying the code for which this object creates tables."""
     self._nr = nr
     self._cutoff = cutoff
     self._potentials = potentials
@@ -44,6 +51,15 @@ class _PairTabulation_AbstractBase(object):
   def dr(self):
     return (self.cutoff / float(self.nr-1)) 
 
+  @classmethod
+  def open_fp(self, filename):
+    """Creates a file object with a given path suitable for writing potential data to.
+
+    :param filename: Filename of output file object.
+
+    :return: File object suitable for passing to write() method"""
+    return open(filename, 'w')
+
   def write(self, fp):
     """Write the tabulation to the file object `fp`.
 
@@ -60,7 +76,7 @@ class LAMMPS_PairTabulation(_PairTabulation_AbstractBase):
     :params potentials: List of atsim.potentials.Potential objects.
     :params cutoff: Maximum separation to be tabulated.
     :params nr: Number of points to be used in tabulation"""
-    super(LAMMPS_PairTabulation, self).__init__(potentials, cutoff, nr, "LAMMPS")
+    super(LAMMPS_PairTabulation, self).__init__(potentials, cutoff, nr, u"LAMMPS")
 
   def write(self, fp):
     """Write the tabulation to the file object `fp`.
@@ -78,7 +94,7 @@ class DLPoly_PairTabulation(_PairTabulation_AbstractBase):
     :params potentials: List of atsim.potentials.Potential objects.
     :params cutoff: Maximum separation to be tabulated.
     :params nr: Number of points to be used in tabulation"""
-    super(DLPoly_PairTabulation, self).__init__(potentials, cutoff, nr, "DLPOLY")
+    super(DLPoly_PairTabulation, self).__init__(potentials, cutoff, nr, u"DLPOLY")
 
   def write(self, fp):
     """Write tabulation to the file object `fp`.
@@ -102,7 +118,7 @@ class GULP_PairTabulation(_PairTabulation_AbstractBase):
     :params potentials: List of atsim.potentials.Potential objects.
     :params cutoff: Maximum separation to be tabulated.
     :params nr: Number of points to be used in tabulation"""
-    super(GULP_PairTabulation, self).__init__(potentials, cutoff, nr, "GULP")
+    super(GULP_PairTabulation, self).__init__(potentials, cutoff, nr, u"GULP")
 
   def write(self, fp):
     """Write tabulation to the file object `fp`.
@@ -119,10 +135,85 @@ class GULP_PairTabulation(_PairTabulation_AbstractBase):
     fp.write(u"spline cubic\n")
     fp.write(header_template.format(speciesA = pot.speciesA, speciesB = pot.speciesB, cutoff= self.cutoff))
 
-    for n in range(self.nr+1):
-      r = float(n)* self.cutoff / (float(self.nr) -1)
+    for r in _r_value_iterator(self):
       energy = pot.energy(r)
       fp.write(row_template.format(sepn = r, energy = energy))
     fp.write(u"\n")
 
-  
+
+class Excel_PairTabulation(_PairTabulation_AbstractBase):
+  """Class for dumping pair-potential models into an Excel formatted spreadsheet"""
+
+  def __init__(self, potentials, cutoff, nr):
+    """Create pair tabulation for Excel.
+
+    :params potentials: List of atsim.potentials.Potential objects.
+    :params cutoff: Maximum separation to be tabulated.
+    :params nr: Number of points to be used in tabulation"""
+    super(Excel_PairTabulation, self).__init__(potentials, cutoff, nr, u"excel")
+    self._workbook = None
+
+  @property
+  def workbook(self):
+    """Property which returns an openpyxl.Workbook instance containing potential data"""
+    if self._workbook is None:
+      self._workbook = self._build_workbook()
+    return self._workbook
+
+  def _build_workbook(self):
+    from openpyxl import Workbook
+    wb = Workbook()
+    wb.remove_sheet(wb.active)
+    self._add_worksheets(wb)
+    return wb
+
+  def _populate_worksheet(self, ws, first_col_name, first_col_values, column_keys, column_dict):
+    ws["A1"] = first_col_name
+    for label, col in zip(column_keys, ws.iter_cols(min_row=1, max_row=1, min_col=2, max_col=len(column_keys)+1)):
+      col[0].value = label
+
+    for r_idx, r in enumerate(first_col_values):
+      r_idx += 2
+      ws.cell(r_idx, 1, value=r)
+      for label, col in zip(column_keys, ws.iter_cols(min_row=r_idx, max_row=r_idx, min_col=2, max_col=len(column_keys)+1)):
+        pot = column_dict[label]
+        col[0].value = pot(r)
+
+
+  def _add_pair_worksheet(self, wb):
+    ws = wb.create_sheet("Pair")
+
+    # Get sorted list of potentials
+    pot_dict = {}
+    for p in self.potentials:
+      k = "{}-{}".format(*sorted([p.speciesA, p.speciesB]))
+      v = p.potentialFunction
+      pot_dict[k] = v
+    column_heads = sorted(pot_dict.keys())
+    self._populate_worksheet(ws, "r", _r_value_iterator(self), column_heads, pot_dict )
+
+
+  def _add_worksheets(self, wb):
+    self._add_pair_worksheet(wb)
+
+  def write(self, fp):
+    """Write tabulation to the file object `fp` (note: fp should be opened in binary mode).
+
+    :param fp: File object into which data should be written."""
+    wb = self.workbook
+
+    from tempfile import NamedTemporaryFile
+    with NamedTemporaryFile() as tmp:
+        wb.save(tmp.name)
+        tmp.seek(0)
+        fp.write(tmp.read())
+
+  @classmethod
+  def open_fp(self, filename):
+    """Creates a file object with a given path suitable for writing potential data to.
+
+    :param filename: Filename of output file object.
+
+    :return: File object suitable for passing to write() method"""
+    return open(filename, 'wb')
+
