@@ -25,9 +25,13 @@ The value of ``INTERPOLATION_TYPE`` specifies how values are calculated between 
 
 Finally the function's data is provided through the ``xy`` option. The value of ``DATA`` is a list of space separated x,y pairs. To aid readability these can appear on separate lines as long as they are indented. Alternatively, table data can be specified as separate arrays of x and y values :ref:`see here for more <ref-potable-input-table-form-x>` \ . 
 
-Example
--------
-Revisiting the example from earlier example (see :ref:`basak-potential-model`\ ) the following shows how the O-U interaction from the Basak model [Basak2003]_ can be represented as a ``[Table-Form]``\ :
+
+
+
+Example: [Table-Form] pair-potential
+------------------------------------
+
+Revisiting the example from earlier (see :ref:`basak-potential-model`\ ) the following shows how the O-U interaction from the Basak model [Basak2003]_ can be represented as a ``[Table-Form]``\ :
 
 
 The data points from :ref:`fig_table_form_plot` (blue) have been included in the ``potable`` input file :download:`basak_table_form.aspot <example_files/basak_table_form.aspot>` using the :ref:`xy <ref-potable-input-table-form-xy>` option.

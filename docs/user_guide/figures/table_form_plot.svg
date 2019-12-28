@@ -225,16 +225,16 @@
 <text transform="matrix(1 0 0 1 228.3756 433.0496)" class="st6 st7">Separation / Å</text>
 <g>
 	<g>
-		<text transform="matrix(1 0 0 1 376.0826 78.8197)" class="st6 st7">[Table-Form:OU]</text>
-		<line class="st8" x1="367" y1="76.6" x2="336.4" y2="76.6"/>
+		<text transform="matrix(1 0 0 1 347.5236 78.8197)" class="st6 st7">[Table-Form:tabulated]</text>
+		<line class="st8" x1="338.4" y1="76.6" x2="307.8" y2="76.6"/>
 	</g>
 	<g>
-		<text transform="matrix(1 0 0 1 376.0826 56.5544)" class="st6 st7">Analytical Form</text>
-		<line class="st9" x1="367" y1="54.3" x2="336.4" y2="54.3"/>
+		<text transform="matrix(1 0 0 1 347.5235 56.5544)" class="st6 st7">Analytical Form</text>
+		<line class="st9" x1="338.4" y1="54.3" x2="307.8" y2="54.3"/>
 	</g>
 	<g>
-		<text transform="matrix(1 0 0 1 376.0821 34.2892)" class="st6 st7">Table Points</text>
-		<path class="st10" d="M349.2,32c0-1.3,1.1-2.4,2.4-2.4s2.4,1.1,2.4,2.4c0,1.3-1.1,2.4-2.4,2.4S349.2,33.4,349.2,32"/>
+		<text transform="matrix(1 0 0 1 347.523 34.2892)" class="st6 st7">Table Points</text>
+		<path class="st10" d="M320.7,32c0-1.3,1.1-2.4,2.4-2.4s2.4,1.1,2.4,2.4c0,1.3-1.1,2.4-2.4,2.4S320.7,33.4,320.7,32"/>
 	</g>
 </g>
 <text transform="matrix(1 0 0 1 69.8631 409.4465)" class="st6 st7">0</text>
@@ -244,11 +244,11 @@
 <text transform="matrix(1 0 0 1 306.5339 409.4467)" class="st6 st7">4</text>
 <text transform="matrix(1 0 0 1 365.6943 409.4467)" class="st6 st7">5</text>
 <text transform="matrix(1 0 0 1 424.8547 409.4467)" class="st6 st7">6</text>
-<text transform="matrix(6.123234e-17 -1 1 6.123234e-17 41.8713 380.0447)" class="st6 st7">-0.5</text>
-<text transform="matrix(6.123234e-17 -1 1 6.123234e-17 41.8713 309.1873)" class="st6 st7">0.0</text>
-<text transform="matrix(6.123234e-17 -1 1 6.123234e-17 41.8713 171.4686)" class="st6 st7">1.0</text>
-<text transform="matrix(6.123234e-17 -1 1 6.123234e-17 41.8713 239.8172)" class="st6 st7">0.5</text>
-<text transform="matrix(6.123234e-17 -1 1 6.123234e-17 41.8713 102.6092)" class="st6 st7">1.5</text>
-<text transform="matrix(6.123234e-17 -1 1 6.123234e-17 41.8713 33.7498)" class="st6 st7">2.0</text>
-<text transform="matrix(6.123234e-17 -1 1 6.123234e-17 19.7886 254.014)" class="st6 st7">Potential Energy / eV</text>
+<text transform="matrix(0 -1 1 0 41.8713 380.0447)" class="st6 st7">-0.5</text>
+<text transform="matrix(0 -1 1 0 41.8713 309.1873)" class="st6 st7">0.0</text>
+<text transform="matrix(0 -1 1 0 41.8713 171.4686)" class="st6 st7">1.0</text>
+<text transform="matrix(0 -1 1 0 41.8713 239.8172)" class="st6 st7">0.5</text>
+<text transform="matrix(0 -1 1 0 41.8713 102.6092)" class="st6 st7">1.5</text>
+<text transform="matrix(0 -1 1 0 41.8713 33.7498)" class="st6 st7">2.0</text>
+<text transform="matrix(0 -1 1 0 19.7886 254.014)" class="st6 st7">Potential Energy / eV</text>
 </svg>

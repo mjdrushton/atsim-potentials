@@ -6,9 +6,9 @@ nr : 652
 [Pair]
 #O-O = as.buck 1633.010242995040 0.327022 3.948787
 #U-U = as.buck 294.640906285709 0.327022 0.0
-O-U = OU
+O-U = tabulated
 
-[Table-Form:OU]
+[Table-Form:tabulated]
 interpolation : cubic_spline
 xy :  0.019969278	1939.293892
       0.169738863	1188.215091

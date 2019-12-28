@@ -220,7 +220,7 @@ For certain parameterisations, popular potential forms can exhibit unphysical be
         -   Si = 2.4 *e*
         -   O  = -1.2 *e*
 
-The plot in :numref:`fig_exp_spline_problem` shows the combined coulomb and short-range contributions for this interaction plotted as a function of separation. The large C term necessary to describe the equilibrium properties of silicates means that as :math:`r_{ij}` gets smaller, the :math:`\frac{C}{r_{ij}^6}` overwhelms the repulsive Born-Mayer component of the Buckingham potential meaning that it turns over. This creates only relatively shallow minimum around the equilibrium Si-O separation. Within simulations containing high velocities (e.g. high temperatures or collision cascades) atoms could easily enter the very negative, attractive portion of the potential at low :math:`r_{ij}` - effectively allowing atoms to collapse onto each other. In order to overcome this deficiency a ZBL potential will be splined onto the Si-O interaction within this example.
+The plot in :numref:`fig_exp_spline_problem` shows the combined coulomb and short-range contributions for this interaction plotted as a function of separation. The large C term necessary to describe the equilibrium properties of silicates means that as :math:`r_{ij}` gets smaller, the :math:`\frac{C}{r_{ij}^6}` overwhelms the repulsive Born-Mayer component of the Buckingham potential meaning that it turns over. This creates only a relatively shallow minimum around the equilibrium Si-O separation. Within simulations containing high velocities (e.g. high temperatures or collision cascades) atoms could easily enter the very negative, attractive portion of the potential at low :math:`r_{ij}` - effectively allowing atoms to collapse onto each other. In order to overcome this deficiency a ZBL potential will be splined onto the Si-O interaction within this example.
 
 .. figure:: figures/exp_spline_problem.*
 	:name: fig_exp_spline_problem
@@ -286,7 +286,7 @@ As its name suggests, the ``buck4_spline`` is closely related to the :ref:`potfo
 	V_\text{PotB}(r_{ij}) & = - \frac{C}{r_{ij}} \\
 
 
-The potential-form is therefore short-hand for the following::
+The potential-form is therefore shorthand for the following::
 
 	spline(as.buck A RHO 0.0 >R_DETACH buck4_spline R_MIN >R_ATTACH as.buck 0 1.0 C)
 
@@ -313,9 +313,9 @@ This model was discussed in a previous example: :ref:`potable-published-spline-c
 	:lines: 6-14
 
 
-From this it can be seen that the O-U interaction is relatively simple whilst the O-O interaction four distinct parts (also defined in eqn. :eq:`eq_morelon-oo`\ ), and when examined more closely it can be seen it matches the four range Buckingham form.
+From this it can be seen that the O-U interaction is relatively simple whilst the O-O interaction has four distinct parts (also defined in eqn. :eq:`eq_morelon-oo`\ ), and when examined more closely it can be seen it matches the four range Buckingham form.
 
-The polynomial terms, with their pre-supplied coefficients, can be replaced by using the ``spline()`` modifier with the ``buck4_spline``\ spline type. This is now shown and can be downloaded as: :download:`morelon_buck4_spline.aspot <example_files/morelon_buck4_spline.aspot>`
+The polynomial terms, with their pre-supplied coefficients, can be replaced by using the ``spline()`` modifier with the ``buck4_spline`` spline type. This is now shown and can be downloaded as: :download:`morelon_buck4_spline.aspot <example_files/morelon_buck4_spline.aspot>`
 
 .. literalinclude:: example_files/morelon_buck4_spline.aspot
 	:lines: 6-13

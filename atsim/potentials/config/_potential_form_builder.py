@@ -2,11 +2,17 @@ import logging
 
 from .._multi_range_potential_form import create_Multi_Range_Potential_Form, Multi_Range_Defn
 
-class UnknownModifierException(KeyError):
-  pass
+from ._common import ConfigurationException
 
-class UnknownPotentialFormException(KeyError):
-  pass
+class UnknownModifierException(ConfigurationException):
+  
+  def __str__(self):
+    return "unknown modifier '{}'".format(super().__str__())
+
+class UnknownPotentialFormException(ConfigurationException):
+
+  def __str__(self):
+    return "unknown potential form '{}'".format(super().__str__())
 
 class Potential_Form_Builder(object):
   """Class that instantiates potential function callables from PotentialFormInstanceTuple"""

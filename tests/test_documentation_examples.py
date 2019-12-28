@@ -568,7 +568,7 @@ basak_aspot_files = py.path.local(__file__).dirpath("..", "docs", "user_guide", 
 @pytest.mark.parametrize("aspotfile", basak_aspot_files)
 def test_basak_files(tmpdir, aspotfile):
   # Copy files in from example directory 
-  srcdir = py.path.local(__file__).dirpath("..", "docs", "basak_tabulate_lammps")
+  srcdir = py.path.local(__file__).dirpath("..", "docs", "quick_start", "basak_tabulate_lammps")
   srcdir.join("UO2.lmpstruct").copy(tmpdir.join("UO2.lmpstruct"))
 
   input_file = py.path.local(_getLAMMPSResourceDirectory()).join("basak_energy.lmpin")

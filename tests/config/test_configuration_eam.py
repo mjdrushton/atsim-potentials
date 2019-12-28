@@ -208,4 +208,3 @@ def test_custom_species_data():
 
   cepot = [p for p in plist if p.species == u"Th"][0]
   assert cepot.latticeType == u'bcc'
-
