@@ -129,6 +129,22 @@ Electrostatic interaction between two point charges.
 :potable signature: ``as.coul`` :math:`q_i` :math:`q_j`
 :Features: potential-form, potential-function, deriv, deriv2
 
+
+.. _potform-exponential:
+
+Exponential (exponential)
+=========================
+
+General exponential form.
+
+.. math ::
+
+	 V(r_{ij}) = A r_{ij}^n
+
+:potable signature: ``as.exponential`` :math:`A` :math:`n`
+:Features: potential-form, potential-function, deriv, deriv2
+
+
 .. _potform-exp_spline:
 
 Exponential Spline (exp_spline)

@@ -16,6 +16,14 @@ def testBuck():
   potfunc = potentialforms.buck(a,rho,c)
   pytest.approx(-10041.34343) == potfunc(r)
 
+def testExponential():
+  r = 0.5
+  A = 14.7
+  n= 4
+
+  potfunc = potentialforms.exponential(A, n)
+  pytest.approx(0.91875) == potfunc(r)
+
 def testHbnd():
   a = 300.0
   b = 20.0
@@ -302,7 +310,14 @@ def test_deriv(caller):
     tang_toennies = ((832.4, 1.865, 129.6, 4187.0, 155500.0), -271.564487468955, 973.169664930065),
     sqrt = ((3.0,), 1.1858541226, -0.370579413300982),
     zbl = ((92, 8), -40.4739253056137, 142.687518894378),
-    zero = (tuple(), 0.0, 0.0)
+    zero = (tuple(), 0.0, 0.0),
+    exponential = [
+      ((1.0, 2), 3.2, 2),
+      ((-5.8, 4), -95.0272, -178.176),
+      ((3, 0.5), 1.1858541226, -0.370579413300982),
+      ((1.2, -1), -0.46875, 0.5859375),
+      ((1.2, -2), -0.5859375, 1.0986328125)
+    ]
   ) 
 
   for (potname, potargs) in expect.items():

@@ -530,7 +530,7 @@ Running :download:`eam_tabulate_example3b.py` produces a file names ``TABEAM`` w
 
 .. rubric:: Footnotes
 
-.. [#sutton1990] A.P. Sutton,  and  J. Chen,  "Long-range Finnis-Sinclair potentials", *Philos. Mag. Lett.* **61** (1990) 139.
+.. [#sutton1990] A.P. Sutton,  and  J. Chen,  "Long-range Finnis-Sinclair potentials", *Philos. Mag. Lett.* **61** (1990) 139 `doi:10.1080/09500839008206493 <https://dx.doi.org/10.1080/09500839008206493>`_\ .
 .. [#Zhou2004] X. Zhou, R. Johnson and H. Wadley, "Misfit-energy-increasing dislocations in vapor-deposited CoFe/NiFe multilayers", *Phys. Rev. B.* **69** (2004) 144113.  
 .. [#Mendelev2011] M.I. Mendelev, D.J. Srolovitz, G.J. Ackland, and S. Han, "Effect of Fe Segregation on the Migration of a Non-Symmetric Σ5 Tilt Grain Boundary in Al", *J. Mater. Res.* **20** (2011) 208.
 

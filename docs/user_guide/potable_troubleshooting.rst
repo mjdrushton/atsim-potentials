@@ -12,7 +12,7 @@ Sometimes you will want to check if the tabulated functions defining your potent
     * **excel_eam:** as above but for EAM potentials,
     * **excel_eam_fs:** for Finnis-Sinclair EAM potential models.
 
-If given as the value of the ``target`` field in a potable input files' ``[Tabulation]`` section each one will dump the model into an Excel ``.xlsx`` formatted spreadsheet. 
+If given as the value of the ``target`` field in a potable input file's ``[Tabulation]`` section each one will dump the model into an Excel ``.xlsx`` formatted spreadsheet. 
 
 Depending on the type of model the spreadsheet can contain **Pair**\ , **EAM-Density** and **EAM-Embed** sheets. The first column of each is either the *r* or *rho* values of the function with the remaining columns giving the function values.
 

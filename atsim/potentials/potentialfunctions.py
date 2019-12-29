@@ -198,6 +198,49 @@ class constant(_Potential_Function_Base):
 
 constant = constant()
 
+class exponential(_Potential_Function_Base):
+  """`exponential` potential type A*r^n"""
+  
+  def _as_sympy(self):
+    import sympy
+    r, A, n = sympy.symbols("r A n")
+    return A*r**n
+
+  def __call__(self, r, A,n):
+    """General exponential form:
+
+    .. math::
+
+      V(r_{ij}) = A r^n
+
+    :param r: Atomic separation.
+    :param A: Potential A parameter
+    :param n: n
+    :return: Potential energy"""
+    return A*r**n
+
+  def deriv(self, r, A, n):
+    """Derivative of `exponential` at `r`
+
+    :param r: Atomic separation.
+    :param A: Potential A parameter
+    :param n: Potentials' B parameter
+
+    :return: Derivative of `exponential` at `r`"""
+    return A*n*r**(n-1)
+
+  def deriv2(self, r, A,n):
+    """Second derivative of `exponential` at `r`
+
+    :param r: Atomic separation.
+    :param A: Potential A parameter
+    :param n: Potentials' B parameter
+
+    :return: 2nd derivative of `exponential` at `r`"""
+    return A*n*(n-1)*r**(n-2) 
+
+exponential = exponential()
+
 class hbnd(_Potential_Function_Base):
   """DL_POLY `hbnd` potential type"""
   
