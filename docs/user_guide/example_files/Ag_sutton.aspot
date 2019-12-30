@@ -1,0 +1,17 @@
+[Tabulation]
+target : setfl
+#
+cutoff_rho : 600
+drho : 0.005
+#
+cutoff : 12.0
+dr : 0.001
+
+[EAM-Embed]
+Ag : product(as.constant 2.5415e-3, as.sqrt -144.41)
+
+[EAM-Density]
+Ag : as.exponential 4681.013008649 -6
+
+[Pair]
+Ag-Ag : product(as.constant 2.5415e-3, as.exponential 21911882.787 -12)

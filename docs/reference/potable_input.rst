@@ -53,7 +53,7 @@ Where:
 [EAM-Embed]
 ===========
 
-Embedding functions for many-body models are defined in this sections. 
+Embedding functions for many-body models are defined in this section. 
 
 Entries have the following form::
 

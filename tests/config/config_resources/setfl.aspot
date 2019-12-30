@@ -1,0 +1,22 @@
+[Tabulation]
+target : setfl
+cutoff_rho : 0.01
+nrho : 2500
+cutoff : 10.0
+
+[Pair]
+O-O = as.buck 1.0 0.2 0.0
+Mg-O = as.buck 3.0 0.2 0.75
+Al-O = as.buck 15.0 0.2 0.0
+Ga-O = as.buck 70.0 0.2 0.0
+In-O = as.buck 36.0 0.20 0.0
+
+[EAM-Density]
+O : density 80000.0
+
+[EAM-Embed]
+Ga : as.sqrt -0.15449392139449653
+In : as.sqrt -0.010691242237852016
+
+[Potential-Form]
+density(r, C) = r/(C^12)
