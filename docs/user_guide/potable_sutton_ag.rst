@@ -5,6 +5,7 @@
 Sutton Ag EAM Example
 =====================
 
+This provides an example of using ``potable`` to tabulate the Ag model given by Sutton and Chen in [#sutton1990]_\ .
 
 Potential Model
 +++++++++++++++
@@ -143,7 +144,7 @@ To tabulate the potential :download:`download the aspot file <example_files/Ag_s
 
 
 
-A LAMMPS input file is provided to allow you to test the ``Ag_sutton.eam.alloy`` file this can be downloaded here: :download:`Ag_sutton_fcc.lmpin <example_files/Ag_sutton_fcc.lmpin>`\ . This will energy minimize the structure and then perform an NPT MD equilibration at T=300K. Frames will be dumped every 1000 timesteps (1ps) and dumped to a LAMMPS dump file named ``dump.atom``\ (this is suitable for visualisation in `Ovito <https://ovito.org>`_\ ).
+A LAMMPS input file is provided to allow you to test the ``Ag_sutton.eam.alloy`` file produced by potable. This input file can be downloaded here: :download:`Ag_sutton_fcc.lmpin <example_files/Ag_sutton_fcc.lmpin>` and will energy minimize the structure and then perform an NPT MD equilibration at T=300K. Frames will be dumped every 1000 timesteps (1ps) and dumped to a LAMMPS dump file named ``dump.atom``\ (this is suitable for visualisation in `Ovito <https://ovito.org>`_\ ).
 
 In terms of the table file the important part of the LAMMPS input is::
 
@@ -159,3 +160,6 @@ Placing both the LAMMPS and table file in the same directory run LAMMPS as follo
     mpirun lammps -in Ag_sutton_fcc.lmpin -log Ag_sutton_fcc.lmpout
 
 
+.. rubric:: Footnotes:
+
+.. [#sutton1990] A.P. Sutton,  and  J. Chen,  "Long-range Finnis-Sinclair potentials", *Philos. Mag. Lett.* **61** (1990) 139 `doi:10.1080/09500839008206493 <https://dx.doi.org/10.1080/09500839008206493>`_\ .

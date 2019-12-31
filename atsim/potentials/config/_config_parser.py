@@ -535,8 +535,9 @@ class ConfigParser(object):
 
     try:
       return self._parse_label_type_params_line(k, value, species_func, EAMDensityTuple)
-    except ConfigParserException:
-      raise ConfigParserException("[{section_name}] parameter lines should be of the form 'FROM_SPECIES->TO_SPECIES : POTENTIAL_FORM PARAMS...'".format(section_name = section_name))
+    except ConfigParserException as e:
+      section_name = 'EAM-Density'
+      raise ConfigParserException("Error in format of Finnis-Sinclair [{section_name}] parameter line: {exc} (should be of the form 'FROM_SPECIES->TO_SPECIES : POTENTIAL_FORM PARAMS...')".format(exc = str(e), section_name = section_name))
 
   def _parse_potential_form_signature(self, pf):
     pf = pf.strip()

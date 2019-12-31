@@ -334,6 +334,63 @@ A-D = pow(as.polynomial 1.0 2.0 3.0, as.polynomial 0 5 0.1, as.constant 0.01)
   actual = ac.potentialFunction.deriv2(var_dict["r"])
   assert pytest.approx(expect) == actual
 
+def test_trans_modifier():
+  cfg_string = u"""[Pair]
+
+A-B = trans(pow(as.polynomial 3.0 2.0, as.constant 2), as.constant -2.0)
+A-A = sum(as.buck 1000.0 0.1 0, trans(as.buck 1000.0 0.1 0, as.constant 1.0))
+"""
+
+  cfgobj = Configuration()
+  tabulation = cfgobj.read(io.StringIO(cfg_string))
+
+  pots = tabulation.potentials
+  potdict = dict([((p.speciesA, p.speciesB),p) for p in pots])
+  ab = potdict[("A", "B")]
+
+  import sympy
+  r,A,B,C = sympy.symbols("r A B C")
+
+  ab_sympy = (A + B*(r-2.0))**C
+  var_dict = dict(r = 2.5, A = 3.0, B = 2.0, C = 2.0)
+
+  expect = float(ab_sympy.subs(var_dict))
+  actual = ab.energy(var_dict["r"])
+  assert pytest.approx(expect) == actual
+
+  assert hasattr(ab.potentialFunction, "deriv")
+  ab_deriv = sympy.diff(ab_sympy, r)
+  expect = float(ab_deriv.subs(var_dict))
+  actual = ab.potentialFunction.deriv(var_dict["r"])
+  assert pytest.approx(expect) == actual
+
+  assert hasattr(ab.potentialFunction, "deriv2")
+  ab_deriv2 = sympy.diff(ab_sympy, r,2)
+  expect = float(ab_deriv2.subs(var_dict))
+  actual = ab.potentialFunction.deriv2(var_dict["r"])
+  assert pytest.approx(expect) == actual
+
+  aa = potdict[("A", "A")]
+  r,A,B,C,D,E,F = sympy.symbols("r A B C D E F")
+  aa_sympy = ( A * sympy.exp(-r/B) - C/r**6 ) + ( D * sympy.exp(-(r+1)/E) - F/(r+1)**6 )
+  var_dict = dict(r = 2.5, A = 1000.0, B = 0.1, C = 0.0, D=1000.0, E=0.1, F=0.0)
+
+  expect = float(aa_sympy.subs(var_dict))
+  actual = aa.energy(var_dict["r"])
+  assert pytest.approx(expect) == actual
+
+  assert hasattr(aa.potentialFunction, "deriv")
+  aa_deriv = sympy.diff(aa_sympy, r)
+  expect = float(aa_deriv.subs(var_dict))
+  actual = aa.potentialFunction.deriv(var_dict["r"])
+  assert pytest.approx(expect) == actual
+
+  assert hasattr(aa.potentialFunction, "deriv2")
+  aa_deriv2 = sympy.diff(aa_sympy, r,2)
+  expect = float(aa_deriv2.subs(var_dict))
+  actual = aa.potentialFunction.deriv2(var_dict["r"])
+  assert pytest.approx(expect) == actual
+
 
 
 def test_unknown_modifier_exception():

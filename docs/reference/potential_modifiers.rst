@@ -161,4 +161,24 @@ Any number of potential instances can be summed::
 	    - :ref:`potable-potential-form-basak-example`
 
 
+.. _modifier-trans:
+
+``trans()``
+===========
+
+Modifier that applies the following transformation to a given potential function::
+
+	potential(r+X)
+
+Where X is the transformation value.
+
+This modifier takes two arguments, the first is a potential form instance. The second must be an instance of ``as.constant`` that takes ``X`` as its argument.
+
+Example
+-------
+
+To shift a Buckingham paair potential two angstroms to the left the ``trans()`` modifier could be used like this::
+
+	[Pair]
+	A-B : trans(as.buck 1000.0 0.1 32.0, as.constant 2)
 

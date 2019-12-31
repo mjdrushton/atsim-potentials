@@ -206,3 +206,48 @@ def spline(potential_forms, potential_form_builder):
   return spot_obj
 
 
+@modifier
+def trans(potential_forms, potential_form_builder):
+  """Modifier that takes two arguments the first is a potential form and the second must be an
+  instance of as.constant. This modifier performs the operation:
+
+  potential_form(r+X)
+
+  where X is the value parameter for the as.constant argument.
+
+  e.g. trans(as.buck 1000.0 0.2 32.0, as.constant 2.0)
+
+  :param potential_forms: List of tuples that can be passed to `atsim.potentials.config._potential_form_builder.Potential_Form_Builder.create_potential_function()` to create potential callables.
+  :param potential_form_builder: `atsim.potentials.config._potential_form_builder.Potential_Form_Builder` used to create potential instances.
+
+  :returns: Potential callable transforms the input to the potential-form."""
+  if not len(potential_forms) == 2:
+    raise ConfigurationException("trans() potential modifier only accepts two arguments")
+
+  second_form = potential_forms[1]
+  if second_form.potential_form != 'as.constant':
+    raise ConfigurationException("the second argument to the trans() potential modifier must be 'as.constant' found {}".format(second_form))
+
+  if len(second_form.parameters) != 1:
+    raise ConfigurationException("the second parameter to trans(), 'as.constant' should have exactly one parameter defining shift. {} parameters found.".format(len(second_form.parameters)))
+
+  logger = logging.getLogger(__name__).getChild("trans")
+
+
+  potential_func = potential_form_builder.create_potential_function(potential_forms[0])
+  trans_value = second_form.parameters[0]
+  logger.debug("Creating trans() modifier with offset of {}".format(trans_value))
+  def transformed(r):
+    return potential_func(r+trans_value)
+
+  if hasattr(potential_func, 'deriv'):
+    def deriv(r):
+      return potential_func.deriv(r+trans_value)
+    transformed.deriv = deriv
+
+  if hasattr(potential_func, 'deriv2'):
+    def deriv2(r):
+      return potential_func.deriv2(r+trans_value)
+    transformed.deriv2 = deriv2
+
+  return transformed
