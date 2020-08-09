@@ -1,5 +1,15 @@
 #Change Log
 
+##0.3.0
+### New Features
+
+* Introduced the new potable tool to allow tabulation without needing to write a python script.
+* Revamped python api.
+
+### Bug-Fixs
+
+* The order that the density functions were specified to the writeSetFLFinnisSinclair() function was the reverse of what would be expected. This has been fixed.
+
 ##0.2.1 (2018-05-19)
 ### Bug-Fixes
 

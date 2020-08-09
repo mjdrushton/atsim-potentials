@@ -1,0 +1,11 @@
+units metal
+atom_style charge
+
+read_data toy_structure.lmpstruct
+
+pair_style eam/fs
+pair_coeff * * finnis_sinclair.eam.fs A B
+
+run 0
+
+print ENERGY:$(pe)

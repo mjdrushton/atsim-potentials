@@ -92,12 +92,13 @@ def _writeSetFLDensityFunction(eampot, eampots, nr, dr, out):
   #Dump into out
   out.write(workout.getvalue())
 
+
 #Writes multiple density functions (one per element) for each element block
 def _writeSetFLDensityFunctionFinnisSinclair(eampot, eampots, nr, dr, out):
   workout = StringIO()
 
   for otherpot in eampots:
-    densFunc = eampot.electronDensityFunction[otherpot.species]
+    densFunc = otherpot.electronDensityFunction[eampot.species]
     _writeDensityFunction(densFunc, nr, dr, workout)
 
   #Dump into out

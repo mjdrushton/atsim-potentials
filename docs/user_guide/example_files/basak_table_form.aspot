@@ -1,11 +1,11 @@
 [Tabulation]
-target :  GULP
+target :  LAMMPS
 cutoff : 6.5
 nr : 652
 
 [Pair]
-#O-O = as.buck 1633.010242995040 0.327022 3.948787
-#U-U = as.buck 294.640906285709 0.327022 0.0
+O-O = as.buck 1633.010242995040 0.327022 3.948787
+U-U = as.buck 294.640906285709 0.327022 0.0
 O-U = tabulated
 
 [Table-Form:tabulated]

@@ -1,0 +1,11 @@
+units metal
+atom_style charge
+
+read_data toy_structure.lmpstruct
+
+pair_style eam/alloy
+pair_coeff * * standard_eam.eam A B
+
+run 0
+
+print ENERGY:$(pe)

@@ -1,0 +1,22 @@
+[Tabulation]
+target : setfl
+cutoff = 5.0
+dr = 0.1
+cutoff_rho = 50.0
+drho = 0.1
+
+[Species]
+A.atomic_mass = 1
+A.atomic_number = 1
+B.atomic_mass = 2
+B.atomic_number = 2
+
+[EAM-Embed]
+A = as.polynomial 0 1
+B = as.zero
+
+[EAM-Density]
+A = as.polynomial 0 2
+B = as.polynomial 0 3
+
+[Pair]

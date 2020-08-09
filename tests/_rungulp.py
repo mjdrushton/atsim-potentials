@@ -2,7 +2,7 @@ import pytest
 
 import py.path
 
-import distutils
+import distutils.spawn
 GULP_FOUND = distutils.spawn.find_executable("gulp-5.0")
 
 needsGULP = pytest.mark.skipif(not GULP_FOUND, reason = "GULP binary not found")

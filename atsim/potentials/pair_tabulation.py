@@ -163,7 +163,7 @@ class Excel_PairTabulation(_PairTabulation_AbstractBase):
   def _build_workbook(self):
     from openpyxl import Workbook
     wb = Workbook()
-    wb.remove_sheet(wb.active)
+    wb.remove(wb.active)
     self._add_worksheets(wb)
     return wb
 

@@ -244,8 +244,8 @@ class RunLAMMPSEAMTableTestCase(TempfileTestCase):
       potO_Ce = potentials.Potential('O', 'Ce', functionO_Ce)
       potCe_Ce = potentials.Potential('Ce', 'Ce', functionCe_Ce)
 
-      eampotCe = potentials.EAMPotential('Ce', 92, 238, embedCe, {'Ce': zw(densityCe), 'O' : zw(densityCe)})
-      eampotO = potentials.EAMPotential('O', 8, 16, embedO, {'Ce': zw(densityO), 'O' : zw(densityO)})
+      eampotCe = potentials.EAMPotential('Ce', 92, 238, embedCe, {'Ce': zw(densityCe), 'O' : zw(densityO)})
+      eampotO = potentials.EAMPotential('O', 8, 16, embedO, {'Ce': zw(densityCe), 'O' : zw(densityO)})
 
       eampots = [eampotCe, eampotO]
       pairpots = [potO_O, potO_Ce, potCe_Ce]

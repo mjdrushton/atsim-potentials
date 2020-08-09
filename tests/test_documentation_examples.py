@@ -27,6 +27,12 @@ def _getDocsDirectory():
   docsdir = os.path.join("docs", "potentials")
   return os.path.abspath(docsdir)
 
+def _get_user_guide_directory():
+  """Returns absolute path to docs/ directory"""
+  currdir = os.path.join(os.path.dirname(__file__))
+  docsdir = os.path.join("docs", "user_guide")
+  return os.path.abspath(docsdir)
+
 def _getLAMMPSResourceDirectory():
   return os.path.join(os.path.dirname(__file__), 'lammps_resources')
 
@@ -157,7 +163,7 @@ class basak_tabulateTestCase(TempfileTestCase):
   def testLAMMPSExample(self):
     """Test doumentation example Quick-Start: LAMMPS."""
 
-    test_name = os.path.join(_getDocsDirectory(), os.pardir, "basak_tabulate_lammps.py")
+    test_name = os.path.join(_get_user_guide_directory(), "basak_tabulate_lammps.py")
 
     oldpwd = os.getcwd()
     try:
@@ -571,7 +577,14 @@ def test_basak_files(tmpdir, aspotfile):
   srcdir = py.path.local(__file__).dirpath("..", "docs", "quick_start", "basak_tabulate_lammps")
   srcdir.join("UO2.lmpstruct").copy(tmpdir.join("UO2.lmpstruct"))
 
-  input_file = py.path.local(_getLAMMPSResourceDirectory()).join("basak_energy.lmpin")
+  if aspotfile.basename == "basak_table_form.aspot":
+    input_file = py.path.local(_getLAMMPSResourceDirectory()).join("basak_energy_table_form.lmpin")
+    expect_e = pytest.approx(-172.839, abs = 1e-3)
+  else:
+    input_file = py.path.local(_getLAMMPSResourceDirectory()).join("basak_energy.lmpin")
+    expect_e = pytest.approx(-172.924, abs = 1e-3)
+
+  
   input_file.copy(tmpdir.join("calc_energy.lmpin"))
 
   # Generate table file
@@ -581,7 +594,6 @@ def test_basak_files(tmpdir, aspotfile):
   with tmpdir.join("Basak.lmptab").open("w") as outfile:
     tabulation.write(outfile)
 
-  expect_e = pytest.approx(-172.924, abs = 1e-3)
   runLAMMPS(cwd = tmpdir.strpath)
   actual_e = extractLAMMPSEnergy(cwd = tmpdir.strpath)
 
@@ -612,3 +624,56 @@ def test_morelon_files(aspot, gulp_uo2_energy_fixture):
   actual_energy = gulp_uo2_energy_fixture.energy()
 
   assert expect == actual_energy
+
+@needsLAMMPS
+@pytest.mark.parametrize(("evaluate_lmpin", "aspot_filename", "tab_filename", "expect_e", "a_flag", "b_flag"), 
+[
+  ("standard_evaluate.lmpin", "standard_eam.aspot", "standard_eam.eam", 24.00, True, False),
+  ("standard_evaluate.lmpin", "standard_eam.aspot", "standard_eam.eam", 131.8822, False, True),
+  ("standard_evaluate.lmpin", "standard_eam.aspot", "standard_eam.eam", 24.00 + 131.8822, True, True),
+
+  ("finnis_sinclair_evaluate.lmpin", "finnis_sinclair_eam.aspot", "finnis_sinclair.eam.fs", 24.00, True, False),
+  ("finnis_sinclair_evaluate.lmpin", "finnis_sinclair_eam.aspot", "finnis_sinclair.eam.fs", 209.137, False, True),
+  ("finnis_sinclair_evaluate.lmpin", "finnis_sinclair_eam.aspot", "finnis_sinclair.eam.fs", 24.00 + 209.137, True, True)
+])
+def test_user_guide_eam(tmpdir, evaluate_lmpin, aspot_filename, tab_filename, expect_e, a_flag, b_flag):
+  
+  # Copy files in from example directory 
+  srcdir = py.path.local(__file__).dirpath("..", "docs", "user_guide", "example_files")
+  srcdir.join("toy_structure.lmpstruct").copy(tmpdir.join("toy_structure.lmpstruct"))
+
+  input_file = srcdir.join(evaluate_lmpin)
+  input_file.copy(tmpdir.join("calc_energy.lmpin"))
+
+  # Generate table file
+  config = atsim.potentials.config.Configuration()
+
+  aspotfile = srcdir.join(aspot_filename)
+
+  a_embed = 'as.zero'
+  b_embed = 'as.zero'
+
+  if a_flag:
+    a_embed = 'as.polynomial 0 1'
+
+  if b_flag:
+    b_embed = 'as.polynomial 0 1'
+
+  overrides = [
+    atsim.potentials.config.ConfigParserOverrideTuple(u'EAM-Embed', 'A', a_embed),
+    atsim.potentials.config.ConfigParserOverrideTuple(u'EAM-Embed', 'B', b_embed)
+  ]
+
+  cp = atsim.potentials.config.ConfigParser(aspotfile.open(), overrides)
+  tabulation = config.read_from_parser(cp)
+
+  # tabulation = config.read(aspotfile.open())
+  
+  with tmpdir.join(tab_filename).open("w") as outfile:
+    tabulation.write(outfile)
+
+  expect_e = pytest.approx(expect_e, abs = 1e-3)
+  runLAMMPS(cwd = tmpdir.strpath)
+  actual_e = extractLAMMPSEnergy(cwd = tmpdir.strpath)
+
+  assert expect_e == actual_e

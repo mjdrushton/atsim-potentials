@@ -12,7 +12,7 @@ List of Potential Forms
 
 The **Features** field in the following potential description may contain the following values:
 
-* **potential-form** - can be used in the ``[Pair]`` section of a :ref:`potable <potable-tool>` input file.
+* **potential-form** - can be used in the ``[Pair]``\ , ``[EAM-Embed]`` and ``[EAM-Density]`` sections of a :ref:`potable <potable-tool>` input file.
 * **potential-function** - can also be used as a function in sections of input files that accept mathematical expressions.
 * **deriv** - potential form provides an analytical derivative with respect to separation.
 * **deriv2** - provides an analytical second derivative with respect to separation.
@@ -304,9 +304,12 @@ Ziegler-Biersack-Littmark screened nuclear repulsion for describing high energy 
 
 .. math::
 
-	V(r)    & = \frac{1}{4\pi\epsilon_0} \frac{Z_1}{Z_2} \phi(r/a) + S(r) \\
-	a       & = \frac{0.46850}{Z_i^{0.23} + Z_j^{0.23}} \\
-	\phi(x) & = 0.18175 \exp(-3.19980x) + 0.50986 \exp(-0.94229x) + 0.28022\exp(-0.40290x) + 0.02817\exp(-0.20162x) \\
+	V(r)    & = \; & \frac{1}{4\pi\epsilon_0} \frac{Z_1}{Z_2} \phi(r/a) + S(r) \\
+	a       & = & \frac{0.46850}{Z_i^{0.23} + Z_j^{0.23}} \\
+	\phi(x) & = & 0.18175 \exp(-3.19980x) \\
+			&   & \quad + 0.50986 \exp(-0.94229x) \\
+			&   & \quad + 0.28022\exp(-0.40290x) \\
+			&   & \quad + 0.02817\exp(-0.20162x) \\
 
 
 Where :math:`Z_i` and :math:`Z_j` are the atomic numbers of two species.

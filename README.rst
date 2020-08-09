@@ -27,6 +27,11 @@ If you have `Pip <http://www.pip-installer.org/>`_ type the following to install
 Install from Source
 -------------------
 
+.. todo::
+
+	Change hg and bitbucket to git and github
+
+
 The source is hosted on `bitbucket`_ and can be cloned using `mercurial`_ as follows:
 
 .. code:: sh

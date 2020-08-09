@@ -1,5 +1,7 @@
 venv/*
 .*
 *.pyc
-
 build
+atsim.potentials.egg-info/
+html/
+ignored/

@@ -4,7 +4,7 @@ from builtins import next
 import unittest
 import os
 
-import distutils
+import distutils.spawn
 DLPOLY_FOUND = distutils.spawn.find_executable('DLPOLY.Z')
 
 needsDLPOLY = unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")

@@ -5,7 +5,7 @@ import py.path
 import pytest
 
 import os
-import distutils
+import distutils.spawn
 LAMMPS_FOUND = distutils.spawn.find_executable('lammps')
 
 needsLAMMPS = unittest.skipIf(not LAMMPS_FOUND, "LAMMPS not available")

@@ -45,7 +45,7 @@ Where:
 
 .. seealso::
 
-    * _potable-many-body-models
+    * :ref:`potable-many-body-models`
 
 
 .. _ref-potable-eam-embed:
@@ -72,7 +72,7 @@ Where:
 
 .. seealso::
 
-    * _potable-many-body-models
+    * :ref:`potable-many-body-models`
 
 
 .. _ref-potable-input-pair:
