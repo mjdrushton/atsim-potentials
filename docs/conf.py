@@ -32,7 +32,10 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'sphinx.ext.todo'
+    'sphinx.ext.todo',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.inheritance_diagram',
+    'autoapi.extension'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -268,3 +271,8 @@ texinfo_documents = [
 
 todo_include_todos = True
 numfig = True
+
+
+autoapi_dirs = ['../atsim']
+autoapi_options = ['members', 'undoc-members', 'show-inheritance', 'show-module-summary', 'special-members', 'imported-members']
+autoapi_root = 'reference/python_api/'

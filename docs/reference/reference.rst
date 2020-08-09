@@ -9,6 +9,6 @@ Reference
   potable_input
   potential_modifiers
   tools
-  python_api
+  python_api/index
 
 

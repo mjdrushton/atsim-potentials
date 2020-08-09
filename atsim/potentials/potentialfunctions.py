@@ -6,21 +6,20 @@ atomic separation `r`, with other potential parameters following after. For inst
 evaluate a Buckingham potential at `r` = 2.0 the following could be called for `A`, `rho` and `C` values 
 1000.0, 0.2 and 32.0 respectively:
 
-```#! python
+.. code-block:: python
 
-atsim.potentialfunctions.buck(2.0, 1000.0, 0.2, 32.0)
+  atsim.potentialfunctions.buck(2.0, 1000.0, 0.2, 32.0)
 
-```
 
 The callable objects also have other useful methods. Perhaps most importantly is the `.deriv()` method
 this returns the first derivative of the given potential (force). Again using the Buckingham potential as
 an example its derivative can be evaluated for `r` = 2.0 as follows:
 
-```#! python
+.. code-block:: python
 
-atsim.potentialfunctions.buck.deriv(2.0, 1000.0, 0.2, 32.0)
+  atsim.potentialfunctions.buck.deriv(2.0, 1000.0, 0.2, 32.0)
 
-```
+
 
 """
 
@@ -505,7 +504,7 @@ class tang_toennies(_Potential_Function_Base):
 
     This potential form describes the Van der Waal's interactions between the noble gases (He to Rn) and is described in:
 
-      * K. T. Tang and J. P. Toennies, “The van der Waals potentials between all the rare gas atoms from He to Rn”, *J. Chem. Phys.*\ , **118** (2003) 4976.
+      * K.T. Tang and J.P. Toennies, “The van der Waals potentials between all the rare gas atoms from He to Rn”, *J. Chem. Phys.*\ , **118** (2003) 4976.
 
     The potential has the following form:
 
