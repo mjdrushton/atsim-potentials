@@ -62,11 +62,11 @@ def buck4(A, rho, C, r_detach, r_min, r_attach):
   .. math::
 
     V(r_{ij}) = 
-    \begin{cases}
-      A \exp(-r_{ij}/\rho)                                                 , & 0 \leq r_{ij} \leq  r_\text{detach}\\
-      a_0 + a_1 r_{ij} +a_2 r_{ij}^2+a_3 r_{ij}^3+a_4 r_{ij}^4+a_5 r_{ij}^5, & r_\text{detach} < r_{ij} < r_\text{min}\\
-      b_0 +b_1 *r_{ij}+b_2*r_{ij}^2+b_3*r_{ij}^3                           , & r_\text{min} \leq r_{ij} < r_\text{attach}\\
-      -\frac{C}{r_{ij}^6}                                                  , & r_{ij} \geq r_\text{attach}\\
+    \\begin{cases}
+      A \\exp(-r_{ij}/\\rho)                                                 , & 0 \\leq r_{ij} \\leq  r_\\text{detach}\\\\
+      a_0 + a_1 r_{ij} +a_2 r_{ij}^2+a_3 r_{ij}^3+a_4 r_{ij}^4+a_5 r_{ij}^5, & r_\\text{detach} < r_{ij} < r_\\text{min}\\\\
+      b_0 +b_1 *r_{ij}+b_2*r_{ij}^2+b_3*r_{ij}^3                           , & r_\\text{min} \\leq r_{ij} < r_\\text{attach}\\\\
+      -\\frac{C}{r_{ij}^6}                                                  , & r_{ij} \\geq r_\\text{attach}\\\\
     \end{cases}
 
   In other words this is a Buckingham potential in which the Born-Mayer component acts at small separations and the disprsion

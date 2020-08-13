@@ -508,15 +508,15 @@ class tang_toennies(_Potential_Function_Base):
 
     The potential has the following form:
 
-    .. :math::
+    .. math::
 
-      V(r) = A \exp(-br) - \sum_{n=3}^N f_{2N} (bR) \frac{C_{2N}}{R^{2N}}
+      V(r) = A \\exp(-br) - \\sum_{n=3}^N f_{2N} (bR) \\frac{C_{2N}}{R^{2N}}
 
     Where:
 
-    .. :math::
+    .. math::
 
-      f_{2N}(x) = 1- \exp(-x) \sum_{k=0}^{2n} \frac{x^k}{k!}
+      f_{2N}(x) = 1- \\exp(-x) \\sum_{k=0}^{2n} \\frac{x^k}{k!}
 
 
     :param r: Separation.

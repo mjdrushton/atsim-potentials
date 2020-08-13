@@ -11,13 +11,8 @@ Credits
 	* **Dr. Clare Bishop** for providing an early implementation of the spline interpolation method implemented within :class:`.SplinePotential`.
 
 .. _Michael Rushton: http://abulafia.mt.ic.ac.uk/groupmembers/michael
-
-.. _actinide potential model: http://abulafia.mt.ic.ac.uk/potentials/actinides actinide potential model  
-
-.. _Michael Cooper: http://abulafia.mt.ic.ac.uk/groupmembers/cooper 
-
+.. _actinide potential model: https://atomsim.org/potentials/actinides  
+.. _Michael Cooper: https://scholar.google.co.uk/citations?user=gpYY_wsAAAAJ&hl=en&oi=ao
 .. _Imperial College London: http://imperial.ac.uk
-
 .. _Department of Materials: http://www.imperial.ac.uk/materials
-
 .. _Atomistic Simulation Group: http://abulafia.mt.ic.ac.uk/

@@ -20,22 +20,22 @@ Tabulating the Potentials
 Defining the Potentials
 =======================
 
-The first step to tabulating pair potentials is to define :class:`~atsim.potentials.Potential` objects (see :ref:`potential_objects`). Normally this involves creating a python function for the desired pair interaction before passing this to the :class:`atsim.potentials.Potential` together with labels name the species pair pertinent to the interaction. 
+The first step to tabulating pair potentials is to define :class:`~atsim.potentials.Potential` objects (see :ref:`potential_objects`). Normally this involves creating a python function for the desired pair interaction before passing this to the :meth:`atsim.potentials.Potential()` constructor to provide labels for the species pair pertinent to the interaction. 
 
 	* The functions ``f_OO`` and ``f_UU`` use the Buckingham form and are created using :func:`~atsim.potentials.potentialforms.buck` function factory (see :ref:`predefined_potential_forms` for more on the pre-defined forms provided):
 
 		.. literalinclude:: basak_tabulate.py
-			:lines: 7-15
+			:lines: 7-16
 
 	* The O-U interaction is a little more tricky to define as Buckingham and Morse potentials need to be combined. Pre-canned implementations of both of these are provided in :mod:`atsim.potentials.potentialforms` as :func:`~atsim.potentials.potentialforms.buck` and :func:`~atsim.potentials.potentialforms.morse`. Two functions are created, one for each component of the O-U interaction and stored in the ``buck_OU`` and ``morse_OU`` variables:
 
 		.. literalinclude:: basak_tabulate.py
-			:lines: 17-24
+			:lines: 18-25
 
 	* These are then composed into the desired function, ``f_OU``, using the :func:`~atsim.potentials.plus` function (see :ref:`combining_potential_forms`):
 
 		.. literalinclude:: basak_tabulate.py
-			:lines: 28
+			:lines: 29
 
 
 Make ``TABLE`` File
@@ -47,8 +47,17 @@ The table file is written from the ``main()`` function of :download:`basak_tabul
 		:pyobject: main
 
 
-	* First the ``makePotentialObjects()`` function is called, returning a list of :class:`~atsim.potentials.Potential` that are stored in the ``potential_objects`` variable. 
-	* The :func:`~atsim.potentials.writePotentials` function is then called with this list to create potentials with a maximum cut-off of 6.5Å and 6500 rows (i.e. a grid increment of 0.001 Å).
+	* First the ``makePotentialObjects()`` function is called, returning a list of :py:class:`~atsim.potentials.Potential` objects that are stored in the ``potential_objects`` variable. 
+	* An instance of :py:class:`~atsim.potentials.pair_tabulation.DLPoly_PairTabulation` is created by passing this list of potentials  a cut-off value of 6.5Å and specifying 6500 rows (i.e. a grid increment of 0.001 Å) to its constructor:
+
+		.. literalinclude:: basak_tabulate.py
+			:lines: 46-47
+
+	* The :py:meth:`~atsim.potentials.pair_tabulation.DLPoly_PairTabulation.write` method of the ``Tabulation`` object is then called with the file object into which the tabulation is written:
+
+		.. literalinclude:: basak_tabulate.py
+			:lines: 49-50
+
 
 	* Now run the :download:`basak_tabulate.py` file (making sure you have :ref:`installed <installation>` ``atsim.potentials`` first):
 
@@ -107,8 +116,8 @@ Once the potential model has been defined as a series of :class:`~atsim.potentia
 
 Only the two highlighted lines have been changed:
 
-	1. the first changes the output filename to ``Basak.lmptab``
-	2. the second has been changed from ``DL_POLY`` to ``LAMMPS`` in order to select the desired tabulation format.
+	1. the first changes the tabulation class to :py:class:`~atsim.potentials.pair_tabulation.LAMMPS_PairTabulation`\ . This describes the same interface as the the previous :py:class:`~atsim.potentials.pair_tabulation.DLPoly_PairTabulation` class meaning it is a drop in replacement.
+	2. the second changes the output filename to ``Basak.lmptab``
 
 Running the file creates the ``Basak.lmptab`` file:
 

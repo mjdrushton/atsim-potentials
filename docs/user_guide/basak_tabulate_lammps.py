@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 
 import atsim.potentials
+from atsim.potentials.pair_tabulation import LAMMPS_PairTabulation
 from atsim.potentials import potentialforms
+
 
 def makePotentialObjects():
     # O-O Interaction:
@@ -23,7 +25,6 @@ def makePotentialObjects():
     buck_OU = potentialforms.buck(693.648700, 0.327022, 0.0)
     morse_OU = potentialforms.morse(1.6500, 2.36900, 0.577190)
 
-
     # Compose the buckingham and morse functions into a single function
     # using the atsim.potentials.plus() function
     f_OU = atsim.potentials.plus(buck_OU, morse_OU)
@@ -36,17 +37,16 @@ def makePotentialObjects():
     ]
     return potential_objects
 
+
 def main():
     potential_objects = makePotentialObjects()
     # Tabulate into file called Basak.lmptab
     # using short-range cutoff of 6.5 Angs with grid
     # increment of 1e-3 Angs (6500 grid points)
-    with open('Basak.lmptab', 'w') as outfile: # <-- Filename changed from 'TABLE'
-        atsim.potentials.writePotentials(
-           'LAMMPS', # <-- This has been changed from 'DL_POLY'
-           potential_objects,
-           6.5, 6500,
-           out = outfile)
+    tabulation = LAMMPS_PairTabulation(potential_objects, 6.5, 6500) # <-- The tabulation class has been changed
+
+    with open('Basak.lmptab', 'w') as outfile:  # <-- Filename changed from 'TABLE'
+        tabulation.write(outfile)
 
 if __name__ == '__main__':
     main()

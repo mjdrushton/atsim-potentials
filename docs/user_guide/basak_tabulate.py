@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 
-import atsim.potentials
 from atsim.potentials import potentialforms
+from atsim.potentials.pair_tabulation import DLPoly_PairTabulation
+
 
 def makePotentialObjects():
     # O-O Interaction:
@@ -35,17 +36,19 @@ def makePotentialObjects():
     ]
     return potential_objects
 
+
 def main():
     potential_objects = makePotentialObjects()
     # Tabulate into file called TABLE
     # using short-range cutoff of 6.5 Angs with grid
     # increment of 1e-3 Angs (6500 grid points)
+
+    tabulation = DLPoly_PairTabulation(potential_objects,
+                                       6.5, 6500)
+
     with open('TABLE', 'w') as outfile:
-        atsim.potentials.writePotentials(
-           'DL_POLY',
-           potential_objects,
-           6.5, 6500,
-           out = outfile)
+        tabulation.write(outfile)
+
 
 if __name__ == '__main__':
     main()
