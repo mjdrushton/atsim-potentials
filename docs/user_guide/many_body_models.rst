@@ -32,6 +32,8 @@ The EAM sections of the input are defined in much the same way as the :ref:`[Pai
 
 As for pair  only models, many-bodied force fields can specify :ref:`[Potential-Form] <potable-potential-form>` and  :ref:`[Table-Form] <potable-table-form>` sections can be provided if custom functional forms are required in ``[EAM-Density]``\ , ``[EAM-Embed]`` or ``[Pair]``\ .
 
+.. _many-body-models-eam-density:
+
 ``[EAM-Density]``
 +++++++++++++++++
 
@@ -69,6 +71,9 @@ This is taken from :ref:`potable_sutton_ag_example`\ . As you can determine from
                        as.polynomial 0 1, 
                        as.constant -1)), 
            as.constant 6)
+
+
+.. _many-body-models-eam-embed:
 
 ``[EAM-Embed]``
 +++++++++++++++
@@ -357,7 +362,7 @@ Tabulate the :download:`finnis_sinclair_eam.aspot <example_files/finnis_sinclair
   potable finnis_sinclair_eam.aspot finnis_sinclair.eam.fs
 
 
-Copy the :download:`toy_structure.lmpstruct <example_files/toy_structure.lmpstruct>` structure file and the following LAMMPs input file (:download:`finnis_sinclair_evaluate.lmpin <example_files/finnis_sinclair_evaluate.lmpin>`) to the same directory as your tabulation::
+Copy the :download:`toy_structure.lmpstruct <example_files/toy_structure.lmpstruct>` structure file and the following LAMMPs input file (:download:`finnis_sinclair_evaluate.lmpin <example_files/finnis_sinclair_evaluate.lmpin>`) to the same directory as your tabulation:
 
 .. literalinclude:: example_files/finnis_sinclair_evaluate.lmpin
   :language: none

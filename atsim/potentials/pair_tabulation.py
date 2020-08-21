@@ -8,7 +8,7 @@ def _r_value_iterator(tabulation):
 
 
 
-class _PairTabulation_AbstractBase(object):
+class PairTabulation_AbstractBase(object):
   """Base class for PairTabulation objects. 
 
   Child classes must implement: 
@@ -67,7 +67,7 @@ class _PairTabulation_AbstractBase(object):
     raise NotImplementedError("Sub-classes must implement write method")
 
 
-class LAMMPS_PairTabulation(_PairTabulation_AbstractBase):
+class LAMMPS_PairTabulation(PairTabulation_AbstractBase):
   """Class for tabulating pair-potential models for LAMMPS"""
   
   def __init__(self, potentials, cutoff, nr):
@@ -85,7 +85,7 @@ class LAMMPS_PairTabulation(_PairTabulation_AbstractBase):
     lmp_writePotentials(self.potentials, self.dr, self.cutoff, self.nr-1, fp)
 
 
-class DLPoly_PairTabulation(_PairTabulation_AbstractBase):
+class DLPoly_PairTabulation(PairTabulation_AbstractBase):
   """Class for tabulating pair-potential models for DLPOLY"""
 
   def __init__(self, potentials, cutoff, nr):
@@ -103,7 +103,7 @@ class DLPoly_PairTabulation(_PairTabulation_AbstractBase):
     dlpoly_writePotentials(self.potentials, self.cutoff, self.nr, fp)
 
 
-class GULP_PairTabulation(_PairTabulation_AbstractBase):
+class GULP_PairTabulation(PairTabulation_AbstractBase):
   """Class for tabulating pair-potential models for the GULP code.
 
   .. :seealso::
@@ -141,7 +141,7 @@ class GULP_PairTabulation(_PairTabulation_AbstractBase):
     fp.write(u"\n")
 
 
-class Excel_PairTabulation(_PairTabulation_AbstractBase):
+class Excel_PairTabulation(PairTabulation_AbstractBase):
   """Class for dumping pair-potential models into an Excel formatted spreadsheet"""
 
   def __init__(self, potentials, cutoff, nr):

@@ -18,6 +18,9 @@ Multi-range potential examples
 
 This section shows how potential-forms can be combined using the multi-range syntax introduced here: :ref:`multi-range-potentials`\ .
 
+
+.. _multi-range-examples-truncating-a-potential:
+
 Example: truncating a potential
 -------------------------------
 
@@ -66,8 +69,11 @@ In this way the cosine function has been truncated. Specifying an Si-Si interact
 The complete input file for this example can be downloaded here :download:`soft_a.aspot <example_files/soft_a.aspot>` and is:
 
 .. literalinclude:: example_files/soft_a.aspot
+   
+   
 
 
+.. _multi-range-examples-truncating-a-potential-using-if:
 
 Example: truncating using ``if()`` statement
 --------------------------------------------
@@ -247,6 +253,11 @@ We now have enough information to spline the two potentials together. This gives
 The result of splining can be seen in :numref:`fig_spline_components`\ b (here it plotted with the Coulomb interaction included).
 
 The complete ``potable`` input can be downloaded here: :download:`exp_spline.aspot <example_files/exp_spline.aspot>`\ .
+
+
+.. seealso::
+
+	* This example :ref:`example_spline` shows how to achieve the same result using the Python API.
 
 
 .. _spline-buck4:

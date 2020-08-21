@@ -87,7 +87,7 @@ def plus(a,b):
   return potential
 
 def product(a,b):
-  """Takes two functions and returns a third which when evaluated returns the result of a(r) * b(r)
+  """Takes two callables and returns a third which when evaluated returns the result of a(r) * b(r)
 
   This function is useful for combining existing potentials.
 
@@ -125,7 +125,7 @@ def product(a,b):
   return potential
 
 def pow(a,b):
-  """Takes two functions and returns a third which when evaluated returns the result of a(r)**b(r)
+  """Takes two callables and returns a third which when evaluated returns the result of a(r)**b(r)
 
   This function is useful for combining existing potentials.
 
@@ -313,7 +313,6 @@ def writePotentials(outputType, potentialList, cutoff, gridPoints, out = sys.std
         * within LAMMPSthe block title is used as the ``keyword`` argument to the
           `pair_style table <http://lammps.sandia.gov/doc/pair_table.html>`_
           ``pair_coeff`` directive.
-      * For a working example see :ref:`quick_start_lammps`
 
 
   :param outputType: The type of output that should be created can be one of: ``DL_POLY`` or ``LAMMPS``

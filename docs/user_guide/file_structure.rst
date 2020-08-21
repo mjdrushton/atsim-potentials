@@ -53,3 +53,8 @@ Each section of the file has a specific purpose and not all sections will be req
 * ``[Species]`` 
 	+ this is used to provide meta-data about the species being tabulated. In most cases this section can be omitted (as very little species data is used during pair-tabulation). It is however, sometimes useful to include atomic charges etc, here so that the input file represents a complete description of a given potential model.
 
+
+For completeness the ``[EAM-Embed]`` and ``[EAM-Density]`` sections are mentioned here. These are not required for pair potential models but are used in many body models:
+
+* ``[EAM-Density]`` is described :ref:`here <many-body-models-eam-density>`\ .
+* ``[EAM-Embed]`` is described :ref:`here <many-body-models-eam-embed>`\ .

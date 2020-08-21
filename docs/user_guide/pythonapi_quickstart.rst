@@ -1,10 +1,15 @@
 .. _python_api_quick_start:
 
-***********
-Quick-Start
-***********
+**************************
+Python API Getting Started
+**************************
 
 The following example gives a complete python script showing how the potential API can be used to tabulate potentials for `DL_POLY`_ .
+
+.. seealso::
+
+	* Also see :ref:`quick-start` which allows you to achieve the same using the ``potable`` tool without requiring programming experience.
+
 
 The following example (:download:`basak_tabulate.py`) shows how the UO\ :sub:`2` potential model of Basak [#basak03]_ can be tabulated:
     

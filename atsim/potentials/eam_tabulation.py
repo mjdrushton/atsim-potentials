@@ -1,5 +1,5 @@
 
-from .pair_tabulation import _PairTabulation_AbstractBase, Excel_PairTabulation, _r_value_iterator
+from .pair_tabulation import PairTabulation_AbstractBase, Excel_PairTabulation, _r_value_iterator
 
 from ._lammpsWriteEAM import writeSetFL, writeSetFLFinnisSinclair
 from ._dlpoly_writeTABEAM import writeTABEAM, writeTABEAMFinnisSinclair
@@ -10,7 +10,7 @@ def _rho_value_iterator(tabulation):
     yield float(n)* tabulation.cutoff_rho / (float(tabulation.nrho) -1)
 
 
-class _EAMTabulationAbstractbase(_PairTabulation_AbstractBase):
+class _EAMTabulationAbstractbase(PairTabulation_AbstractBase):
   """Base class for EAMTabulation objects.
 
   Child classes must implement:

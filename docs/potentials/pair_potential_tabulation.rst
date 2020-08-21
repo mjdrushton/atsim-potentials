@@ -1,23 +1,50 @@
 Pair Potential Tabulation 
 ==========================
 
-Pair potentials are tabulated using the convenience function :func:`atsim.potentials.writePotentials`. This function is supplied with a list of :meth:`Potential <potential_objects>` objects, which have :meth:`PotentialInterface.energy` and :meth:`PotentialInterface.force` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
+Pair potentials are tabulated using ``PairTabulation`` objects, a tabulation class is provided for each target (note an alternative procedural interface is also provided :func:`atsim.potentials.writePotentials`\ ):
 
-``atsim.potentials.writePotentials()``
---------------------------------------
-The :func:`atsim.potentials.writePotentials` function is used to tabulate pair-potentials for the supported simulation codes.
+    * :class:`atsim.potentials.pair_tabulation.DLPoly_PairTabulation`
+        * Class for creating DL_POLY ``TABLE`` files.
+    * :class:`atsim.potentials.pair_tabulation.Excel_PairTabulation` 
+        * Produces Excel spreadsheet files from :class:`atsim.potentials.Potential` objects. This is useful for plotting potentials and debugging purposes (also see :ref:`potable-troubleshooting`)\ .
+    * :class:`atsim.potentials.pair_tabulation.GULP_PairTabulation`
+        * Suitable for producing files usable with the GULP code.
+    * :class:`atsim.potentials.pair_tabulation.LAMMPS_PairTabulation`
+        * Produces files for use with LAMMPS `pair_style table <https://lammps.sandia.gov/doc/pair_table.html>`_\ .
 
-The process by which :func:`writePotentials() <atsim.potentials.writePotentials>` is used can be summmarised as follows:
-    
-    #.  Define python functions describing energy of interactions (see :ref:`instantiate_potential_object` and :ref:`predefined_potential_forms`)
-    #.  Wrap these functions in :class:`.Potential` objects.
-    #.  Call :func:`.writePotentials` with list of :class:`.Potential` objects choosing:
-        
-        *   Tabulation type
-        *   Potential cut-off
-        *   Number of  rows in tabulation
-        *   Python file like object into which data should be written.
+
+
+
+Using ``Tabulation`` objects 
+----------------------------
+
+The constructor of ``PairTabulation`` classes have the following basic signature::
+
+    PairTabulation(self, potentials, cutoff, nr)
+
+Where:
+
+    * ``potentials`` is a list of :meth:`Potential <potential_objects>` objects. 
+        * ``Potential`` objects have :meth:`~PotentialInterface.energy` and :meth:`~PotentialInterface.force` methods called during tabulation to obtain potential-energy as a function of separation and its derivative respectively.
+        * see :ref:`instantiate_potential_object` and :ref:`predefined_potential_forms`\ .
+    * ``cutoff`` is a float giving the maximum separation represented by the tabulation.
+    * ``nr`` the number of rows to be included in the tabulation.
+
+Therefore to create a :class:`~atsim.potentials.pair_tabulation.LAMMPS_PairTabulation` with a 10 Å cutoff with 5000 rows from a list of potentials stored in the variable ``potentials`` the following would be used::
+
+    tabulation = LAMMPS_PairTabulation(potentials, 10, 5000)
+
+
+The pair potential model can then be written to a file-like object using the :meth:`~atsim.potentials.pair_tabulation.PairTabulation_AbstractBase.write` method::
+
+    with open("tabulation.lmptab", "w") as outfile:
+        tabulation.write(outfile)
             
+
+.. seealso::
+
+    * :ref:`python_api_quick_start` provides a complete example of using ``PairTabulation`` objects.
+
 
 .. _potential_objects:
 
@@ -60,7 +87,7 @@ Potential objects should implement the following interface:
         :rtype: float
     	
 
-In most cases the :class:`atsim.potentials.Potential` class provided in :mod:`atsim.potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`atsim.potentials.Potential.energy` method. The forces calculated by the :meth:`atsim.potentials.Potential.force` method are obtained by taking the numerical derivative of the wrapped function. 
+In most cases the :class:`atsim.potentials.Potential` class provided in :mod:`atsim.potentials` can be used. This wraps a python callable that returns potential energy as a function of separation to provide the values returned by the :meth:`~atsim.potentials.Potential.energy` method. The forces calculated by the :meth:`~atsim.potentials.Potential.force` method are obtained by taking the numerical derivative of the wrapped function. 
 
 
 
@@ -111,7 +138,7 @@ The energy and force at a separation of 1Å can then be obtained by calling the
 Predefined Potential Forms
 --------------------------
 
-In the previous example (`instantiate_potential_object`_), a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atsim.potentials.potentialsforms`` module.
+In the `previous example <instantiate_potential_object>`_\ , a function named ``bornMayer_Gd_O()`` was defined for a single pair-interaction, with the potential parameters hard-coded within the function. Explicitly defining a function for each interaction quickly becomes tedious for anything but the smallest parameter sets. In order to make the creation of functions using standard potential forms easier, a set of function factories are provided within the ``atsim.potentials.potentialsforms`` module.
 
 Using the ``potentialsforms`` module, the function:
 
@@ -130,7 +157,13 @@ can be rewritten as:
         from atsim.potentials import potentialforms
         bornMayer_Gd_O = potentialsforms.bornmayer(1000.0, 0.212)
 
+
+
 See API reference for list of available potential forms: :ref:`atsim_potentials_potentialforms`
+
+.. todo::
+
+    Module documentation doesn't show list of potentialforms as module is populated at runtime.
 
 
 .. _combining_potential_forms:
@@ -138,9 +171,19 @@ See API reference for list of available potential forms: :ref:`atsim_potentials_
 Combining Potential Forms
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Pair interactions are often described using a combination of standard potential forms. This was seen for the Basak potentials used within the :ref:`quick_start` example, where the oxygen-uranium pair potential was the combination of a Buckingham and Morse potential forms. 
+Pair interactions are often described using a combination of standard potential forms. This was seen for the Basak potentials used within the :ref:`python_api_quick_start` example, where the oxygen-uranium pair potential was the combination of a Buckingham and Morse potential forms. This combination was made using the :func:`~atsim.potentials.plus` function. This returns a callable which, when invoked, returns the sum of the values returned by the callables originally passed to :func:`~atsim.potentials.plus`\ . 
 
-Such potential combinations can be made using the ``plus()`` function from the ``atsim.potentials`` module:
+The combination functions listed below will return a wrapped function that correctly evaluate the first and second derivatives of the combined callables. That is, when the callables provide ``.deriv()`` and ``.deriv2()`` methods, these will, where possible be used in the evaluation. In this way accurate analytical derivatives can be combined and will appear in the resulting tabulation. If any callable does not implement these methods, the system will revert to using numerical evaluation of derivatives.
+
+* Combination functions:
+    * :func:`atsim.potentials.plus`
+        * Sum the return values of constituent callables.
+    * :func:`atsim.potentials.pow`
+        * Takes two functions and returns a third which when evaluated returns the result of ``a(r)**b(r)``
+    * :func:`atsim.potentials.product`
+        * Takes two callables and returns a third which when evaluated returns the result of ``a(r) * b(r)``\ .
+
+
 
 
 .. _spline_interpolation :
@@ -149,6 +192,10 @@ Spline Interpolation
 --------------------
 
 The :class:`.SplinePotential` class can be used to smoothly interpolate between two different potential forms within the same potential curve: one potential function acts below a given cutoff (referred to as the detachment point) and the other potential function takes over at larger separations (acting above a second cutoff called the attachment point). An exponential interpolating spline acts between the detachment and attachment points to provide a smooth transition between the two potential curves. 
+
+.. seealso::
+
+    * :ref:`Splining with potable <aspot-splining>` - description of how to do splining with potable rather than using the Python API.
 
 The :class:`.SplinePotential` class aims to automatically determine spline coefficients such that the resultant, interpolated,  potential curve is continuous in its first and second derivatives. The analytical form of the interpolating spline is (where :math:`r_{ij}` is interatomic separation and :math:`B_{0..5}` are the spline coefficients calculated by the :class:`.SplinePotential` class):
 
@@ -162,12 +209,24 @@ The :class:`.SplinePotential` has a number of applications, for example:
     *   similarly different potential forms may be better able to express certain separations than others. For instance the :func:`~atsim.potentials.potentialforms.zbl` potential is often used to describe the high energy interactions found in radiation damage cascades but must be combined with another potential to describe equilibrium properties.
 
 
+The :class:`atsim.potentials.spline.Buck4_SplinePotential` can also be used to connect two potential functions. The splined region of this potentialform is described via an instance of :class:`atsim.potentials.spline.Buck4_Spline`\ .
+
+Both :class:`atsim.potentials.spline.Buck4_SplinePotential` and :class:`atsim.potentials.spline.SplinePotential` inherit from :class:`atsim.potentials.spline.Custom_SplinePotential`\ . This provides the useful property :attr:`~atsim.potentials.spline.Custom_SplinePotential.splineCoefficients` which can be used to access the coefficients used to describe the polynomial connecting the two potential functions. These are often quoted in journal papers as they allow the same spline to be reproduced exactly by readers.
+
+
 .. _example_spline:
 
-Example: Splining ZBL Potential onto Buckingham Potential
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Example: Splining ZBL Potential on to Buckingham Potential
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As mentioned above, for certain parameterisations, popular potential forms can exhibit unphysical behaviour for some interatomic separations. A popular model for the description of silicate and phosphate systems is that due to van Beest, Kramer and van Santen (the BKS potential set) [#bks]_. In the current example, the Si-O interaction from this model will be considered. This uses the Buckingham potential form with the following parameters:
+As mentioned above, for certain parameterisations, popular potential forms can exhibit unphysical behaviour for some interatomic separations. 
+
+.. seealso::
+
+    * A version of this example which uses potable instead of the Python API is given here: :ref:`spline-exp_spline-example`\ .
+
+
+A popular model for the description of silicate and phosphate systems is that due to van Beest, Kramer and van Santen (the BKS potential set) [#bks]_. In the current example, the Si-O interaction from this model will be considered. This uses the Buckingham potential form with the following parameters:
     
     * A = 18003.7572 eV
     * :math:`\rho` = 0.205204 Å
@@ -223,14 +282,16 @@ Plotting the splined Si-O potential together with the original ``buck`` and ``zb
     Plot of BKS Si-O interaction showing the short-range (buck) and ZBL functions plotted with the curve generated by ``SplinePotential`` (spline). This joins them with a an interpolating spline acting between the detachment point at :math:`r_{ij} = 0.8` and re-attachment point at :math:`r_{ij} = 1.4` shown by dashed lines. 
 
 
-Finally, the potential can be tabulated in a format suitable for LAMMPS using :func:`atsim.potentials.writePotentials` :
+Finally, the potential can be tabulated in a format suitable for LAMMPS:
 
 .. code-block:: python
 
     bks_SiO = atsim.potentials.Potential('Si', 'O', spline)
+    tabulation = atsim.potentials.pair_tabulation.LAMMPS_PairTabulation(
+        [bks_SiO],
+        10.0, 5000)
     with open('bks_SiO.lmptab', 'w') as outfile:
-        atsim.potentials.writePotentials('LAMMPS', [bks_SiO], 10.0, 5000, out = outfile)
-
+        tabulation.write(outfile)
 
 
 .. [#bks] Van Beest, B. W. H., Kramer, G. J., & van Santen, R. A. (1990). Force fields for silicas and aluminophosphates based on ab initio calculations.  *Physical Review Letters* , **64** (16), 1955–1958. http://dx.doi.org/doi:10.1103/PhysRevLett.64.1955

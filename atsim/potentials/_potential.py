@@ -6,10 +6,18 @@ class Potential(object):
   """Class used to describe a potential to the :func:`.writePotentials()` function.
 
   Potential objects encapsulate a python function or callable which is used by
-  the :meth:`.energy` method to calculate potential energy. This callable is also
-  used when calculating forces :math:`\\frac{-dU}{dr}` through the  :meth:`.force` method.
-  Forces are calculated by using a simple finite difference method to
-  find the linear gradient of the energy for a given separation."""
+  the :meth:`.energy` method to calculate potential energy. 
+  
+  The :meth:`.force` method returns :math:`\\frac{-dU}{dr}`\ . If the energy callable
+  provides `.deriv()` and `.deriv2()` methods these are used for evaluating the first
+  and second derivatives of energy with respect to sepration. This allows analytical
+  derivatives to be defined to the Potential object. When not defined, numerical
+  derivatives are used instead.
+
+  The :func:`gradient` function is used to wrap the energy callable so that 
+  the correct derivative implementation is used.
+  
+   """
 
   def __init__(self, speciesA, speciesB, potentialFunction, h = 1e-6):
     """Create a Potential object from a python function or callable that returns energy at a given separation.

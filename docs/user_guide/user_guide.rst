@@ -10,6 +10,7 @@ This user-guide is broadly split into two sections. The first (:ref:`using-potab
 The second half (:ref:`python-api`\ ) describes the python interface to ``atsim.potentials``. This is provided to allow tabulation tasks to be automated, included in other scripts or for when :ref:`potable <potable-tool>` is not expressive enough.
 
 .. toctree::
+	:maxdepth: 3
 
 	using_potable
 	python_tabulation

@@ -27,6 +27,7 @@ Finally the function's data is provided through the ``xy`` option. The value of 
 
 
 
+.. _pair_table_form-example-table-form:
 
 Example: [Table-Form] pair-potential
 ------------------------------------
@@ -34,7 +35,7 @@ Example: [Table-Form] pair-potential
 Revisiting the example from earlier (see :ref:`basak-potential-model`\ ) the following shows how the O-U interaction from the Basak model [Basak2003]_ can be represented as a ``[Table-Form]``\ :
 
 
-The data points from :ref:`fig_table_form_plot` (blue) have been included in the ``potable`` input file :download:`basak_table_form.aspot <example_files/basak_table_form.aspot>` using the :ref:`xy <ref-potable-input-table-form-xy>` option.
+The data points from :numref:`fig_table_form_plot` (blue) have been included in the ``potable`` input file :download:`basak_table_form.aspot <example_files/basak_table_form.aspot>` using the :ref:`xy <ref-potable-input-table-form-xy>` option.
 
 The third line of the ``[Pair]`` section deserves notice::
 
