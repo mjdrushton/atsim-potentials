@@ -214,6 +214,7 @@ By comparing the :ref:`input file <basak_aspot>` and :numref:`table_basak_parame
 
 The O-U interaction makes use of a :ref:`potential modifier <potential-modifiers>` to combine the ``as.buck`` and ``as.morse`` forms. This is achieved using the :ref:`sum() <modifier-sum>` modifier which adds up all the contributions of the comma separated list of potentials defined inside the brackets.
 
+.. _quickstart_basak_generating_tabulation:
 
 Generating the tabulation
 =========================

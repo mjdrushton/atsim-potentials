@@ -135,6 +135,9 @@ The ``potable`` input for this model can be downloaded as :download:`Ag_sutton.a
     * As above, the ``product()`` :ref:`potential modifier <potential-modifiers>` has been used to multiply the function by :math:`\epsilon`\ .
     * Here the first parameter to the ``as.exponential`` form is :math:`a^n = 4.09^{12}` = 21911882.78.
 
+
+.. _user_guide_potable_sutton_ag_making_and_testing:
+
 Making and testing the tabulation
 +++++++++++++++++++++++++++++++++
 
