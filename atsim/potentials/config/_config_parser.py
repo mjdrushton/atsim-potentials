@@ -235,7 +235,7 @@ class _TableFormSection(object):
         label = cls._parse_name(section_name)
         seen.setdefault(label, []).append(section_name)
     
-    for k, v in seen.items():
+    for _k, v in seen.items():
       if len(v) > 1:
         msg = "Duplicate '{}' sections found:  {}".format(
           cls._section_name_prefix,

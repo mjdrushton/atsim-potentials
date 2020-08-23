@@ -1,7 +1,11 @@
 """Functions representing different potential forms.
 
 The functions contained herein are function factories returning
-a function that takes separation as its sole argument."""
+a function that takes separation as its sole argument.
+
+See :ref:`list-of-potential-forms` for descriptions of these potential forms.
+
+"""
 
 from . import potentialfunctions
 import inspect
@@ -40,18 +44,6 @@ class _FunctionFactory(object):
     if hasattr(self._func, "deriv2"):
       wrapper.deriv2 = _rpartial(self._func.deriv2, *args)
     return wrapper
-
-
-def _populate_module():
-  potfuncs = inspect.getmembers(potentialfunctions, _iscallable)
-
-  currmodule = sys.modules[__name__]
-  for name, func in potfuncs:
-    funcfactory = _FunctionFactory(func)
-    setattr(currmodule, name, funcfactory)
-
-_populate_module()
-
 
 @potential
 def buck4(A, rho, C, r_detach, r_min, r_attach):
@@ -102,3 +94,18 @@ def buck4(A, rho, C, r_detach, r_min, r_attach):
   pot = Buck4_SplinePotential(bm, disp, r_detach, r_attach, r_min)
 
   return pot
+
+buck = _FunctionFactory(potentialfunctions.buck)
+bornmayer = _FunctionFactory(potentialfunctions.bornmayer)
+coul = _FunctionFactory(potentialfunctions.coul)
+constant = _FunctionFactory(potentialfunctions.constant)
+exponential = _FunctionFactory(potentialfunctions.exponential)
+hbnd = _FunctionFactory(potentialfunctions.hbnd)
+lj = _FunctionFactory(potentialfunctions.lj)
+morse = _FunctionFactory(potentialfunctions.morse)
+polynomial = _FunctionFactory(potentialfunctions.polynomial)
+sqrt = _FunctionFactory(potentialfunctions.sqrt)
+tang_toennies = _FunctionFactory(potentialfunctions.tang_toennies)
+zbl = _FunctionFactory(potentialfunctions.zbl)
+zero = _FunctionFactory(potentialfunctions.zero)
+exp_spline = _FunctionFactory(potentialfunctions.exp_spline)

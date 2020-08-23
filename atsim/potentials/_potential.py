@@ -3,12 +3,12 @@ from builtins import object
 from ._util import gradient
 
 class Potential(object):
-  """Class used to describe a potential to the :func:`.writePotentials()` function.
+  """Class used to describe a potential to the :func:`~atsim.potentials.writePotentials()` function.
 
   Potential objects encapsulate a python function or callable which is used by
-  the :meth:`.energy` method to calculate potential energy. 
+  the :meth:`~atsim.potentials.Potential.energy` method to calculate potential energy. 
   
-  The :meth:`.force` method returns :math:`\\frac{-dU}{dr}`\ . If the energy callable
+  The :meth:`~atsim.potentials.Potential.force` method returns :math:`\\frac{-dU}{dr}`\ . If the energy callable
   provides `.deriv()` and `.deriv2()` methods these are used for evaluating the first
   and second derivatives of energy with respect to sepration. This allows analytical
   derivatives to be defined to the Potential object. When not defined, numerical

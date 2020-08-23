@@ -51,9 +51,6 @@ def pow(x,a):
 def sqrt(x):
   return math.sqrt(x)
 
-def sqrt(x):
-  return math.sqrt(x)
-
 def acos(x):
   return math.acos(x)
 

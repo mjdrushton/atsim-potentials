@@ -60,5 +60,5 @@ please see LICENSE and NOTICE file.
 
 .. _LAMMPS: http://lammps.sandia.gov
 .. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx
-.. _bitbucket: https://github.com/mjdrushton/atsim-potentials
+.. _github: https://github.com/mjdrushton/atsim-potentials
 .. _git: https://git-scm.com

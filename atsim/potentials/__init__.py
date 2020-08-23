@@ -50,7 +50,7 @@ def plus(a,b):
 
   **Example:**
 
-    To combine :func:`.buck` and :func:`.hbnd` functions from the :mod:`.potentialsforms` module to give:
+    To combine :func:`~atsim.potentials.potentialforms.buck` and :func:`~atsim.potentials.potentialforms.hbnd` functions from the :mod:`atsim.potentials.potentialforms` module to give:
 
       .. code:: python
 
@@ -286,7 +286,7 @@ def writePotentials(outputType, potentialList, cutoff, gridPoints, out = sys.std
 
       * This function creates output that can be written to a ``TABLE`` and used
         within DL_POLY.
-      * for a working example see :ref:`Quick-Start: DL_POLY <quick_start>`.
+      * for a working example see :ref:`Quick-Start: DL_POLY <quick-start>`.
 
     * ``GULP``:
 

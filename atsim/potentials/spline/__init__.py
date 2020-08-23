@@ -65,7 +65,7 @@ class Exp_Spline(object):
             U(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \\right) + C
 
   
-  The spline coefficients :math:`B_{0...5}` and `C` can be obtained using the :meth:`.spline_coefficients` property.
+  The spline coefficients :math:`B_{0...5}` and `C` can be obtained using the :meth:`~atsim.potentials.Exp_Spline.spline_coefficients` property.
   
   """
   
@@ -389,7 +389,7 @@ class SplinePotential(Custom_SplinePotential):
 
             U(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \\right) + C
 
-    The spline coefficients :math:`B_{0...5}` can be obtained using the :meth:`.SplineCoefficients` property.
+    The spline coefficients :math:`B_{0...5}` can be obtained using the :meth:`~atsim.potnetials.SplinePotential.splineCoefficients` property.
     
     .. seealso::
 

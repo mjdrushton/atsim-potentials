@@ -11,7 +11,7 @@
 Embedded Atom Method (EAM) Tabulation
 =====================================
 
-An EAM model is defined by constructing instances of  :class:`atsim.potentials.EAMPotential` describing each species within the model. :class:`.EAMPotential` encapsulates the density and embedding functions specific to each species' many bodied interactions. In addition the purely pairwise interactions within the EAM are defined using a list of :class:`atsim.potentials.Potential` objects.
+An EAM model is defined by constructing instances of  :class:`atsim.potentials.EAMPotential` describing each species within the model. :class:`~atsim.potenials.EAMPotential` encapsulates the density and embedding functions specific to each species' many bodied interactions. In addition the purely pairwise interactions within the EAM are defined using a list of :class:`atsim.potentials.Potential` objects.
 
 
 Once the EAM model has been described in terms of  :class:`EAMPotential <atsim.potentials.EAMPotential>` and :class:`Potential <atsim.potentials.Potential>` objects it can be tabulated for specific simulation codes. This is done by using the ``EAM_Tabulation`` objects from the :mod:`atsim.potentials.eam_tabulation` module:
@@ -109,7 +109,7 @@ It is now necessary to describe the model in python code. Hard-coding the model 
   :lines: 2-16
 
 
-The embedding and density functions should then be wrapped in an :class:`.EAMPotential` object to create a single item list:
+The embedding and density functions should then be wrapped in an :class:`~atsim.potentials.EAMPotential` object to create a single item list:
 
 .. literalinclude:: eam_example1.py
   :lines: 26
@@ -134,7 +134,7 @@ Now all the components of the model have been defined a table file can be create
   * Here 50000 density values will be tabulated to a cutoff of 50.0.
   * The pair-potential cut-off and the maximum :math:`r_{ij}` value for the density function is 12 Å and both will have 12000 rows.
 
-An instance of :class:`atsim.potentials.eam_tabulation.SetFL_EAMTabulation` is created with the :class:`.EAMPotential` and :class:`.Potential` objects. This object is then used to tabulate the Ag potential by calling the :meth:`~atsim.potentials.eam_tabulation.SetFL_EAMTabulation.write` method with the ``Ag.eam.alloy`` file object:
+An instance of :class:`atsim.potentials.eam_tabulation.SetFL_EAMTabulation` is created with the :class:`~atsim.potentials.EAMPotential` and :class:`~atsim.potentials.Potential` objects. This object is then used to tabulate the Ag potential by calling the :meth:`~atsim.potentials.eam_tabulation.SetFL_EAMTabulation.write` method with the ``Ag.eam.alloy`` file object:
     
 .. literalinclude:: eam_example1.py
   :language: python
@@ -293,25 +293,25 @@ The ``makeEmbed()`` function describes the embedding function:
   :pyobject: makeEmbed
 
 
-Lists of :class:`.EAMPotential` and :class:`.Potential` objects are created and returned as a tuple by the ``makePotentialObjects()`` function within :download:`eam_example2a.py`. Before invoking the factory functions we just defined, the model parameters are assigned to easily identifiable variables within this function:
+Lists of :class:`~atsim.potentials.EAMPotential` and :class:`~atsim.potentials.Potential` objects are created and returned as a tuple by the ``makePotentialObjects()`` function within :download:`eam_example2a.py`. Before invoking the factory functions we just defined, the model parameters are assigned to easily identifiable variables within this function:
 
 .. literalinclude:: eam_example2a.py
   :lines: 58-121
 
 
-Now the functions required by the :class:`.EAMPotential` instances for Al and Cu can be created:
+Now the functions required by the :class:`~atsim.potentials.EAMPotential` instances for Al and Cu can be created:
 
 .. literalinclude:: eam_example2a.py
   :lines: 93-99
 
 
-Now these are wrapped up in :class:`.EAMPotential` objects to give the ``eamPotentials`` list:
+Now these are wrapped up in :class:`~atsim.potentials.EAMPotential` objects to give the ``eamPotentials`` list:
 
 .. literalinclude:: eam_example2a.py
   :lines: 102-104
 
 
-Similarly, using the ``makePairPotAA()`` and ``makePairPotAB()`` function factories the :class:`.Potential` objects required for the tabulation are defined:
+Similarly, using the ``makePairPotAA()`` and ``makePairPotAB()`` function factories the :class:`~atsim.potentials.Potential` objects required for the tabulation are defined:
 
 .. literalinclude:: eam_example2a.py
   :lines: 106-119
@@ -380,7 +380,7 @@ Example 2b: Tabulate Al-Cu Alloy Potentials Using :class:`~atsim.potentials.eam_
 
 The tabulation script used with :ref:`Example 2a <eam_example_2a_obj>` can be easily modified to produce the ``TABEAM`` format expected by the `DL_POLY`_ simulation code. See the tabulation script for this example: :download:`eam_example2b.py`.
 
-The :class:`.EAMPotential` and :class:`.Potential` lists are created in exactly the same way as :ref:`Example 2a <eam_example_2a>`, however rather than creating an instance of :class:`~atsim.potentials.eam_tabulation.SetFL_EAMTabulation` in the ``main()`` function it is modified to use the DL_POLY specific :class:`~atsim.potentials.eam_tabulation.TABEAM_EAMTabulation` class instead and to write into a file named ``TABEAM``. The ``main()`` function of :download:`eam_example2b.py` is now given:
+The :class:`~atsim.potentials.EAMPotential` and :class:`~atsim.potentials.Potential` lists are created in exactly the same way as :ref:`Example 2a <eam_example_2a>`, however rather than creating an instance of :class:`~atsim.potentials.eam_tabulation.SetFL_EAMTabulation` in the ``main()`` function it is modified to use the DL_POLY specific :class:`~atsim.potentials.eam_tabulation.TABEAM_EAMTabulation` class instead and to write into a file named ``TABEAM``. The ``main()`` function of :download:`eam_example2b.py` is now given:
 
 .. literalinclude:: eam_example2b.py
   :pyobject: main
@@ -435,7 +435,7 @@ Although both the :math:`\alpha\beta` and :math:`\beta\alpha` can be described u
 Using :class:`~atsim.potentials.eam_tabulation.SetFL_FS_EAMTabulation` to Tabulate the Model
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-As in previous examples it is necessary to define pair, density and embedding functions in python code that are then wrapped in :class:`.EAMPotential` and :class:`.Potential` objects to be passed to the tabulation function. For brevity only the names of the functions, as defined in the attached example file (:download:`eam_example3a.py`) are now  given:
+As in previous examples it is necessary to define pair, density and embedding functions in python code that are then wrapped in :class:`~atsim.potentials.EAMPotential` and :class:`~atsim.potentials.Potential` objects to be passed to the tabulation function. For brevity only the names of the functions, as defined in the attached example file (:download:`eam_example3a.py`) are now  given:
 
 * **Pair-Potentials:**
 
@@ -466,13 +466,13 @@ These functions are used within the ``main()`` function of the :download:`eam_ex
   :language: python
   :pyobject: main
 
-1. Breaking ``main()`` into its components, first a list of :class:`.Potential` objects is created, this is common with the other tabulation methods already discussed:
+1. Breaking ``main()`` into its components, first a list of :class:`~atsim.potentials.Potential` objects is created, this is common with the other tabulation methods already discussed:
 
 .. literalinclude:: eam_example3a.py
   :language: python
   :lines: 124-128
 
-2. Next, the :class:`.EAMPotential` objects for Al and Fe are instantiated. This is where a Finnis-Sinclair model differs from the standard EAM seen earlier. Instead of a single density callable being passed to the :class:`.EAMPotential` constructor a dictionary of density functions is passed instead (see highlighted lines):
+2. Next, the :class:`~atsim.potentials.EAMPotential` objects for Al and Fe are instantiated. This is where a Finnis-Sinclair model differs from the standard EAM seen earlier. Instead of a single density callable being passed to the :class:`~atsim.potentials.EAMPotential` constructor a dictionary of density functions is passed instead (see highlighted lines):
   
 .. literalinclude:: eam_example3a.py
   :language: python
@@ -481,18 +481,18 @@ These functions are used within the ``main()`` function of the :download:`eam_ex
 
 3. The density function dictionary keys refer to the :math:`\beta` species in each :math:`\alpha\beta` pair. This means that:
 
-  * for the Al :class:`.EAMPotential` instance:
+  * for the Al :class:`~atsim.potentials.EAMPotential` instance:
     
     * :math:`\rho_{\text{Al}\text{Al}}` = ``AlAlDensityFunction()``,
     * :math:`\rho_{\text{Al}\text{Fe}}` = ``FeAlDensityFunction()``.
       
-  * for the Fe :class:`.EAMPotential` instance:
+  * for the Fe :class:`~atsim.potentials.EAMPotential` instance:
     
     * :math:`\rho_{\text{Fe}\text{Al}}` = ``FeAlDensityFunction()``,
     * :math:`\rho_{\text{Fe}\text{Fe}}` = ``FeFeDensityFunction()``.
 
 
-4. Finally, having defined the list of :class:`.EAMPotential` instances these are passed to the constructor of :class:`~atsim.potentials.eam_tabulation.SetFL_FS_EAMTabulation`\ , in this case writing the data to ``Mendelev_Al_Fe.eam.fs`` in the current directory:
+4. Finally, having defined the list of :class:`~atsim.potentials.EAMPotential` instances these are passed to the constructor of :class:`~atsim.potentials.eam_tabulation.SetFL_FS_EAMTabulation`\ , in this case writing the data to ``Mendelev_Al_Fe.eam.fs`` in the current directory:
 
 
 .. literalinclude:: eam_example3a.py

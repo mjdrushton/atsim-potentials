@@ -31,17 +31,17 @@ Contents
 ========
 
 .. toctree::
-    :maxdepth: 2
+  :maxdepth: 2
 
-    quick_start/quickstart
-    installation
-    user_guide/user_guide
-    reference/reference
-    examples
-    credits
-    changes
-    license
-    references
+  quick_start/quickstart
+  installation
+  user_guide/user_guide
+  reference/reference
+  examples
+  credits
+  changes
+  license
+  references
 
 .. todolist::
 

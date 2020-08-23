@@ -20,6 +20,7 @@ an example its derivative can be evaluated for `r` = 2.0 as follows:
   atsim.potentialfunctions.buck.deriv(2.0, 1000.0, 0.2, 32.0)
 
 
+See :ref:`list-of-potential-forms` for descriptions of these potential forms.
 
 """
 
@@ -31,7 +32,7 @@ class _Potential_Function_Base(object):
   is_potential = True
 
 
-class buck(_Potential_Function_Base):
+class _buck(_Potential_Function_Base):
   """Callable object for evaluating the Buckingham potential"""
 
   def _as_sympy(self):
@@ -73,9 +74,10 @@ class buck(_Potential_Function_Base):
     :return: Second derivative of Buckingham potential at `r`"""
     return A*math.exp(-r/rho)/rho**2 - 42.0*C/r**8
 
-buck = buck()
 
-class bornmayer(_Potential_Function_Base):
+buck = _buck()
+
+class _bornmayer(_Potential_Function_Base):
   """Callable object for evaluating Born-Mayer Potential"""
 
   def _as_sympy(self):
@@ -114,10 +116,10 @@ class bornmayer(_Potential_Function_Base):
     :return: 2nd derivative at `r`"""
     return buck.deriv2(r, A, rho, 0.0)
 
-bornmayer = bornmayer()
+bornmayer = _bornmayer()
 
 
-class coul(_Potential_Function_Base):
+class _coul(_Potential_Function_Base):
   """Callable representing Coulomb potential (including :math:`4\pi \epsilon_0` term)"""
 
   def _as_sympy(self):
@@ -161,9 +163,9 @@ class coul(_Potential_Function_Base):
     :return: 2nd derivative at `r`"""
     return 90.4748118123914*qi*qj/(math.pi*r**3)
 
-coul = coul()
+coul = _coul()
 
-class constant(_Potential_Function_Base):
+class _constant(_Potential_Function_Base):
   """Callable that returns a constant"""
 
   def __call__(self,r, constant):
@@ -195,9 +197,9 @@ class constant(_Potential_Function_Base):
     """
     return 0.0
 
-constant = constant()
+constant = _constant()
 
-class exponential(_Potential_Function_Base):
+class _exponential(_Potential_Function_Base):
   """`exponential` potential type A*r^n"""
   
   def _as_sympy(self):
@@ -238,9 +240,9 @@ class exponential(_Potential_Function_Base):
     :return: 2nd derivative of `exponential` at `r`"""
     return A*n*(n-1)*r**(n-2) 
 
-exponential = exponential()
+exponential = _exponential()
 
-class hbnd(_Potential_Function_Base):
+class _hbnd(_Potential_Function_Base):
   """DL_POLY `hbnd` potential type"""
   
   def _as_sympy(self):
@@ -282,9 +284,9 @@ class hbnd(_Potential_Function_Base):
     :return: 2nd derivative of `hbnd` at `r`"""
     return 2*(78*A/r**2 - 55*B)/r**12
 
-hbnd = hbnd()
+hbnd = _hbnd()
 
-class lj(_Potential_Function_Base):
+class _lj(_Potential_Function_Base):
   """Callable for Lennard-Jones 12-6 potential"""
 
   def _as_sympy(self):
@@ -323,10 +325,10 @@ class lj(_Potential_Function_Base):
     :return: 2nd derivative of potential at `r`"""
     return -168.0*epsilon*sigma**6/r**8 + 624.0*epsilon*sigma**12/r**14
 
-lj = lj()
+lj = _lj()
 
 
-class morse(_Potential_Function_Base):
+class _morse(_Potential_Function_Base):
   """Callable representing the Morse potential"""
 
   def _as_sympy(self):
@@ -370,10 +372,10 @@ class morse(_Potential_Function_Base):
     :return: Derivative of Morse potential at `r`"""
     return D*gamma**2*(4.0*math.exp(-2.0*gamma*(r - r_star)) - 2.0*math.exp(-gamma*(r - r_star)))
 
-morse = morse()
+morse = _morse()
 
 
-class polynomial(_Potential_Function_Base):
+class _polynomial(_Potential_Function_Base):
   """Callable for polynomials"""
 
   def _split_args(self, args):
@@ -417,10 +419,10 @@ class polynomial(_Potential_Function_Base):
     v = [i * float(i-1) * r**float(i-2) * c for (i,c) in enumerate(coefs)][2:]
     return sum([0]+v)
 
-polynomial = polynomial()
+polynomial = _polynomial()
 
 
-class sqrt(_Potential_Function_Base):
+class _sqrt(_Potential_Function_Base):
   """Callable representing a square root potential form"""
 
   def _as_sympy(self):
@@ -464,9 +466,9 @@ class sqrt(_Potential_Function_Base):
     :return: 2nd derivative at `r`. """
     return -G/(4*r**(3/2))
     
-sqrt = sqrt()
+sqrt = _sqrt()
 
-class tang_toennies(_Potential_Function_Base):
+class _tang_toennies(_Potential_Function_Base):
   """Callable for Tang-Toennies potential form"""
 
   def _f2n(self, x, n):
@@ -599,9 +601,9 @@ class tang_toennies(_Potential_Function_Base):
      6.4024338364297603832*C_8*b**4*r**6 + 13.552671944954518324*C_8*b**3*r**5 + 21.516221979809795783*C_8*b**2*r**4 +\
      22.772769343430688593*C_8*b*r**3 - 12.051349536543520813*C_8*r**2*math.exp(1.8896447467876*b*r) + 12.051349536543520813*C_8*r**2)*math.exp(-1.8896447467876*b*r)/r**12
 
-tang_toennies = tang_toennies()
+tang_toennies = _tang_toennies()
 
-class zbl(_Potential_Function_Base):
+class _zbl(_Potential_Function_Base):
   """Callable representing ZBL potential."""
 
   Ck1=0.1818
@@ -686,10 +688,10 @@ class zbl(_Potential_Function_Base):
         28.79884*self.Ck4*math.exp(-2.13503407300877*self.Bk4*r*(z1**0.23 + z2**0.23)))/r**2)/r
     return v
 
-zbl = zbl()
+zbl = _zbl()
 
 
-class zero(_Potential_Function_Base):
+class _zero(_Potential_Function_Base):
   """Callable that returns 0.0 for any given input"""
 
   def __call__(self, r):
@@ -708,9 +710,9 @@ class zero(_Potential_Function_Base):
     """Second derivative function - always returns 0.0"""
     return 0.0
 
-zero = zero()
+zero = _zero()
 
-class exp_spline(_Potential_Function_Base):
+class _exp_spline(_Potential_Function_Base):
   """Callable representing exponential spline"""
 
   def _as_sympy(self):
@@ -771,5 +773,5 @@ class exp_spline(_Potential_Function_Base):
       + (B1 + 2*B2*r + 3*B3*r**2 + 4*B4*r**3 + 5*B5*r**4)**2) \
       * math.exp(B0 + B1*r + B2*r**2 + B3*r**3 + B4*r**4 + B5*r**5)
 
-exp_spline = exp_spline()
+exp_spline = _exp_spline()
 

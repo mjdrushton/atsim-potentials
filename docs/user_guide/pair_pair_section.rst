@@ -48,7 +48,7 @@ It is also possible to define your own potential-forms in the ``[Potential-Form]
 Potential modifiers
 +++++++++++++++++++
 
-If you followed the :ref:`quick_start` guide, you will have already seen a potential modifier. The ``[Pair]`` section from the :download:`basak.aspot <../quick_start/basak.aspot>` used in the :ref:`quick_start` is repeated here:
+If you followed the :ref:`quick-start` guide, you will have already seen a potential modifier. The ``[Pair]`` section from the :download:`basak.aspot <../quick_start/basak.aspot>` used in the :ref:`quick-start` is repeated here:
 
 .. literalinclude:: ../quick_start/basak.aspot
 	:lines: 6-10

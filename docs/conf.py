@@ -275,4 +275,5 @@ numfig = True
 
 autoapi_dirs = ['../atsim']
 autoapi_options = ['members', 'undoc-members', 'show-inheritance', 'show-module-summary', 'special-members', 'imported-members']
-autoapi_root = 'reference/python_api/'
+autoapi_root = 'reference/python_api'
+autoapi_keep_files = False

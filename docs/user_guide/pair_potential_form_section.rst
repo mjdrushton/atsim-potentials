@@ -59,7 +59,7 @@ We can write this as an entry in ``[Potential-Form]`` as::
 	To understand the functions, operators and syntax, supported for formulae please refer to the exprtk_ documentation. 
 
 
-It is also possible to call the standard ``as.*`` :ref:`potential-forms <list-of-potential-forms>` in ``[Potential-Form]`` expressions. This is shown here to define a ``basak_morse`` function, where :ref:`as.morse <potform-morse>` will be used to provide a function that can be used directly with the parameters from the Basak paper (:numref:`table_basak_params`\ ). For reference, :ref:`as.morse <potform-morse> has the ``potable signature``\ :
+It is also possible to call the standard ``as.*`` :ref:`potential-forms <list-of-potential-forms>` in ``[Potential-Form]`` expressions. This is shown here to define a ``basak_morse`` function, where :ref:`as.morse <potform-morse>` will be used to provide a function that can be used directly with the parameters from the Basak paper (:numref:`table_basak_params`\ ). For reference, :ref:`as.morse <potform-morse>` has the ``potable signature``\ :
 
 	| ``as.morse`` :math:`\gamma` :math:`r_*` :math:`D`
 

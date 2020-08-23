@@ -168,7 +168,7 @@ def writeFuncFL(
     out = sys.stdout,
     title = ""):
   """Creates a DYNAMO ``funcfl`` formatted file suitable for use with lammps `pair_style eam <http://lammps.sandia.gov/doc/pair_eam.html>`_
-  potential form. For the `pair_style eam/alloy <http://lammps.sandia.gov/doc/pair_eam.html>`_ see :func:`.writeSetFL`.
+  potential form. For the `pair_style eam/alloy <http://lammps.sandia.gov/doc/pair_eam.html>`_ see :func:`~atsim.potentials.writeSetFL`.
 
   .. seealso ::
 
@@ -187,10 +187,10 @@ def writeFuncFL(
   :param dr:   Step size between r values in effective charge and density functions
   :type dr: float
 
-  :param eampots: List containing a single :class:`.EAMPotential` instance for species to be tabulated.
+  :param eampots: List containing a single :class:`~atsim.potentials.EAMPotential` instance for species to be tabulated.
   :type eampots: list
 
-  :param pairpots: List containing a single :class:`.PairPotential` instance for the X-X interaction (where X is the species represented by EAMPotential in ``eampots`` list)
+  :param pairpots: List containing a single :class:`~atsim.potentials.PairPotential` instance for the X-X interaction (where X is the species represented by EAMPotential in ``eampots`` list)
   :type pairpots: list
 
   :param out:  Python file object to which eam table file will be written
@@ -303,9 +303,9 @@ def writeSetFLFinnisSinclair(
   """Creates Finnis-Sinclar EAM potential in the DYNAMO ``setfl`` format. The format should be used with the
   ``LAMMPS`` `eam/fs pair_style <http://lammps.sandia.gov/doc/pair_eam.html>`_.
 
-  The :class:`.EAMPotential` instances within the ``eampots`` list are expected to provide individual density functions
-  for each species pair in the species being tabulated. See :meth:`.EAMPotential.__init__` for how these are specified
-  to the :class:`.EAMPotential` constructors.
+  The :class:`~atsim.potentials.EAMPotential` instances within the ``eampots`` list are expected to provide individual density functions
+  for each species pair in the species being tabulated. See :meth:`atsim.potentials.EAMPotential.__init__` for how these are specified
+  to the :class:`atsim.potentials.EAMPotential` constructor.
 
   .. seealso ::
 

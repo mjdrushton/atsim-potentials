@@ -8,7 +8,7 @@ This section of the input  serves a similar purpose to the :ref:`[Potential-Form
 
 It is sometimes to convenient to use pre-tabulated values for very complex expressions however you should always use caution. It is recommended that when using ``[Table-Form]`` that you plot the resulting functions and derivatives. This is because interpolation can sometimes introduce spurious effects, so it's worth checking that nothing odd has happened.
 
-.. _potable-potential-form-formula-syntax:
+.. _potable-potential-form-table-form-syntax:
 
 Defining a Table Form
 +++++++++++++++++++++

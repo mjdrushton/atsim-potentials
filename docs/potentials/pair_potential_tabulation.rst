@@ -159,11 +159,7 @@ can be rewritten as:
 
 
 
-See API reference for list of available potential forms: :ref:`atsim_potentials_potentialforms`
-
-.. todo::
-
-    Module documentation doesn't show list of potentialforms as module is populated at runtime.
+See API reference for list of available potential forms: :mod:`atsim.potentials.potentialforms`
 
 
 .. _combining_potential_forms:
@@ -191,21 +187,21 @@ The combination functions listed below will return a wrapped function that corre
 Spline Interpolation
 --------------------
 
-The :class:`.SplinePotential` class can be used to smoothly interpolate between two different potential forms within the same potential curve: one potential function acts below a given cutoff (referred to as the detachment point) and the other potential function takes over at larger separations (acting above a second cutoff called the attachment point). An exponential interpolating spline acts between the detachment and attachment points to provide a smooth transition between the two potential curves. 
+The :class:`~atsim.potentials.spline.SplinePotential` class can be used to smoothly interpolate between two different potential forms within the same potential curve: one potential function acts below a given cutoff (referred to as the detachment point) and the other potential function takes over at larger separations (acting above a second cutoff called the attachment point). An exponential interpolating spline acts between the detachment and attachment points to provide a smooth transition between the two potential curves. 
 
 .. seealso::
 
     * :ref:`Splining with potable <aspot-splining>` - description of how to do splining with potable rather than using the Python API.
 
-The :class:`.SplinePotential` class aims to automatically determine spline coefficients such that the resultant, interpolated,  potential curve is continuous in its first and second derivatives. The analytical form of the interpolating spline is (where :math:`r_{ij}` is interatomic separation and :math:`B_{0..5}` are the spline coefficients calculated by the :class:`.SplinePotential` class):
+The :class:`~atsim.potentials.spline.SplinePotential` class aims to automatically determine spline coefficients such that the resultant, interpolated,  potential curve is continuous in its first and second derivatives. The analytical form of the interpolating spline is (where :math:`r_{ij}` is interatomic separation and :math:`B_{0..5}` are the spline coefficients calculated by the :class:`~atsim.potentials.spline.SplinePotential` class):
 
 .. math::
     
     U(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \right)
 
-The :class:`.SplinePotential` has a number of applications, for example:
+The :class:`~atsim.potentials.spline.SplinePotential` has a number of applications, for example:
 
-    *   certain potential forms can become attractive in an unphysical manner at small separations (an example is the so-called Buckingham catastrophe); :class:`.SplinePotential` can be used to combine an appropriate repulsive potential at short separations whilst still using the other form for equilibrium and larger separations.
+    *   certain potential forms can become attractive in an unphysical manner at small separations (an example is the so-called Buckingham catastrophe); :class:`~atsim.potentials.SplinePotential` can be used to combine an appropriate repulsive potential at short separations whilst still using the other form for equilibrium and larger separations.
     *   similarly different potential forms may be better able to express certain separations than others. For instance the :func:`~atsim.potentials.potentialforms.zbl` potential is often used to describe the high energy interactions found in radiation damage cascades but must be combined with another potential to describe equilibrium properties.
 
 
@@ -244,7 +240,7 @@ The following plot shows the combined coulomb and short-range contributions for 
     Plot of BKS Si-O potential showing the short-range (bks_buck) component, electrostatic (bks_coul) and the effective Si-O interaction (bks_buck + bks_coul). This shows that this potential turns over at small separations making it unsuitable for use where high energies may be experienced such as high-temperature or radiation damage cascade simulations.
 
 
-The first step to using :class:`.SplinePotential` is to choose appropriate detachment and attachment points. This is perhaps best done plotting the two potential functions to be splined. The :mod:`.potentials` module contains the convenience functions :func:`atsim.potentials.plot` and :func:`atsim.potentials.plotToFile` to make this task easier. The following piece of code first defines the ZBL and Buckingham potentials before plotting them into the files ``zbl.dat`` and ``bks_buck.dat``. These files each contain two, space delimited, columns giving :math:`r_{ij}` and energy, and may be easily plotted in Excel or GNU Plot. 
+The first step to using :class:`~atsim.potentials.spline.SplinePotential` is to choose appropriate detachment and attachment points. This is perhaps best done plotting the two potential functions to be splined. The :mod:`.potentials` module contains the convenience functions :func:`atsim.potentials.plot` and :func:`atsim.potentials.plotToFile` to make this task easier. The following piece of code first defines the ZBL and Buckingham potentials before plotting them into the files ``zbl.dat`` and ``bks_buck.dat``. These files each contain two, space delimited, columns giving :math:`r_{ij}` and energy, and may be easily plotted in Excel or GNU Plot. 
 
 .. code-block:: python
     

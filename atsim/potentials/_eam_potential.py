@@ -79,8 +79,8 @@ class EAMPotential(object):
     :param mass: Atomic mass
     :param embeddingFunction: Python callable that retuns embedding values as function of density
     :param electronDensityFunction: Python callable that returns density as function of separation in angstroms.
-       For write functions that accept multiple density functions (e.g. :func:`.writeSetFLFinnisSinclair` and
-       :func:`.writeTABEAMFinnisSinclair`) a dictionary mapping species to a function object is expected for this
+       For write functions that accept multiple density functions (e.g. :func:`~atsim.potentials.writeSetFLFinnisSinclair` and
+       :func:`~atsim.potentials.writeTABEAMFinnisSinclair`) a dictionary mapping species to a function object is expected for this
        parameter. See above.
     :param latticeConstant: Lattice constant for this species
     :param latticeType: Lattice type e.g. 'fcc' for this"""
@@ -100,7 +100,7 @@ class EAMPotential(object):
     #: Python callable that returns density as function of separation in angstroms.
     #  For write functions that accept multiple density functions (e.g. writeSetFLFinnisSinclair() )
     #  a dictionary mapping element to a function object is expected for this parameter.
-    #  See :func:`.EAMPotential.__init__` for more.
+    #  See :meth:`atsim.potentials.EAMPotential.__init__` for more.
     self.electronDensityFunction = electronDensityFunction
 
     #: Lattice constant for species (unused by most simulation codes).

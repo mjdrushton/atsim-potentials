@@ -132,9 +132,9 @@ def writeTABEAM(nrho, drho, nr, dr, eampots, pairpots, out = sys.stdout, title =
 def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.stdout, title = ""):
   """Create Exended EAM variant of DL_POLY ``TABEAM`` file.
 
-  The :class:`.EAMPotential` instances within the ``eampots`` list are expected to provide individual density functions
-  for each species pair in the species being tabulated. See :meth:`.EAMPotential.__init__` for how these are specified
-  to the :class:`.EAMPotential` constructors.
+  The :class:`~atsim.potentials.EAMPotential` instances within the ``eampots`` list are expected to provide individual density functions
+  for each species pair in the species being tabulated. See :meth:`~atsim.potentials.EAMPotential.__init__` for how these are specified
+  to the :class:`~atsim.potentials.EAMPotential` constructor.
 
   .. note :: The Extended EAM variant for which this function creates ``TABEAM`` files (i.e. metal potential type = eeam) is only supported in DL_POLY versions >= 4.05.
 
@@ -151,9 +151,9 @@ def writeTABEAMFinnisSinclair(nrho, drho, nr, dr, eampots, pairpots, out = sys.s
   :type nr: int
   :param dr:  Step size between entries in tabulated pair potentials and density functions
   :type dr: float
-  :param eampots: Potentials List of :class:`.EAMPotential` objects
+  :param eampots: Potentials List of :class:`atsim.potentials.EAMPotential` objects
   :type eam: list
-  :param pairpots: Potentials List of :class:`.Potential` objects
+  :param pairpots: Potentials List of :class:`atsim.potentials.Potential` objects
   :type pairpots: list
   :param out:  Python file object to which ``TABEAM`` data should be written
   :type out: file object

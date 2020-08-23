@@ -8,7 +8,7 @@ Credits
 
 		* M.W.D. Cooper, M.J.D. Rushton and R. W. Grimes, "A many-body potential approach to modelling the thermomechanical properties of actinide oxides", *J. Phys. Condens. Matter*, 2014 **26** 105401. `doi:10.1088/0953-8984/26/10/105401 <http://dx.doi.org/10.1088/0953-8984/26/10/105401>`_ 
 		
-	* **Dr. Clare Bishop** for providing an early implementation of the spline interpolation method implemented within :class:`.SplinePotential`.
+	* **Dr. Clare Bishop** for providing an early implementation of the spline interpolation method implemented within :class:`atsim.potentials.spline.SplinePotential`.
 
 .. _Michael Rushton: http://abulafia.mt.ic.ac.uk/groupmembers/michael
 .. _actinide potential model: https://atomsim.org/potentials/actinides  
