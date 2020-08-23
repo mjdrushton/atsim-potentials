@@ -138,7 +138,7 @@ class GULP_PairTabulation(PairTabulation_AbstractBase):
     for r in _r_value_iterator(self):
       energy = pot.energy(r)
       fp.write(row_template.format(sepn = r, energy = energy))
-    fp.write(u"\n")
+    # fp.write(u"\n")
 
 
 class Excel_PairTabulation(PairTabulation_AbstractBase):
