@@ -98,6 +98,11 @@ Add or override values in the configuration file
 Examples:
 ---------
 
-.. todo::
-	
-	Provide examples of potable's usage.
+Various examples of the use of this tool are given throughout the documentation:
+
+  * :ref:`quick-start`\ .
+  * :ref:`Quick Start: Generating Basak Tabulation for DL_POLY <quickstart_basak_generating_tabulation>`\ .
+  * :ref:`Quick Start: Generating Basak Tabulation for LAMMPS <specifying-other-tabulation-targets>`\ .
+  * :ref:`Quick Start: Generating Basak Tabulation for GULP <specifying-other-tabulation-targets-GULP>`\ . This provides an example of the ``--override-item`` option.
+  * :ref:`User Guide: Making and Testing the Tabulation - Sutton Ag Example <user_guide_potable_sutton_ag_making_and_testing>`\ .
+  * :ref:`potable-troubleshooting`\ : provides an example of the ``--override-item`` option.
