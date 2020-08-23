@@ -182,6 +182,7 @@ Finnis-Sinclair style models can be used with the following tabulation targets:
   * ``setfl_fs``
 
 
+.. _many_body_models_potable_finnis_sinclair:
 
 Example
 -------

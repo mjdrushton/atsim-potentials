@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from atsim.potentials import potentialforms
+from atsim.potentials import Potential, plus, potentialforms
 from atsim.potentials.pair_tabulation import DLPoly_PairTabulation
 
 
@@ -26,13 +26,13 @@ def makePotentialObjects():
 
     # Compose the buckingham and morse functions into a single function
     # using the atsim.potentials.plus() function
-    f_OU = atsim.potentials.plus(buck_OU, morse_OU)
+    f_OU = plus(buck_OU, morse_OU)
 
     # Construct list of Potential objects
     potential_objects = [
-        atsim.potentials.Potential('O', 'O', f_OO),
-        atsim.potentials.Potential('U', 'U', f_UU),
-        atsim.potentials.Potential('O', 'U', f_OU)
+        Potential('O', 'O', f_OO),
+        Potential('U', 'U', f_UU),
+        Potential('O', 'U', f_OU)
     ]
     return potential_objects
 

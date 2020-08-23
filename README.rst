@@ -27,19 +27,17 @@ If you have `Pip <http://www.pip-installer.org/>`_ type the following to install
 Install from Source
 -------------------
 
-.. todo::
-
-	Change hg and bitbucket to git and github
 
 
-The source is hosted on `bitbucket`_ and can be cloned using `mercurial`_ as follows:
+
+The source is hosted on `github`_ and can be cloned using `git`_ as follows:
 
 .. code:: sh
 
-	hg clone https://bitbucket.org/mjdr/atsim_potentials  
+	git clone https://github.com/mjdrushton/atsim-potentials.git
 
 
-alternatively a tarball of the source can be downloaded from the bitbucket downloads page `here <https://bitbucket.org/mjdr/atsim_potentials/downloads>`_ 
+alternatively a tarball of the source can be downloaded `here <https://github.com/mjdrushton/atsim-potentials/archive/master.zip>`_ 
 
 From the source directory install ``atsim.potentials`` using the following command:
 
@@ -62,5 +60,5 @@ please see LICENSE and NOTICE file.
 
 .. _LAMMPS: http://lammps.sandia.gov
 .. _DL_POLY: http://www.stfc.ac.uk/cse/25526.aspx
-.. _bitbucket: http://https://bitbucket.org/mjdr/atsim_potentials/
-.. _mercurial: http://mercurial.selenic.com
+.. _bitbucket: https://github.com/mjdrushton/atsim-potentials
+.. _git: https://git-scm.com

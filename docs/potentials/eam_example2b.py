@@ -1,10 +1,9 @@
 #! /usr/bin/env python
 
-from atsim.potentials import writeSetFL
-from atsim.potentials import Potential
-from atsim.potentials import EAMPotential
-
 import math
+
+from atsim.potentials import EAMPotential, Potential
+from atsim.potentials.eam_tabulation import TABEAM_EAMTabulation
 
 
 def makeFunc(a, b, r_e, c):
@@ -16,8 +15,8 @@ def makeFunc(a, b, r_e, c):
 
 
 def makePairPotAA(A, gamma, r_e, kappa,
+                  # Function factory that returns functions parameterised for homogeneous pair interactions
                   B, omega, lamda):
-    # Function factory that returns functions parameterised for homogeneous pair interactions
     f1 = makeFunc(A, gamma, r_e, kappa)
     f2 = makeFunc(B, omega, r_e, lamda)
 
@@ -100,7 +99,7 @@ def makePotentialObjects():
     embed_Al = makeEmbed(rho_e_Al, rho_s_Al, F_ni_Al, F_i_Al, F_e_Al, eta_Al)
 
     # Wrap them in EAMPotential objects
-    eamPotentials = [
+    eam_potentials = [
         EAMPotential("Al", 13, 26.98, embed_Al, dens_Al),
         EAMPotential("Cu", 29, 63.55, embed_Cu, dens_Cu)]
 
@@ -114,12 +113,12 @@ def makePotentialObjects():
     pair_AlCu = makePairPotAB(dens_Cu, pair_CuCu, dens_Al, pair_AlAl)
 
     # Wrap them in Potential objects
-    pairPotentials = [
+    pair_potentials = [
         Potential('Al', 'Al', pair_AlAl),
         Potential('Cu', 'Cu', pair_CuCu),
         Potential('Al', 'Cu', pair_AlCu)]
 
-    return eamPotentials, pairPotentials
+    return eam_potentials, pair_potentials
 
 
 def main():
@@ -127,20 +126,17 @@ def main():
 
     # Perform tabulation
     # Make tabulation
+    cutoff_rho = 100.0
     nrho = 2000
-    drho = 0.05
 
+    cutoff = 6
     nr = 2000
-    dr = 0.003
 
-    with open("Zhou_AlCu.eam.alloy", 'w') as outfile:
-        writeSetFL(
-            nrho, drho,
-            nr, dr,
-            eamPotentials,
-            pairPotentials,
-            out=outfile,
-            comments=['Zhou Al Cu', "", ""])  # <-- Note: title lines given as list of three strings
+    tabulation = TABEAM_EAMTabulation(
+        pairPotentials, eamPotentials, cutoff, nr, cutoff_rho, nrho)
+
+    with open("TABEAM", 'w') as outfile:
+        tabulation.write(outfile)
 
 
 if __name__ == '__main__':

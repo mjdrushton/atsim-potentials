@@ -30,7 +30,7 @@ The following page gives a list of the examples that are distributed across the 
 | LAMMPS `pair_style soft` )                           |                                                                             |
 +------------------------------------------------------+-----------------------------------------------------------------------------+
 | [Table-Form] pair-potential.                         |  :ref:`potable <pair_table_form-example-table-form>`                        |
-| Including pre-tabulated data in a model.             |                                                                             |
+| | Including pre-tabulated data in a model.           |                                                                             |
 +------------------------------------------------------+-----------------------------------------------------------------------------+
 | Instantiating :class:`atsim.potentials.Potential`    |  :ref:`Python API <instantiate_potential_object>`                           |
 | Objects                                              |                                                                             |
@@ -50,3 +50,7 @@ The following page gives a list of the examples that are distributed across the 
 | Tabulate Al-Fe Finnis-Sinclair Potentials Using      |  :ref:`Python API <eam_example_3b>`                                         |
 | :func:`.writeTABEAMFinnisSinclair` for DL_POLY       |                                                                             |
 +------------------------------------------------------+-----------------------------------------------------------------------------+
+| Finnis-Sinclair Tabulation using potable             |  :ref:`potable <many_body_models_potable_finnis_sinclair>`                  |
++------------------------------------------------------+-----------------------------------------------------------------------------+
+
+
