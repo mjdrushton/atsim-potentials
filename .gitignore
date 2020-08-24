@@ -5,3 +5,5 @@ build
 atsim.potentials.egg-info/
 html/
 ignored/
+dist/
+wheelhouse/
