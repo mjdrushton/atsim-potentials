@@ -8,7 +8,8 @@ import os
 import distutils.spawn
 LAMMPS_FOUND = distutils.spawn.find_executable('lammps')
 
-needsLAMMPS = unittest.skipIf(not LAMMPS_FOUND, "LAMMPS not available")
+# needsLAMMPS = unittest.skipIf(not LAMMPS_FOUND, "LAMMPS not available")
+needsLAMMPS = pytest.mark.skpif(not LAMMPS_FOUND, reason="LAMMPS not available")
 
 def _getResourceDirectory():
   """Returns path to resources used by this test module (currently assumed to be sub-directory

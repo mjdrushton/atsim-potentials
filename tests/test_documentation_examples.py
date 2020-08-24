@@ -587,7 +587,7 @@ def test_eam_tabulate_example3_ExampleA(tmpdir):
     exampleModule = _loadModule(test_nameA)
 
     oldpwd = os.getcwd()
-    os.chdir(tmpdir)
+    os.chdir(tmpdir.strpath)
     try:
         exampleModule.main()
     finally:
@@ -600,7 +600,7 @@ def test_eam_tabulate_example3_ExampleB(tmpdir):
     exampleModule = _loadModule(test_nameB)
 
     oldpwd = os.getcwd()
-    os.chdir(tmpdir)
+    os.chdir(tmpdir.strpath)
     try:
         exampleModule.main()
     finally:
@@ -615,7 +615,7 @@ def test_eam_tabulate_example3_ExampleB(tmpdir):
     ("eam_example3a.py", "eam_tabulate_example3b.py"),
     ("eam_tabulate_example3a.py", "eam_example3b.py")
 ])
-def test_eam_tabulate_example3__cross_check_LAMMPS_DLPOLY(tmpdir, test_name_A, test_name_B):
+def test_eam_tabulate_example3_cross_check_LAMMPS_DLPOLY(test_name_A, test_name_B, tmpdir):
     test_name_A = os.path.join(_getDocsDirectory(), test_name_A)
     test_name_B = os.path.join(_getDocsDirectory(), test_name_B)
 
@@ -626,7 +626,7 @@ def test_eam_tabulate_example3__cross_check_LAMMPS_DLPOLY(tmpdir, test_name_A, t
 
 def _crossCheckLAMMPS_DLPOLY(tmpdir, exampleModuleA, exampleModuleB):
     """Check that models tabulated for LAMMPS and DL_POLY give the same result"""
-
+    tmpdir = tmpdir.strpath
     oldpwd = os.getcwd()
     os.chdir(tmpdir)
     try:

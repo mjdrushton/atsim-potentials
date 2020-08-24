@@ -3,11 +3,13 @@
 from builtins import next
 import unittest
 import os
+import pytest
 
 import distutils.spawn
 DLPOLY_FOUND = distutils.spawn.find_executable('DLPOLY.Z')
 
-needsDLPOLY = unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
+# needsDLPOLY = unittest.skipIf(not DLPOLY_FOUND, "DLPOLY not available")
+needsDLPOLY = pytest.mark.skipif(not DLPOLY_FOUND, reason="DLPOLY not available")
 
 
 def runDLPoly(cwd = None):
