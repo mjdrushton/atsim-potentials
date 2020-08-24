@@ -17,14 +17,15 @@ If you have `Pip <http://www.pip-installer.org/>`_ type the following to install
 Install from Source
 ===================
 
-The source is hosted on `bitbucket`_ and can be cloned using `mercurial`_ as follows:
+The source is hosted on `github`_ and can be cloned using `git`_ as follows:
 
 .. code:: sh
 
-	hg clone https://bitbucket.org/mjdr/atsim_potentials  
+	git clone https://github.com/mjdrushton/atsim-potentials.git
 
 
-alternatively a tarball of the source can be downloaded from the bitbucket downloads page `here <https://bitbucket.org/mjdr/atsim_potentials/downloads>`_ 
+
+alternatively a tarball of the source can be downloaded `here <https://github.com/mjdrushton/atsim-potentials/archive/master.zip>`_ 
 
 From the source directory install ``atsim.potentials`` using the following command:
 
@@ -40,13 +41,13 @@ The documentation (which you are currently reading) can be built from source usi
 
 .. code:: sh
 
-	python setup.py build_sphinx
+	sphinx-build docs html
 
 
-This will place documents in ``build/sphinx/html`` within the source tree. 
+This will place documents in ``html`` within the project directory. 
 
 Alternatively this documentation is hosted at http://atsimpotentials.readthedocs.org
 
 
-.. _bitbucket: http://https://bitbucket.org/mjdr/atsim_potentials/
-.. _mercurial: http://mercurial.selenic.com
+.. _github: https://github.com/mjdrushton/atsim-potentials
+.. _git: https://git-scm.com
