@@ -13,8 +13,8 @@ setup(name="atsim.potentials",
     "cexprtk>=0.3.4",
     "wrapt==1.11.2",
     "scipy",
-    'openpyxl>=3.0.0;python_version>"3.0"',
-    'openpyxl==2.6.4;python_version<"3.0"'
+    'openpyxl>=3.0.0;python_version>"3.5"',
+    'openpyxl==2.6.4;python_version<="3.5"',
     ],
 
   version = '0.3.0',
