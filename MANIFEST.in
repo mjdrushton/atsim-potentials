@@ -1,2 +1,3 @@
 exclude .hgignore
 exclude .hgtags
+include LICENSE
