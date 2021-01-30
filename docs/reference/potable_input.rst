@@ -229,8 +229,8 @@ target
 :Item: ``target``
 :Format: str
 :Valid Options: ``DL_POLY|DLPOLY``, 
-    ``DLPOLY_EAM_fs``,
-    ``DLPOLY_EAM``, 
+    ``DL_POLY_EAM_fs``,
+    ``DL_POLY_EAM``, 
     ``excel``,
     ``excel_eam``,
     ``excel_eam_fs``,
