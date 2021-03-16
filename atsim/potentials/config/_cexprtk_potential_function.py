@@ -26,7 +26,12 @@ class _Cexptrk_Potential_Function(object):
   def register_function(self, func):
     """Register `func` with this object's symbol_table"""
     label = func._potential_form_tuple.signature.label
-    self._local_symbol_table.functions[label] = func
+    try:
+      self._local_symbol_table.functions[label] = func
+    except cexprtk._exceptions.NameShadowException as e:
+      msg = "Name clash for potential-form '{}': {}".format(label, str(e))
+      raise Potential_Form_Exception(msg)
+      
 
   def __call__(self, *args):
     parameter_names = self._potential_form_tuple.signature.parameter_names
