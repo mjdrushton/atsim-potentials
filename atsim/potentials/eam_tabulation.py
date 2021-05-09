@@ -1,7 +1,7 @@
 
 from .pair_tabulation import PairTabulation_AbstractBase, Excel_PairTabulation, _r_value_iterator
 
-from ._lammpsWriteEAM import writeSetFL, writeSetFLFinnisSinclair
+from ._lammpsWriteEAM import writeSetFL, writeSetFLFinnisSinclair, _writeSetFLPairPots
 from ._dlpoly_writeTABEAM import writeTABEAM, writeTABEAMFinnisSinclair
 
 def _rho_value_iterator(tabulation):
@@ -251,4 +251,44 @@ class Excel_FinnisSinclair_EAMTabulation(Excel_EAMTabulation):
 
     column_heads = sorted(pot_dict.keys())
     self._inner_tabulation._populate_worksheet(ws, "r", _r_value_iterator(self), column_heads, pot_dict )
-  
+
+
+class ADP_EAMTabulation(SetFL_EAMTabulation):
+  """Class for tabulating setfl formatted embedded atom potentials with the ADP, angular dependent extension,
+  suitable for use with LAMMPS' pair_style adp"""
+
+  def __init__(self, potentials, eam_potentials, dipole_potentials, quadrupole_potentials, cutoff, nr, cutoff_rho, nrho):
+    """Instantiate class for tabulation of setfl formatted embedded atom potential tables.
+
+    :params potentials: List of atsim.potentials.Potential objects.
+    :params eam_potentials: List of `atsim.potentials.EAMPotential` instances.
+    :params dipole_potentials: List atsim.potentials.Potential objects giving ADP dipole functions.
+    :params quadrupole_potentials: List atsim.potentials.Potential objects giving ADP quadrupole functions.
+    :params cutoff: Maximum separation to be tabulated.
+    :params nr: Number of points to be used in tabulation
+    :params cutoff_rho: Density cutoff.
+    :params nrho: Number of points to be used when discretising density range during EAM tabulation"""
+    super(SetFL_EAMTabulation, self).__init__(potentials, eam_potentials, cutoff, nr, cutoff_rho, nrho, "eam_adp")
+    self.dipole_potentials = dipole_potentials
+    self.quadrupole_potentials = quadrupole_potentials
+
+  def write(self, fp):
+    """Write the tabulation to the file object `fp`.
+
+    :param fp: File object into which data should be written."""
+    writeSetFL(
+      self.nrho, self.drho, 
+      self.nr, self.dr,
+      self.eam_potentials,
+      self.potentials,
+      out = fp)
+
+    self._write_dipole(fp)
+    self._write_quadrupole(fp)
+
+
+  def _write_dipole(self, fp):
+    _writeSetFLPairPots(self.nr, self.dr, self.eam_potentials, self.dipole_potentials, fp, scale_r=False)
+
+  def _write_quadrupole(self, fp):
+    _writeSetFLPairPots(self.nr, self.dr, self.eam_potentials, self.quadrupole_potentials, fp, scale_r=False)

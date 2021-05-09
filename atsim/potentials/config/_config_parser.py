@@ -562,13 +562,22 @@ class ConfigParser(object):
       params.append(pair_tuple)
     return params
 
+  def parse_pair_like(self, section_name):
+    """Parse a section as if it contains pair potentials.
+    
+    :param section_name: Name of section that should be parsed in the same way as the [Pair] section.
+
+    :returns: List of tuples of (SpeciesPair, potential_form_label, params)
+      Where params = [p1, p2, ..., pn] and p1 etc are the potential parameters"""
+    return self._parse_params_section(section_name, self._parse_pair_line)
+
   @property
   def pair(self):
     """Returns the contents of the config file's [Pair] section.
 
     :returns: List of tuples of (SpeciesPair, potential_form_label, params)
       Where params = [p1, p2, ..., pn] and p1 etc are the potential parameters"""
-    return self._parse_params_section("Pair", self._parse_pair_line)
+    return self.parse_pair_like("Pair")
 
   @property
   def potential_form(self):

@@ -9,12 +9,12 @@ except ImportError:
   Mapping = collections.Mapping
 
 from ..pair_tabulation import DLPoly_PairTabulation, LAMMPS_PairTabulation, GULP_PairTabulation, Excel_PairTabulation
-from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation, Excel_EAMTabulation, Excel_FinnisSinclair_EAMTabulation
+from ..eam_tabulation  import SetFL_EAMTabulation, SetFL_FS_EAMTabulation, TABEAM_EAMTabulation, TABEAM_FinnisSinclair_EAMTabulation, Excel_EAMTabulation, Excel_FinnisSinclair_EAMTabulation, ADP_EAMTabulation
 
 from ._common import ConfigurationException
 from ._potential_form_registry import Potential_Form_Registry
 from ._modifier_registry import Modifier_Registry
-from ._pair_potential_builder import Pair_Potential_Builder
+from ._pair_potential_builder import Pair_Potential_Builder, Pair_Potentials_From_Tuples_Builder
 from ._eam_potential_builder import EAM_Potential_Builder, EAM_Potential_Builder_FS
 from ..referencedata import Reference_Data
 
@@ -215,6 +215,30 @@ class DLPOLY_PairTabulationFactory(PairTabulationFactory):
       raise ConfigurationException("The number of rows in a DL_POLY TABLE file needs to be divisible by 4. Number of rows specified = {} ".format(cutoffs.nr))
     return cutoffs
 
+class ADP_EAMTabulationFactory(EAMTabulationFactory):
+  """EAMTabulationFactory which creates the additional dipole and quadrupole objects 
+  required by the ADP EAM extension"""
+
+  def _extract_pots(self, cp, pfr, mr, section_name):
+    tuples = cp.parse_pair_like(section_name)
+    pot_builder = Pair_Potentials_From_Tuples_Builder(tuples, pfr, mr, section_name )
+    return pot_builder.potentials
+
+  def extract_dipoles(self, cp, potential_form_registry, modifier_registry):
+    return self._extract_pots(cp, potential_form_registry, modifier_registry, "EAM-ADP-Dipole")
+
+  def extract_quadrupoles(self, cp, potential_form_registry, modifier_registry):
+    return self._extract_pots(cp, potential_form_registry, modifier_registry, "EAM-ADP-Quadrupole")
+
+  def extract_tabulation_args(self, cp, r_cutoff, potobjs, potential_form_registry, modifier_registry):
+    (potobjs, eam_potentials, 
+    cutoff_r, nr, 
+    cutoff_rho, nrho) = super().extract_tabulation_args(cp, r_cutoff, potobjs, potential_form_registry, modifier_registry)
+
+    dipoles = self.extract_dipoles(cp, potential_form_registry, modifier_registry)
+    quadrupoles = self.extract_quadrupoles(cp, potential_form_registry, modifier_registry)
+    args = [potobjs, eam_potentials, dipoles, quadrupoles, cutoff_r, nr, cutoff_rho, nrho]
+    return args
 
 """Target name to factory objects"""
 TABULATION_FACTORIES = {
@@ -227,5 +251,6 @@ TABULATION_FACTORIES = {
   "DL_POLY_EAM"  :  EAMTabulationFactory("DL_POLY_EAM", TABEAM_EAMTabulation),               
   "DL_POLY_EAM_fs" :  EAMTabulationFactory("DL_POLY_EAM_fs", TABEAM_FinnisSinclair_EAMTabulation, EAM_Potential_Builder_FS),
   "excel_eam"    :  EAMTabulationFactory("excel_eam", Excel_EAMTabulation),
-  "excel_eam_fs"    :  EAMTabulationFactory("excel_eam_fs", Excel_FinnisSinclair_EAMTabulation, EAM_Potential_Builder_FS)
+  "excel_eam_fs"    :  EAMTabulationFactory("excel_eam_fs", Excel_FinnisSinclair_EAMTabulation, EAM_Potential_Builder_FS),
+  "eam_adp" : ADP_EAMTabulationFactory("eam_adp", ADP_EAMTabulation)
 }

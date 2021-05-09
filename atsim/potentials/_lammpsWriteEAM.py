@@ -104,7 +104,7 @@ def _writeSetFLDensityFunctionFinnisSinclair(eampot, eampots, nr, dr, out):
   #Dump into out
   out.write(workout.getvalue())
 
-def _writeSetFLPairPots(nr, dr, eampots, pairpots, out):
+def _writeSetFLPairPots(nr, dr, eampots, pairpots, out, scale_r = True):
   workout = StringIO()
 
   def pairkey(a,b):
@@ -129,7 +129,9 @@ def _writeSetFLPairPots(nr, dr, eampots, pairpots, out):
 
       for k in range(nr):
         r = float(k) * dr
-        val = r * pp.energy(r)
+        val = pp.energy(r)
+        if scale_r:
+          val *= r
         print(u"% 20.16e" % val, file=workout)
   out.write(workout.getvalue())
 
