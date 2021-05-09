@@ -53,7 +53,7 @@ def test_adp_tabulation(tmpdir):
 
 
 def test_throw_configuration_exception():
-    cfg = """[Tabulation]
+    cfg = u"""[Tabulation]
 target : eam_adp
 drho : 2.2770502180000001e-03
 nrho : 10000
@@ -80,7 +80,7 @@ Cu-Cu : as.zero
     with raises(ConfigurationException):
         configuration.read(io.StringIO(cfg))
 
-    cfg = """[Tabulation]
+    cfg = u"""[Tabulation]
 target : eam_adp
 drho : 2.2770502180000001e-03
 nrho : 10000
@@ -111,7 +111,7 @@ Cu-Cu : as.zero
     with raises(ConfigurationException):
         configuration.read(io.StringIO(cfg))
 
-    cfg = """[Tabulation]
+    cfg = u"""[Tabulation]
 target : eam_adp
 drho : 2.2770502180000001e-03
 nrho : 10000
@@ -161,8 +161,8 @@ def test_adp_in_lammps(tmpdir):
         potentials.write("pair_style adp\n")
         potentials.write("pair_coeff * * AlCu.adp Al Cu\n")
 
-    runLAMMPS(cwd=expect_dir)
-    expect_energy = extractLAMMPSEnergy(cwd=expect_dir)
+    runLAMMPS(cwd=expect_dir.strpath)
+    expect_energy = extractLAMMPSEnergy(cwd=expect_dir.strpath)
 
     actual_dir = tmpdir.join("actual")
     actual_dir.ensure(dir=True)
@@ -184,8 +184,8 @@ def test_adp_in_lammps(tmpdir):
     with actual_dir.join("AlCu.adp").open("w") as outfile:
         tabulation.write(outfile)
 
-    runLAMMPS(cwd=actual_dir)
-    actual_energy = extractLAMMPSEnergy(cwd=actual_dir)
+    runLAMMPS(cwd=actual_dir.strpath)
+    actual_energy = extractLAMMPSEnergy(cwd=actual_dir.strpath)
 
     assert expect_energy == approx(actual_energy)
 

@@ -18,7 +18,7 @@ setup(name="atsim.potentials",
     "wrapt==1.11.2",
     ],
 
-  version = '0.3.0',
+  version = '0.4.0dev',
 
   entry_points = {
         'console_scripts' : [
@@ -47,9 +47,9 @@ setup(name="atsim.potentials",
     "atomic scale"],
   classifiers = [
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Topic :: Scientific/Engineering"])

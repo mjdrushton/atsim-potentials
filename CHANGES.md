@@ -1,6 +1,12 @@
 #Change Log
 
-##0.3.0
+##0.4.0
+
+#### New Features
+
+* Added support for angular dependent potential (ADP) models (LAMMPS `pair_style adp`).
+
+##0.3.0 (2020-8-24)
 ### New Features
 
 * Introduced the new potable tool to allow tabulation without needing to write a python script.
