@@ -377,4 +377,35 @@ gives the following output::
 
   ENERGY:209.13708498984715334
 
-Referring back to :numref:`table_eam_density_calculation_finnis_sinclair` and remmbering that there are four **B** atoms in the system the value expected from the hand calculation was 52.284 × 4 = 209.136. This very closely matches the value obtained from LAMMPS.
+Referring back to :numref:`table_eam_density_calculation_finnis_sinclair` and remembering that there are four **B** atoms in the system the value expected from the hand calculation was 52.284 × 4 = 209.136. This very closely matches the value obtained from LAMMPS.
+
+
+.. _adp-eam-models:
+
+ADP Style EAM Models
+++++++++++++++++++++
+
+The ``potable`` tool allows EAM models using the angular dependent potential (ADP) extension to be tabulated.
+
+.. math::
+  :label: eq_eam_adp
+
+  E_i            & = F_\alpha \left( \sum_{j\neq i} \rho_\beta (r_{ij}) \right) + \frac{1}{2} \sum_{j\neq i}\phi_{\alpha\beta}(r_{ij})+ \frac{1}{2} \sum_s (\mu_i^s)^2 + \frac{1}{2} \sum_{s,t} (\lambda_i^{st})^2 - \frac{1}{6} \nu_i^2 \\
+  \mu_i^s        & = \sum_{j\neq i}u_{\alpha\beta}(r_{ij})r_{ij}^s\\
+  \lambda_i^{st} & = \sum_{j\neq i}w_{\alpha\beta}(r_{ij})r_{ij}^sr_{ij}^t\\
+  \nu_i          & = \sum_s\lambda_i^{ss}
+
+
+ADP extends the standard EAM :eq:`eq_standard_eam` with additional dipole (:math:`\mu_i^s`) and quadrupole terms (:math:`\lambda_i^{st}`). The dipoles and quadrupoles are defined via :math:`u_{\alpha\beta}(r_{ij})` and :math:`w_{\alpha\beta}(r_{ij})` functions respectively.
+
+As the :math:`u` and :math:`w` functions are specified for pairs of species they are defined in a ``potable`` file in the same way as pair potentials (see :ref:`[Pair] section <potable-pair-section>`). The :math:`u_{\alpha\beta}(r_{ij})` functions are given in the section named ``[EAM-ADP-Dipole]`` and the :math:`w_{\alpha\beta}(r_{ij})` functions appear in ``[EAM-ADP-Quadrupole]``. Other than these new sections ADP models are defined in the same way as the standard EAM (see :ref:`potable-many-body-models`). Consequently the ``potable`` file for an ADP model minimally contains the sections:
+
+* :ref:`ref-potable-input-tabulation`
+  
+  - For ADP the ``target`` value should be set as ``eam_adp``.
+
+* :ref:`ref-potable-eam-density`
+* :ref:`ref-potable-eam-embed`
+* :ref:`ref-potable-input-pair`
+* :ref:`ref-potable-eam-adp-dipole`
+* :ref:`ref-potable-eam-adp-quadrupole`

@@ -5,6 +5,39 @@
 ``potable`` input format
 ************************
 
+.. _ref-potable-eam-adp-dipole:
+
+[EAM-ADP-Dipole]
+================
+
+Section defining the dipole functions for angular dependent (ADP) EAM models. See :ref:`adp-eam-models`.
+
+Potential forms are defined between pairs of species in the same way as in the :ref:`ref-potable-input-pair` section::
+
+    SPECIES_A-SPECIES_B : POTENTIAL_FORM PARM_1 PARAM_2 ... PARAM_N
+
+Where:
+
+    * `SPECIES_A-SPECIESB` gives the pair of species for which the dipole function is defined. e.g. `Al-Cu` would define a function for aluminium and copper.
+    * `POTENTIAL_FORM PARAM_1 PARAM_2 ... PARAM_N` defines the potential form in the same way as in the :ref:`ref-potable-input-pair` section.
+
+
+.. _ref-potable-eam-adp-quadrupole:
+
+[EAM-ADP-Quadrupole]
+====================
+
+Section defining the quadrupole functions for angular dependent (ADP) EAM models. See :ref:`adp-eam-models`.
+
+Potential forms are defined between pairs of species in the same way as in the :ref:`ref-potable-input-pair` section::
+
+    SPECIES_A-SPECIES_B : POTENTIAL_FORM PARM_1 PARAM_2 ... PARAM_N
+
+Where:
+
+    * `SPECIES_A-SPECIESB` gives the pair of species for which the dipole function is defined. e.g. `Al-Cu` would define a function for aluminium and copper.
+    * `POTENTIAL_FORM PARAM_1 PARAM_2 ... PARAM_N` defines the potential form in the same way as in the :ref:`ref-potable-input-pair` section.
+
 
 .. _ref-potable-eam-density:
 
@@ -228,9 +261,10 @@ target
 
 :Item: ``target``
 :Format: str
-:Valid Options: ``DL_POLY|DLPOLY``, 
+:Valid Options: ``DL_POLY|DLPOLY``,
     ``DL_POLY_EAM_fs``,
     ``DL_POLY_EAM``, 
+    ``eam_adp``,
     ``excel``,
     ``excel_eam``,
     ``excel_eam_fs``,

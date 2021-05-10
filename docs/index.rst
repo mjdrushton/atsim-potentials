@@ -17,7 +17,7 @@ Features
     
     + DYNAMO - as used by `LAMMPS`_ and several other codes:
    
-      - Support for `LAMMPS`_ ``eam``, ``eam/fs``, ``eam/alloy`` pair-styles.
+      - Support for `LAMMPS`_ ``eam``, ``eam/fs``, ``eam/alloy``, ``adp`` pair-styles.
 
     + `DL_POLY`_\ : write ``TABEAM`` formatted files.
 

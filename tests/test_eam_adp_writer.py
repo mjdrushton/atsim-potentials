@@ -188,6 +188,3 @@ def test_adp_in_lammps(tmpdir):
     actual_energy = extractLAMMPSEnergy(cwd=actual_dir.strpath)
 
     assert expect_energy == approx(actual_energy)
-
-
-
