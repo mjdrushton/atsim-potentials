@@ -1,4 +1,4 @@
-from backports import configparser
+import configparser
 import re
 import collections
 
@@ -312,7 +312,7 @@ class _ConfigParserDict(collections.OrderedDict):
 class _RawConfigParser(configparser.RawConfigParser):
 
   def __init__(self):
-    super(_RawConfigParser, self).__init__(dict_type = _ConfigParserDict)
+    super(_RawConfigParser, self).__init__(dict_type = _ConfigParserDict, default_section = "Variables", interpolation = configparser.ExtendedInterpolation())
     self._sections = collections.OrderedDict()
 
   def optionxform(self, option):

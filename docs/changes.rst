@@ -10,8 +10,8 @@ New Features
 ------------
 
 -  Added support for angular dependent potential (ADP) models (LAMMPS
-   ``pair_style adp``).
-
+   ``pair_style adp``). See :ref:`adp-eam-models`\ .
+-  Support for ``[Variables]`` section in ``potable`` files which allows use of string snippets and string interpolation. See :ref:`ref-potable-input-variables`\ .
 
 
 0.3.0 (2020-8-24)

@@ -10,6 +10,8 @@
 [EAM-ADP-Dipole]
 ================
 
+*Added in: 0.4.0*
+
 Section defining the dipole functions for angular dependent (ADP) EAM models. See :ref:`adp-eam-models`.
 
 Potential forms are defined between pairs of species in the same way as in the :ref:`ref-potable-input-pair` section::
@@ -18,14 +20,16 @@ Potential forms are defined between pairs of species in the same way as in the :
 
 Where:
 
-    * `SPECIES_A-SPECIESB` gives the pair of species for which the dipole function is defined. e.g. `Al-Cu` would define a function for aluminium and copper.
-    * `POTENTIAL_FORM PARAM_1 PARAM_2 ... PARAM_N` defines the potential form in the same way as in the :ref:`ref-potable-input-pair` section.
+    * ``SPECIES_A-SPECIESB`` gives the pair of species for which the dipole function is defined. e.g. `Al-Cu` would define a function for aluminium and copper.
+    * ``POTENTIAL_FORM PARAM_1 PARAM_2 ... PARAM_N`` defines the potential form in the same way as in the :ref:`ref-potable-input-pair` section.
 
 
 .. _ref-potable-eam-adp-quadrupole:
 
 [EAM-ADP-Quadrupole]
 ====================
+
+*Added in: 0.4.0*
 
 Section defining the quadrupole functions for angular dependent (ADP) EAM models. See :ref:`adp-eam-models`.
 
@@ -35,8 +39,8 @@ Potential forms are defined between pairs of species in the same way as in the :
 
 Where:
 
-    * `SPECIES_A-SPECIESB` gives the pair of species for which the dipole function is defined. e.g. `Al-Cu` would define a function for aluminium and copper.
-    * `POTENTIAL_FORM PARAM_1 PARAM_2 ... PARAM_N` defines the potential form in the same way as in the :ref:`ref-potable-input-pair` section.
+    * ``SPECIES_A-SPECIESB`` gives the pair of species for which the dipole function is defined. e.g. `Al-Cu` would define a function for aluminium and copper.
+    * ``POTENTIAL_FORM PARAM_1 PARAM_2 ... PARAM_N`` defines the potential form in the same way as in the :ref:`ref-potable-input-pair` section.
 
 
 .. _ref-potable-eam-density:
@@ -360,3 +364,51 @@ y
 :Format: List of space separated float values.
 :Description: Define y values of tabulated data. Must be used with ``x`` option.
 :Example: See documentation for :ref:`ref-potable-input-table-form-x` option.
+
+
+
+.. _ref-potable-input-variables:
+
+[Variables]
+===========
+
+*Added in: 0.4.0*
+
+This section allows values to be specified for use in multiple places in the ``potable`` file. Values are actually string snippets with variable place-holders replaced throughout the file before potential tabulation is performed. Variables are specified like this::
+
+    [Variables]
+    VARIABLE_NAME_1 : VARIABLE_VALUE_1
+    VARIABLE_NAME_2 : VARIABLE_VALUE_2
+    ...
+    VARIABLE_NAME_N : VARIABLE_VALUE_N
+
+These values may then be referenced elsewhere in the file through place-holders with the this form ``${VARIABLE_NAME}``. With the place-holder replaced with the value from the ``[Variables]`` section before tabulation is performed.
+
+This feature makes use of the string interpolation from Python's ``configparser`` module using the `extended interpolation <https://docs.python.org/3/library/configparser.html#configparser.ExtendedInterpolation>`_ syntax. This allows values from other sections in the file to be referenced using this placeholder format: ``${SECTION:NAME}``.
+
+Example
++++++++
+
+::
+
+    [Variables]
+    nsteps : 10000
+    rho : 0.32
+
+    [Tabulation]
+    target : LAMMPS
+    nr : ${nsteps}
+    dr : 0.1
+
+    [Species]
+    Gd.atomic_number : 64
+    O.atomic_number : 8
+
+    [Pair]
+    Gd-O : spline(
+                    as.zbl ${Species:Gd.atomic_number} ${Species:O.atomic_number}
+                    >=0.8
+                        as.buck 1000.0 ${rho} 0.0)
+    O-O : as.buck 500 ${rho} 32.0
+
+

@@ -22,3 +22,4 @@ tests/lammps_resources/Apostol_Mishin_2011_Al-Cu/Apostol_Mishin_2011_ro_Al.plt
 tests/lammps_resources/Apostol_Mishin_2011_Al-Cu/Apostol_Mishin_2011_ro_Cu.plt
 alcu.pdf
 cu.xlsx
+tests/lammps_resources/CuTa_adp.aspot

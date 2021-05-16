@@ -19,7 +19,7 @@ def test_configuration_setfl_synonyms():
   assert config_parser.tabulation.target == u"setfl"
 
   # Now change setfl to lammps_eam_alloy and check that the target still registers as setfl
-  from backports import configparser
+  import configparser
   inifile = configparser.ConfigParser()
   inifile.read(u"{}".format(cfg_file_path.strpath))
 

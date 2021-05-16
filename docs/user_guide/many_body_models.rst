@@ -385,6 +385,8 @@ Referring back to :numref:`table_eam_density_calculation_finnis_sinclair` and re
 ADP Style EAM Models
 ++++++++++++++++++++
 
+*Added in: 0.4.0*
+
 The ``potable`` tool allows EAM models using the angular dependent potential (ADP) extension to be tabulated.
 
 .. math::
