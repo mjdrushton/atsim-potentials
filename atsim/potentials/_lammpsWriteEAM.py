@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import range
-from builtins import object
-from builtins import str as text
 import math
 import os
 
@@ -16,7 +11,7 @@ from ._eam_potential import EAMPotential # noqa
 
 
 def _writeHeader(outfile, nrho, drho, nr, dr, cutoff, title, atomicNumber, mass, latticeConstant, latticeType):
-  print(text(title), file=outfile)
+  print(title, file=outfile)
   print(u"%d %f %f %s" % (atomicNumber, mass, latticeConstant, latticeType), file=outfile)
   print(u"%d %f %d %f %f" % (nrho, drho, nr, dr, cutoff), file=outfile)
 
@@ -35,7 +30,7 @@ def _writeValueBlock(outfile, values):
 
     if i % 5 == 0:
       i = 0
-      outfile.write(text(os.linesep))
+      outfile.write(os.linesep)
       continue
 
 def _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, out):
@@ -46,7 +41,7 @@ def _writeSetFLHeader(nrho, drho, nr, dr, cutoff, eampots, comments, out):
   newcomments.extend(['', '', ''])
   newcomments = newcomments[:3]
 
-  print(text(os.linesep).join(newcomments), file=workout)
+  print(os.linesep.join(newcomments), file=workout)
 
   #Line 4: ntypes
   ntypes = [u"%d" % len(eampots)]

@@ -1,8 +1,4 @@
 """Module containing functions for creating DL_POLY TABEAM files"""
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import range
-
 import sys
 
 from ._potential import Potential

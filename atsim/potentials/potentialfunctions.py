@@ -24,8 +24,6 @@ See :ref:`list-of-potential-forms` for descriptions of these potential forms.
 
 """
 
-from __future__ import division
-
 import math
 
 class _Potential_Function_Base(object):

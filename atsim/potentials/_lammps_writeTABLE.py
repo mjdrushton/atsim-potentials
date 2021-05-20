@@ -1,13 +1,7 @@
-from __future__ import print_function
-from builtins import range
-
 from io import StringIO
 
 import os
 import sys
-
-from builtins import str as text
-
 
 def _writeSinglePotential(pot, minr, maxr, gridPoints, out):
   """Create a lammps tabulated potential for the given potentials.Potential
@@ -24,7 +18,7 @@ def _writeSinglePotential(pot, minr, maxr, gridPoints, out):
   #Write the section header
   sbuild = StringIO()
 
-  print(u"%s-%s" % (text(pot.speciesA), text(pot.speciesB)), file=sbuild)
+  print(u"%s-%s" % (pot.speciesA, pot.speciesB), file=sbuild)
   print(u"N %(gridpoints)d R %(minr).8f %(maxr).8f" % { 'gridpoints' : gridPoints,
                                                                  'minr' : minr,
                                                                  'maxr' : maxr }, file=sbuild)

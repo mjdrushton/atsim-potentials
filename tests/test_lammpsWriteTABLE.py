@@ -1,6 +1,4 @@
 """Module containing tests for the _lammps_writeTABLE module"""
-from builtins import zip
-
 import unittest
 
 from io import StringIO

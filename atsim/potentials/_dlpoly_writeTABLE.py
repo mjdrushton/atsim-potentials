@@ -1,7 +1,4 @@
 """Module for creating DL_POLY TABLE files"""
-from __future__ import division
-from builtins import range
-
 import sys
 
 from io import StringIO

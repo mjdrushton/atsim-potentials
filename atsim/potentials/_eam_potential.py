@@ -1,6 +1,3 @@
-from __future__ import division
-from builtins import object
-
 class EAMPotential(object):
   """Class used to describe a particular species within EAM potential models.
 

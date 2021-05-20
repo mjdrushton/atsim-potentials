@@ -1,5 +1,3 @@
-from builtins import object
-
 from ._util import gradient
 
 class Potential(object):

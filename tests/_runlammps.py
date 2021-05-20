@@ -1,5 +1,3 @@
-# from future import standard_library
-# standard_library.install_aliases()
 import unittest
 import py.path
 import pytest

@@ -1,11 +1,8 @@
 """Tests to make sure tests given in the documentation work"""
-from __future__ import absolute_import, print_function
-
 import os
 import shutil
 import sys
 import unittest
-from builtins import range, str, zip
 
 import atsim.potentials
 import atsim.potentials.config
