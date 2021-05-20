@@ -17,7 +17,7 @@ setup(name="atsim.potentials",
     "wrapt==1.11.2",
     ],
 
-  version = '0.4.0dev',
+  version = '0.4.0',
 
   entry_points = {
         'console_scripts' : [
