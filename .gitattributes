@@ -1,0 +1,6 @@
+tests/lammps_resources/* linguist-detectable=false
+tests/dl_poly_resources/* linguist-detectable=false
+tests/gulp_resources/* linguist-detectable=false
+tests/config/config_resources/* linguist-detectable=false
+docs/* linguist-documentation
+
