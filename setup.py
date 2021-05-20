@@ -13,7 +13,7 @@ setup(name="atsim.potentials",
     "pyparsing>=2.2.0",
     "scipy",
     "setuptools",
-    "wrapt==1.11.2",
+    "wrapt>=1.12.1",
     ],
 
   version = '0.4.0',

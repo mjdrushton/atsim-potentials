@@ -1,4 +1,3 @@
-from __future__ import division
 
 def deriv(r, func, h = 0.1e-5):
   """Evaluates the derivative of a unary callable, `func` at a value of `r`.
