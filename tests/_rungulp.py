@@ -3,7 +3,7 @@ import pytest
 import py.path
 
 import distutils.spawn
-GULP_FOUND = distutils.spawn.find_executable("gulp-5.0")
+GULP_FOUND = distutils.spawn.find_executable("gulp-5.2")
 
 needsGULP = pytest.mark.skipif(not GULP_FOUND, reason = "GULP binary not found")
 
@@ -49,7 +49,7 @@ def gulp_uo2_energy_fixture(tmpdir, charges):
 
 def runGULP(infile, outfile, cwd = None):  
   import subprocess
-  popen = subprocess.Popen("gulp-5.0", cwd = cwd, shell = True, stdin = subprocess.PIPE, stdout = subprocess.PIPE, close_fds=True)
+  popen = subprocess.Popen("gulp-5.2", cwd = cwd, shell = True, stdin = subprocess.PIPE, stdout = subprocess.PIPE, close_fds=True)
   stdout, stderr = popen.communicate(infile.read().encode("utf-8"))
   outfile.write(stdout.decode())
 
