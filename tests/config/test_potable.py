@@ -29,7 +29,7 @@ def test_list_item_labels():
 
   expect.sort()
   
-  with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
+  with (_get_lammps_resource_dir() / "CRG_U_Th.aspot").open() as infile:
     cp = ConfigParser(infile)
     items = _query_actions._list_item_labels(cp)
     items.sort()
@@ -57,14 +57,14 @@ def test_list_items():
     ("Pair:U-O" ,"buck_morse 448.779 0.387758 0.0 0.66080 2.05815 2.38051")]
   expect.sort()
   
-  with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
+  with (_get_lammps_resource_dir() / "CRG_U_Th.aspot").open() as infile:
     cp = ConfigParser(infile)
     items = _query_actions._list_items(cp)
     items.sort()
     assert expect == items
     
 def test_item_value():
-  with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
+  with (_get_lammps_resource_dir() / "CRG_U_Th.aspot").open() as infile:
     cp = ConfigParser(infile)
     value = _query_actions._item_value(cp, "Tabulation:drho")
     assert "0.01" == value
@@ -85,7 +85,7 @@ def test_list_plot_item_labels():
 
   expect.sort()
   
-  with _get_lammps_resource_dir().join("CRG_U_Th.aspot").open() as infile:
+  with (_get_lammps_resource_dir() / "CRG_U_Th.aspot").open() as infile:
     cp = ConfigParser(infile)
     items = _query_actions._list_plot_item_labels(cp)
     items.sort()

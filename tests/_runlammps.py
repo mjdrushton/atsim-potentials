@@ -1,6 +1,6 @@
 import unittest
-import py.path
 import pytest
+import pathlib
 
 import os
 import distutils.spawn
@@ -15,28 +15,28 @@ def _getResourceDirectory():
   return os.path.join(os.path.dirname(__file__), 'lammps_resources')
 
 @pytest.fixture
-def lammps_run_fixture(tmpdir):
-  resource_path = py.path.local(_getResourceDirectory())
-  lmpin = resource_path.join("calc_energy.lmpin")
+def lammps_run_fixture(tmp_path):
+  resource_path = pathlib.Path(_getResourceDirectory())
+  lmpin = resource_path / "calc_energy.lmpin"
   
   import shutil
-  shutil.copyfile(lmpin.strpath, tmpdir.join("calc_energy.lmpin").strpath)
-  shutil.copyfile(resource_path.join("pair_2angs.lmpstruct").strpath,
-    tmpdir.join("structure.lmpstruct").strpath)
+  shutil.copyfile(lmpin, tmp_path / "calc_energy.lmpin")
+  shutil.copyfile(resource_path / "pair_2angs.lmpstruct",
+    tmp_path / "structure.lmpstruct")
 
-  return tmpdir
+  return tmp_path
 
 @pytest.fixture
-def lammps_run_fluorite_fixture(tmpdir):
-  resource_path = py.path.local(_getResourceDirectory())
-  lmpin = resource_path.join("calc_energy.lmpin")
+def lammps_run_fluorite_fixture(tmp_path):
+  resource_path = pathlib.Path(_getResourceDirectory())
+  lmpin = resource_path / "calc_energy.lmpin"
   
   import shutil
-  shutil.copyfile(lmpin.strpath, tmpdir.join("calc_energy.lmpin").strpath)
-  shutil.copyfile(resource_path.join("CeO2-single_cell.lmpstruct").strpath,
-    tmpdir.join("structure.lmpstruct").strpath)
+  shutil.copyfile(lmpin, tmp_path  / "calc_energy.lmpin")
+  shutil.copyfile(resource_path / "CeO2-single_cell.lmpstruct",
+    tmp_path / "structure.lmpstruct")
 
-  return tmpdir
+  return tmp_path
 
 def extractLAMMPSEnergy(cwd = None):
   if cwd:

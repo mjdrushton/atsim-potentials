@@ -1,4 +1,5 @@
 import io
+import shutil
 
 from pytest import approx, raises, fail
 
@@ -11,8 +12,8 @@ from .config._common import _get_lammps_resource_dir
 from atsim.potentials.eam_tabulation import ADP_EAMTabulation
 
 
-def test_adp_tabulation(tmpdir):
-    cfg_file = _get_lammps_resource_dir().join("Al_Cu_adp.aspot")
+def test_adp_tabulation(tmp_path):
+    cfg_file = _get_lammps_resource_dir() / "Al_Cu_adp.aspot"
     configuration = Configuration()
     tabulation = configuration.read(cfg_file.open('r'))
 
@@ -144,47 +145,47 @@ Cu-Cu : as.zero
 
 
 @needsLAMMPS
-def test_adp_in_lammps(tmpdir):
-    expect_dir = tmpdir.join("expect")
-    expect_dir.ensure(dir=True)
+def test_adp_in_lammps(tmp_path):
+    expect_dir = tmp_path / "expect"
+    expect_dir.mkdir(parents=True, exist_ok=True)
     
-    lmpin =  _get_lammps_resource_dir().join("AlCu3.lmpstruct")
-    lmpin.copy(expect_dir.join("structure.lmpstruct"))
+    lmpin =  _get_lammps_resource_dir() / "AlCu3.lmpstruct"
+    shutil.copy(lmpin, expect_dir / "structure.lmpstruct")
 
-    lmpin =  _get_lammps_resource_dir().join("calc_energy.lmpin")
-    lmpin.copy(expect_dir.join("calc_energy.lmpin"))
+    lmpin =  _get_lammps_resource_dir() / "calc_energy.lmpin"
+    shutil.copy(lmpin, expect_dir / "calc_energy.lmpin")
 
     # Copy existing table file
-    _get_lammps_resource_dir().join("AlCu.adp").copy(expect_dir.join("AlCu.adp"))
+    shutil.copy(_get_lammps_resource_dir() / "AlCu.adp", expect_dir / "AlCu.adp")
 
-    with expect_dir.join("potentials.lmpinc").open("w") as potentials:
+    with (expect_dir / "potentials.lmpinc").open("w") as potentials:
         potentials.write("pair_style adp\n")
         potentials.write("pair_coeff * * AlCu.adp Al Cu\n")
 
-    runLAMMPS(cwd=expect_dir.strpath)
-    expect_energy = extractLAMMPSEnergy(cwd=expect_dir.strpath)
+    runLAMMPS(cwd=expect_dir)
+    expect_energy = extractLAMMPSEnergy(cwd=expect_dir)
 
-    actual_dir = tmpdir.join("actual")
-    actual_dir.ensure(dir=True)
+    actual_dir = tmp_path / "actual"
+    actual_dir.mkdir(parents=True, exist_ok=True)
 
-    lmpin =  _get_lammps_resource_dir().join("AlCu3.lmpstruct")
-    lmpin.copy(actual_dir.join("structure.lmpstruct"))
+    lmpin =  _get_lammps_resource_dir() / "AlCu3.lmpstruct"
+    shutil.copy(lmpin, actual_dir / "structure.lmpstruct")
 
-    lmpin =  _get_lammps_resource_dir().join("calc_energy.lmpin")
-    lmpin.copy(actual_dir.join("calc_energy.lmpin"))
+    lmpin =  _get_lammps_resource_dir() / "calc_energy.lmpin"
+    shutil.copy(lmpin, actual_dir / "calc_energy.lmpin")
 
-    with actual_dir.join("potentials.lmpinc").open("w") as potentials:
+    with (actual_dir / "potentials.lmpinc").open("w") as potentials:
         potentials.write("pair_style adp\n")
         potentials.write("pair_coeff * * AlCu.adp Al Cu\n")
 
     # Tabulate potential
-    cfg_file = _get_lammps_resource_dir().join("Al_Cu_adp.aspot")
+    cfg_file = _get_lammps_resource_dir() / "Al_Cu_adp.aspot"
     configuration = Configuration()
     tabulation = configuration.read(cfg_file.open('r'))
-    with actual_dir.join("AlCu.adp").open("w") as outfile:
+    with (actual_dir / "AlCu.adp").open("w") as outfile:
         tabulation.write(outfile)
 
-    runLAMMPS(cwd=actual_dir.strpath)
-    actual_energy = extractLAMMPSEnergy(cwd=actual_dir.strpath)
+    runLAMMPS(cwd=actual_dir)
+    actual_energy = extractLAMMPSEnergy(cwd=actual_dir)
 
     assert expect_energy == approx(actual_energy)

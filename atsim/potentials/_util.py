@@ -47,7 +47,7 @@ class _GradientWrapper(object):
       def deriv(self, r):
         return self._wrapped.deriv2(r)
       #... bind this to the object
-      self.deriv = deriv.__get__(self)
+      self.deriv = deriv.__get__(self) # pylint: disable=no-value-for-parameter
 
   def __call__(self, r):
     return deriv(r, self._wrapped, self._h)

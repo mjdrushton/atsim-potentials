@@ -83,7 +83,6 @@ def _setup_logging():
   logging.basicConfig(level = logging.INFO, format = "%(message)s")
 
 def _do_tabulation(p, args):
-  logger = logging.getLogger(__name__).getChild("main")
   species_list = None
   exclude_flag = False
   if args.include_species:
@@ -117,7 +116,6 @@ def _do_tabulation(p, args):
 
 def main():
   _setup_logging()
-  logger = logging.getLogger(__name__).getChild("main")
   p, args = _parse_command_line()
 
   try:

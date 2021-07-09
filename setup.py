@@ -6,7 +6,6 @@ setup(name="atsim.potentials",
   namespace_packages = ["atsim"],
   test_suite = "tests",
   install_requires = [
-    'funcsigs==1.0.2;python_version<"3.5"',
     'openpyxl==2.6.4;python_version<="3.5.*"',
     'openpyxl>=3.0.0;python_version>="3.6"',
     "cexprtk>=0.3.4",
@@ -16,7 +15,7 @@ setup(name="atsim.potentials",
     "wrapt>=1.12.1",
     ],
 
-  version = '0.4.0',
+  version = '0.5.0dev',
 
   entry_points = {
         'console_scripts' : [

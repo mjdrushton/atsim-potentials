@@ -1,7 +1,9 @@
 """Module defining the pyparsing grammar for multi-range and modified
 potential definitions used by the config_parser."""
 
-from pyparsing import *
+# from pyparsing import *
+
+from pyparsing import Combine, ZeroOrMore, Literal, Forward, Group, delimitedList, Optional
 
 def _grammar():
   from pyparsing import pyparsing_common
@@ -10,7 +12,6 @@ def _grammar():
 
   # multi_range
   range_start = Group((Literal(u">=") | Literal(u">"))("range_type") + number("start"))("range_start")
-  # range_start = Group((unicodeString(u">=") | unicodeString(u">"))("range_type") + number("start"))("range_start")
 
   modified = Forward()
   potential_description = Group(identifier("potential_label") + Group(ZeroOrMore(number))("potential_parameters"))("potential_description")

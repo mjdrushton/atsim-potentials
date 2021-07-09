@@ -81,7 +81,7 @@ class _Exp_Spline_Factory(object):
 
   def build_spline(self, detach_point, attach_point, spline_defn):
       if spline_defn.parameters:
-        raise ConfigurationException("spline modifier 'exp_spline' middle potential form does not take any parameters. The following parameters were specified: {}".format(pot2.parameters))
+        raise ConfigurationException("spline modifier 'exp_spline' middle potential form does not take any parameters. The following parameters were specified: {}".format(spline_defn.parameters))
 
       spline = Exp_Spline(detach_point, attach_point)
       return spline
@@ -94,7 +94,7 @@ class _Buck4_Spline_Factory(object):
 
   def build_spline(self, detach_point, attach_point, spline_defn):
       if not len(spline_defn.parameters) == 1:
-        raise ConfigurationException("spline modifier with 'buck4_spline' requires a single parameter to define r_min. The following parameters were specified: {}".format(pot2.parameters))
+        raise ConfigurationException("spline modifier with 'buck4_spline' requires a single parameter to define r_min. The following parameters were specified: {}".format(spline_defn.parameters))
 
       r_min = spline_defn.parameters[0]
 

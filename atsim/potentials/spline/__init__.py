@@ -309,13 +309,13 @@ class Custom_SplinePotential(object):
     if hasattr(self._detach_point.potential_function, "deriv") or hasattr(self._attach_point.potential_function, "deriv") or hasattr(self._inter_point.potential_function, "deriv"):
       def deriv(self, r):
         return self._deriv(r)
-      self.deriv = deriv.__get__(self)
+      self.deriv = deriv.__get__(self) # pylint: disable=no-value-for-parameter
 
     # Expose a .deriv2() method if any of components provide one natively.
     if hasattr(self._detach_point.potential_function, "deriv2") or hasattr(self._attach_point.potential_function, "deriv2") or hasattr(self._inter_point.potential_function, "deriv2"):
       def deriv2(self, r):
         return self._deriv2(r)
-      self.deriv2 = deriv2.__get__(self)
+      self.deriv2 = deriv2.__get__(self) # pylint: disable=no-value-for-parameter
 
 
   # The _deriv and _deriv2 methods are made public as deriv() and deriv2() by _init_deriv() if any of the component functions provide a deriv or deriv2 method.

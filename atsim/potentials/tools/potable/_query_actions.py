@@ -91,7 +91,7 @@ def action_list_items(cp):
 
 def action_list_item_labels(cp):
   items = _list_items(cp)
-  for k, v in items:
+  for k, _v in items:
     outline = "{}\n".format(k)
     sys.stdout.write(outline)
   

@@ -58,7 +58,6 @@ buck_morse(r, A, rho, C, gamma, r_star, D) : buck(r,A,rho,C) + morse(r, gamma, r
 
 def test_config_potential_form_registry_args():
   cfg = ConfigParser(io.StringIO())
-  # import pdb; pdb.set_trace()
   pfr = Potential_Form_Registry(cfg, register_standard=True)
 
   buck = pfr["as.buck"]

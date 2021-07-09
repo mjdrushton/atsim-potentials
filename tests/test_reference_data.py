@@ -20,7 +20,7 @@ def test_unknown_species():
   with pytest.raises(Unknown_Species_Exception):
     rd.get("Bl", 'atomic_mass')
 
-def test_unknown_species():
+def test_unknown_property():
   rd = Reference_Data()
 
   with pytest.raises(Unknown_Property_Exception):

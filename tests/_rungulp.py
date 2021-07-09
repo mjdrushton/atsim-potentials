@@ -1,6 +1,7 @@
 import pytest
 
-import py.path
+import pathlib
+import types
 
 import distutils.spawn
 GULP_FOUND = distutils.spawn.find_executable("gulp-5.2")
@@ -10,41 +11,49 @@ needsGULP = pytest.mark.skipif(not GULP_FOUND, reason = "GULP binary not found")
 def _getResourceDirectory():
   """Returns path to resources used by this test module (currently assumed to be sub-directory
   of test module called resources)"""
-  return py.path.local(__file__).dirpath('gulp_resources')
+  return pathlib.Path(__file__).parent / 'gulp_resources'
 
 @pytest.fixture
 def charges():
   return [-2, 4]
 
 @pytest.fixture
-def gulp_uo2_energy_fixture(tmpdir, charges):
+def gulp_uo2_energy_fixture(tmp_path, charges):
   from io import StringIO
 
-  def run(charges):
-    resource_path = py.path.local(_getResourceDirectory())
-    gulpin = resource_path.join("uo2.gin")
-    template = gulpin.open(encoding = 'utf-8').read()
+  class Gulp_Directory(pathlib.Path):
 
-    ocharge, ucharge = charges
-    charges = {"U_charge" : ucharge, "O_charge" : ocharge}
+    def __new__(cls, p: pathlib.Path, charges):
+      import pdb;pdb.set_trace()
+      self = pathlib.Path.__new__(cls, p)
+      self.charges = charges
+      return self
+
+    def run(self, charges):
+      resource_path = pathlib.Path(_getResourceDirectory())
+      gulpin = resource_path / "uo2.gin"
+      template = gulpin.open(encoding = 'utf-8').read()
+
+      ocharge, ucharge = charges
+      charges = {"U_charge" : ucharge, "O_charge" : ocharge}
+      
+      outfile = StringIO()
+      infile = StringIO(template.format(**charges))
+      infile.seek(0)
+
+      runGULP(infile, outfile, cwd = tmp_path)
+      outfile.seek(0)
+
+      return outfile
     
-    outfile = StringIO()
-    infile = StringIO(template.format(**charges))
-    infile.seek(0)
+    def energy(self):
+      outfile = self.run(self.charges)
+      energy = extractGULPEnergy(outfile)
+      return energy
 
-    runGULP(infile, outfile, cwd = tmpdir.strpath)
-    outfile.seek(0)
-
-    return outfile
+  ret_path = Gulp_Directory(tmp_path, charges)
   
-  def energy():
-    outfile = run(charges)
-    energy = extractGULPEnergy(outfile)
-    return energy
-
-  tmpdir.energy = energy
-
-  return tmpdir
+  return ret_path
 
 
 def runGULP(infile, outfile, cwd = None):  

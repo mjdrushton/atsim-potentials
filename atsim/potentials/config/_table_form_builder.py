@@ -47,7 +47,7 @@ class Table_Form_Builder(object):
   def _populate(self):
     tf_dict = {}
     classes  = inspect.getmembers(tableforms, is_potential)
-    for cls_name, cls in classes:
+    for _cls_name, cls in classes:
       label = cls.config_label
       tf_dict[label] = cls
     return tf_dict
@@ -62,13 +62,12 @@ class Table_Form_Builder(object):
 
     :param table_tuple: TableFormTuple instance defining table form.
     :return: Potential_Form instance"""
-    name = table_tuple.name
     try:
       cls = self._config_name_to_class(table_tuple.interpolation)
     except KeyError:
       raise Table_Form_Exception("Unknown interpolation type specified for [Table-Form:{}]: '{}'".format(table_tuple.name, table_tuple.interpolation))
 
     factory = Table_Form_Factory(table_tuple, cls)
-    func = factory()
+    factory()
     pf = Table_Form(table_tuple, cls)
     return pf

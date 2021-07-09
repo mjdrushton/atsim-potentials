@@ -17,18 +17,18 @@ from .._eam_fs_AlFe import feAlDensFunction
 from .._eam_fs_AlFe import ppfuncAlAl, ppfuncAlFe, ppfuncFeFe
 
 import pytest
-import py
 
+import pathlib
 import itertools
 
 def _get_resource_dir():
-  rd = py.path.local(__file__).dirpath()
-  rd = rd.join('config_resources')
+  rd = pathlib.Path(__file__).parent
+  rd = rd / 'config_resources'
   return rd
 
 
 def test_fs_AlFe():
-  cfg_file_path = _get_lammps_resource_dir().join("AlFe_setfl_fs.aspot")
+  cfg_file_path = _get_lammps_resource_dir() / "AlFe_setfl_fs.aspot"
   with cfg_file_path.open() as config_file:
     config_parser = ConfigParser(config_file)
   assert config_parser.tabulation.target == "setfl_fs"
@@ -115,7 +115,7 @@ def test_fs_AlFe():
       assert pytest.approx(expect) == actual
 
 def test_add_zeroed_interactions_fs():
-  with _get_resource_dir().join("spinel.aspot").open() as infile:
+  with (_get_resource_dir() / "spinel.aspot").open() as infile:
     cfg = Configuration()
     tab = cfg.read(infile)
 
@@ -149,7 +149,7 @@ def test_add_zeroed_interactions_fs():
 
     
 def test_add_zeroed_interactions():
-  with _get_resource_dir().join("setfl.aspot").open() as infile:
+  with (_get_resource_dir()/ "setfl.aspot").open() as infile:
     cfg = Configuration()
     tab = cfg.read(infile)
 

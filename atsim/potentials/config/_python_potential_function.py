@@ -13,13 +13,13 @@ class _Python_Potential_Function(object):
       def deriv(self, *args):
         self._check_call(*args)
         return self._pyfunc.deriv(*args)
-      self.deriv = deriv.__get__(self)
+      self.deriv = deriv.__get__(self) # pylint: disable=no-value-for-parameter
 
     if hasattr(pyfunc, 'deriv2'):
       def deriv2(self, *args):
         self._check_call(*args)
         return self._pyfunc.deriv2(*args)
-      self.deriv2 = deriv2.__get__(self)
+      self.deriv2 = deriv2.__get__(self) # pylint: disable=no-value-for-parameter
 
   def register_function(self, func):
     pass

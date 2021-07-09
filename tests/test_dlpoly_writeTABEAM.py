@@ -121,7 +121,7 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
   """Class that makes EAM tabulation for DLPOLY then runs code to check that we get expected energy"""
 
   def setUp(self):
-    super(DLPOLYWriteTABEAMTestCase_RunDLPoly, self).setUp()
+    super().setUp()
     shutil.copyfile(os.path.join(_getResourceDirectory(), 'CONTROL_CeO2'), os.path.join(self.tempdir, 'CONTROL'))
     shutil.copyfile(os.path.join(_getResourceDirectory(), 'CONFIG_CeO2'), os.path.join(self.tempdir, 'CONFIG'))
     shutil.copyfile(os.path.join(_getResourceDirectory(), 'FIELD_CeO2'), os.path.join(self.tempdir, 'FIELD'))
@@ -217,7 +217,6 @@ class DLPOLYWriteTABEAMTestCase_RunDLPoly(TempfileTestCase):
             "Title")
 
       runDLPoly()
-      # import pdb;pdb.set_trace()
       engcfg = extractDLPOLYEnergy()
       expect = -998.811
       self.assertAlmostEqual(expect, engcfg, places = 3)
@@ -260,7 +259,7 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
   """Tests for the EEAM variant of the DL_POLY TABEAM file"""
 
   def setUp(self):
-    super(DLPOLYWriteTABEAMFinnisSinclair, self).setUp()
+    super().setUp()
 
     shutil.copyfile(os.path.join(_getResourceDirectory(),"CONFIG_triplet_eeam"), os.path.join(self.tempdir,"CONFIG"))
     shutil.copyfile(os.path.join(_getResourceDirectory(),"CONTROL_triplet_eeam"), os.path.join(self.tempdir,"CONTROL"))
@@ -308,7 +307,6 @@ class DLPOLYWriteTABEAMFinnisSinclair(TempfileTestCase):
         potentials.writeTABEAMFinnisSinclair(1000, 0.1, 1000, 0.01, eamPotentials, pairPotentials, outfile, "")
 
       runDLPoly()
-      # import pdb;pdb.set_trace()
       energy = extractDLPOLYEnergy()
       self.assertAlmostEqual(65.31152, energy, places=4)
 

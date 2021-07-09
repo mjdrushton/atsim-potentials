@@ -53,7 +53,7 @@ class _TabulationCutoff(object):
     self._template_dict = dict( cutoff = self._cutoff_attr, nr = self._nr_attr, dr = self._dr_attr) 
 
   def create_cutoff(self, cp_tabulation_section):
-    tclass = collections.namedtuple(self._cutoff_name, [self._nr_attr, self._cutoff_attr])
+    tclass = collections.namedtuple(self._cutoff_name, [self._nr_attr, self._cutoff_attr]) # type: ignore
     nr = None
     cutoff = None
     if cp_tabulation_section:
@@ -298,21 +298,21 @@ class _ConfigParserDict(collections.OrderedDict):
 
   def __setitem__(self, key, value):
     key = self._key_transform(key)
-    return super(_ConfigParserDict, self).__setitem__(key, value)
+    return super().__setitem__(key, value)
 
   def __getitem__(self, key):
     key = self._key_transform(key)
-    return super(_ConfigParserDict, self).__getitem__(key)
+    return super().__getitem__(key)
 
   def __delitem__(self, key):
     key = self._key_transform(key)
-    return super(_ConfigParserDict, self).__delitem__(key)
+    return super().__delitem__(key)
 
 
 class _RawConfigParser(configparser.RawConfigParser):
 
   def __init__(self):
-    super(_RawConfigParser, self).__init__(dict_type = _ConfigParserDict, default_section = "Variables", interpolation = configparser.ExtendedInterpolation())
+    super().__init__(dict_type = _ConfigParserDict, default_section = "Variables", interpolation = configparser.ExtendedInterpolation())
     self._sections = collections.OrderedDict()
 
   def optionxform(self, option):

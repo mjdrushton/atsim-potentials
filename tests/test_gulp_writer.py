@@ -7,7 +7,7 @@ from atsim.potentials import potentialforms, pair_tabulation, Potential, Multi_R
 from ._rungulp import needsGULP, runGULP, extractGULPEnergy
 
 @needsGULP
-def test_single_pair(tmpdir):
+def test_single_pair(tmp_path):
   gulp_input = u"""single
 
 cell
@@ -32,7 +32,7 @@ include potentials.lib"""
 
   tabulation = pair_tabulation.GULP_PairTabulation([pot], 10.0, 500)
 
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path / "potentials.lib").open("w") as potfile:
     tabulation.write(potfile)
 
   # Reproduce a buckingham potential at sepns of 0.1 1.1 2.1 and 3.1
@@ -43,7 +43,7 @@ include potentials.lib"""
     expect  = pytest.approx(buck(x), rel = 1e-4)
 
     gulp_outfile = io.StringIO()
-    runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+    runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
     gulp_outfile.seek(0)
     actual = extractGULPEnergy(gulp_outfile)
@@ -52,7 +52,7 @@ include potentials.lib"""
 
 
 @needsGULP
-def test_structure(tmpdir):
+def test_structure(tmp_path):
   gulp_input = u"""single
 
 cell
@@ -82,7 +82,7 @@ O -2.0
 include potentials.lib"""
 
   # First calculate the expected energy using GULP's built-in analytical potentials
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path / "potentials.lib").open("w") as potfile:
     potfile.write("buck\n")
     potfile.write("O O 9547.96 0.2192 32.0 15.0\n")
     potfile.write("O U 1761.775 0.35642 0.0 15.0\n")
@@ -91,13 +91,13 @@ include potentials.lib"""
   gulp_infile.seek(0)
 
   gulp_outfile = io.StringIO()
-  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+  runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
   gulp_outfile.seek(0)
   expect = extractGULPEnergy(gulp_outfile)
 
-  tmpdir.join("potentials.lib").remove()
-  assert not tmpdir.join("potentials.lib").exists()
+  (tmp_path / "potentials.lib").unlink()
+  assert not (tmp_path/"potentials.lib").exists()
 
   # Now build a potential model and tabulate it - then re-run the calculation and check the energies match.
 
@@ -111,36 +111,36 @@ include potentials.lib"""
 
   tabulation = pair_tabulation.GULP_PairTabulation(potlist, 15.0, 500)
 
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path / "potentials.lib").open("w") as potfile:
     tabulation.write(potfile)
 
   gulp_infile.seek(0)
 
   gulp_outfile = io.StringIO()
-  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+  runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)
   assert pytest.approx(expect) == actual
 
-  tmpdir.join("potentials.lib").remove()
-  assert not tmpdir.join("potentials.lib").exists()
+  (tmp_path / "potentials.lib").unlink()
+  assert not (tmp_path  / "potentials.lib").exists()
 
   # Now do the same again but use the procedural interface
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path / "potentials.lib").open("w") as potfile:
     writePotentials("GULP", potlist, 15.0, 500, out = potfile)
 
   gulp_infile.seek(0)
 
   gulp_outfile = io.StringIO()
-  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+  runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)
   assert pytest.approx(expect) == actual
 
 @needsGULP
-def test_badly_conditioned_spline(tmpdir):
+def test_badly_conditioned_spline(tmp_path):
   """Test for GULP 'badly_conditioned_spline' error encountered when writing Basak potential"""
 
   gulp_input = u"""single
@@ -172,7 +172,7 @@ O -1.2
 include potentials.lib"""
 
   # First calculate the expected energy using GULP's built-in analytical potentials
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path/ "potentials.lib").open("w") as potfile:
     potfile.write("buck\n")
     potfile.write("O O 1633.01 0.3270196735 3.94879 10.0\n")
     potfile.write("U U 294.640906285709 0.327022 0.0 10.0\n")
@@ -186,13 +186,13 @@ include potentials.lib"""
   gulp_infile.seek(0)
 
   gulp_outfile = io.StringIO()
-  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+  runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
   gulp_outfile.seek(0)
   expect = extractGULPEnergy(gulp_outfile)
 
-  tmpdir.join("potentials.lib").remove()
-  assert not tmpdir.join("potentials.lib").exists()
+  (tmp_path / "potentials.lib").unlink()
+  assert not (tmp_path / "potentials.lib").exists()
 
   # Now build a potential model and tabulate it - then re-run the calculation and check the energies match.
   aspot = io.StringIO(u"""
@@ -214,17 +214,17 @@ O-U = sum(as.buck 693.650933805978 0.327022 0.0,
   from atsim.potentials.config import Configuration
   tabulation =  Configuration().read(aspot)
 
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path /"potentials.lib").open("w") as potfile:
     tabulation.write(potfile)
 
   gulp_infile.seek(0)
 
   gulp_outfile = io.StringIO()
-  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+  runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)
   assert pytest.approx(expect, rel=1e-4) == actual
 
-  tmpdir.join("potentials.lib").remove()
-  assert not tmpdir.join("potentials.lib").exists()
+  (tmp_path  / "potentials.lib").unlink()
+  assert not (tmp_path  / "potentials.lib").exists()

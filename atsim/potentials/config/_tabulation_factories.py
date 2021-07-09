@@ -146,7 +146,7 @@ class EAMTabulationFactory(PairTabulationFactory):
   """Tabulation factory for setfl (LAMMPS eam/alloy) potentials"""
 
   def __init__(self, tabulation_target, tabulation_class, eam_builder_class = EAM_Potential_Builder):
-    super(EAMTabulationFactory, self).__init__(tabulation_target, tabulation_class)
+    super().__init__(tabulation_target, tabulation_class)
     self.eam_builder_class = eam_builder_class
     self.tabulation_type = "EAM"
 
@@ -202,7 +202,7 @@ class EAMTabulationFactory(PairTabulationFactory):
     return args
 
   def _log_cutoffs(self, logger, r_cutoff, **kwargs):
-    super(EAMTabulationFactory, self)._log_cutoffs(logger, r_cutoff, **kwargs)
+    super()._log_cutoffs(logger, r_cutoff, **kwargs)
     logger.info("  * cutoff_rho: {}".format(r_cutoff.cutoff_rho))
     logger.info("  * nrho: {}".format(r_cutoff.nrho))
 
@@ -210,7 +210,7 @@ class DLPOLY_PairTabulationFactory(PairTabulationFactory):
   """PairTabulationFactory that performs extra checks required by DL_POLY TABLEs and raises ConfigException if errors are found"""
 
   def extract_cutoffs(self, cp):
-    cutoffs = super(DLPOLY_PairTabulationFactory, self).extract_cutoffs(cp)
+    cutoffs = super().extract_cutoffs(cp)
     if cutoffs.nr % 4 != 0:
       raise ConfigurationException("The number of rows in a DL_POLY TABLE file needs to be divisible by 4. Number of rows specified = {} ".format(cutoffs.nr))
     return cutoffs

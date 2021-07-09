@@ -102,7 +102,7 @@ class EAM_Potential_Builder(object):
 
     null = zero()
     for s in all_species:
-      other_dict = density_dict.setdefault(s, null)
+      density_dict.setdefault(s, null)
 
 
   def _extract_embed(self, cp):

@@ -106,11 +106,9 @@ class Potential_Form_Registry(object):
       a.potential_function.register_function(b.potential_function)
 
   def _register_pymath_functions(self):
-    # mathfuncs = ["factorial"]
     from . import _pymath
 
     new_mathfuncs = []
-    # import pdb;pdb.set_trace()
     namespace = "pymath"
 
     for name, pyfunc in inspect.getmembers(_pymath, inspect.isfunction):

@@ -1,10 +1,7 @@
 import collections
 import sys
 
-try:
-  from inspect import signature, Parameter
-except ImportError:
-  from funcsigs import signature, Parameter
+from inspect import signature, Parameter
 
 SpeciesTuple = collections.namedtuple("SpeciesTuple", ["species_a", "species_b"])
 EAMFSDensitySpeciesTuple = collections.namedtuple("EAMFSDensitySpeciesTuple", ["from_species", "to_species"])

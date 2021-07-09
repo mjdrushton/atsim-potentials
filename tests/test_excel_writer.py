@@ -10,7 +10,7 @@ import pytest
 
 import io
 
-def test_pair_model(tmpdir):
+def test_pair_model(tmp_path):
 
     cfg = u"""[Tabulation]
 target : excel
@@ -29,12 +29,12 @@ Al-O : as.polynomial 0 2
 
     assert type(tabulation) is Excel_PairTabulation
 
-    out_path = tmpdir.join("pair.xlsx")
+    out_path = tmp_path / "pair.xlsx"
 
-    with tabulation.open_fp(out_path.strpath) as outfile:
+    with tabulation.open_fp(out_path) as outfile:
         tabulation.write(outfile)
 
-    wb = load_workbook(out_path.strpath)
+    wb = load_workbook(out_path)
 
     assert ["Pair"] == wb.sheetnames
     ws = wb["Pair"]
@@ -59,7 +59,7 @@ Al-O : as.polynomial 0 2
     assert ws["C502"].value == pytest.approx(5.0)
 
 
-def test_pair_eam(tmpdir):
+def test_pair_eam(tmp_path):
 
     cfg = u"""[Tabulation]
 target : excel_eam
@@ -88,12 +88,12 @@ Al : as.polynomial 0 6
 
     assert type(tabulation) is Excel_EAMTabulation
 
-    out_path = tmpdir.join("pair.xlsx")
+    out_path = tmp_path / "pair.xlsx"
 
-    with tabulation.open_fp(out_path.strpath) as outfile:
+    with tabulation.open_fp(out_path) as outfile:
         tabulation.write(outfile)
 
-    wb = load_workbook(out_path.strpath)
+    wb = load_workbook(out_path)
 
     assert ["Pair", "EAM-Density", "EAM-Embed"] == wb.sheetnames
     
@@ -164,7 +164,7 @@ Al : as.polynomial 0 6
     assert ws["C502"].value == pytest.approx(5.0*5.0)
 
 
-def test_pair_eam_fs(tmpdir):
+def test_pair_eam_fs(tmp_path):
 
     cfg = u"""[Tabulation]
 target : excel_eam_fs
@@ -193,12 +193,12 @@ Al : as.polynomial 0 6
 
     assert type(tabulation) is Excel_FinnisSinclair_EAMTabulation
 
-    out_path = tmpdir.join("pair.xlsx")
+    out_path = tmp_path / "pair.xlsx"
 
-    with tabulation.open_fp(out_path.strpath) as outfile:
+    with tabulation.open_fp(out_path) as outfile:
         tabulation.write(outfile)
 
-    wb = load_workbook(out_path.strpath)
+    wb = load_workbook(out_path)
 
     assert ["Pair", "EAM-Density", "EAM-Embed"] == wb.sheetnames
     

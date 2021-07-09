@@ -3,12 +3,12 @@ import os
 import shutil
 import sys
 import unittest
+import pathlib
 
 import atsim.potentials
 import atsim.potentials.config
 from atsim.potentials import EAMPotential, Potential
 
-import py.path
 import pytest
 
 from ._rundlpoly import extractDLPOLYEnergy, needsDLPOLY, runDLPoly
@@ -30,11 +30,12 @@ def _get_user_guide_directory():
 
 
 def _getLAMMPSResourceDirectory():
-    return os.path.join(os.path.dirname(__file__), 'lammps_resources')
-
+    p = pathlib.Path(__file__).parent / 'lammps_resources'
+    return p
 
 def _getDLPolyResourceDirectory():
-    return os.path.join(os.path.dirname(__file__), 'dl_poly_resources')
+    p = pathlib.Path(__file__).parent / 'dl_poly_resources'
+    return p
 
 
 if sys.version_info.major == 3 and sys.version_info.minor >= 5:
@@ -58,15 +59,11 @@ elif sys.version_info.major == 2:
         name = os.path.splitext(name)[0]
         with open(scriptname) as infile:
             mod = imp.load_module(name, infile, scriptname, ('.py', 'U', 1))
-            # mod = importlib.load_module(name,infile, scriptname, ('.py', 'U', 1))
         return mod
 
 else:
     raise Exception(
         "No implementation of _loadModule for python version {}".format(sys.version))
-
-# basak_tabulate.py
-
 
 class basak_tabulateTestCase(TempfileTestCase):
     """Test docs/potentials/basak_tabulate.py"""
@@ -90,8 +87,6 @@ class basak_tabulateTestCase(TempfileTestCase):
             exampleModule.main()
 
             def dotest(d, testfunc):
-                # exampleModule.main()
-
                 pobjs = exampleModule.makePotentialObjects()
                 species = [d["speciesA"], d["speciesB"]]
                 spairs = [
@@ -545,7 +540,6 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
             exampleModuleB.main()
 
             runDLPoly()
-            # import pdb;pdb.set_trace()
             dlpolyenergy = extractDLPOLYEnergy()
 
             # LAMMPS Tabulation
@@ -560,7 +554,6 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
             # Create the table files
             exampleModuleA.main()
 
-            # import pdb;pdb.set_trace()
             runLAMMPS()
             lammpsenergy = extractLAMMPSEnergy()
 
@@ -569,35 +562,27 @@ class eam_tabulate_example2TestCase(TempfileTestCase):
         finally:
             os.chdir(oldpwd)
 
-# eam_tabulate_example3a.py
-# class eam_tabulate_example3TestCase(TempfileTestCase):
-#   """Test docs/potentials/eam_tabulate_example3a.py and eam_tabulate_example3b.py"""
-#   test_nameA = os.path.join(_getDocsDirectory(), "eam_tabulate_example3a.py")
-#   test_nameA_obj = os.path.join(_getDocsDirectory(), "eam_example3a.py")
-#   test_nameB = os.path.join(_getDocsDirectory(), "eam_tabulate_example3b.py")
-#   test_nameB_obj = os.path.join(_getDocsDirectory(), "eam_example3b.py")
 
-
-def test_eam_tabulate_example3_ExampleA(tmpdir):
+def test_eam_tabulate_example3_ExampleA(tmp_path : pathlib.Path):
     """Test example eam_tabulate_example3a.py"""
     test_nameA = os.path.join(_getDocsDirectory(), "eam_tabulate_example3a.py")
     exampleModule = _loadModule(test_nameA)
 
     oldpwd = os.getcwd()
-    os.chdir(tmpdir.strpath)
+    os.chdir(tmp_path)
     try:
         exampleModule.main()
     finally:
         os.chdir(oldpwd)
 
 
-def test_eam_tabulate_example3_ExampleB(tmpdir):
+def test_eam_tabulate_example3_ExampleB(tmp_path : pathlib.Path):
     """Test example eam_tabulate_example3b.py"""
     test_nameB = os.path.join(_getDocsDirectory(), "eam_tabulate_example3b.py")
     exampleModule = _loadModule(test_nameB)
 
     oldpwd = os.getcwd()
-    os.chdir(tmpdir.strpath)
+    os.chdir(tmp_path)
     try:
         exampleModule.main()
     finally:
@@ -612,28 +597,24 @@ def test_eam_tabulate_example3_ExampleB(tmpdir):
     ("eam_example3a.py", "eam_tabulate_example3b.py"),
     ("eam_tabulate_example3a.py", "eam_example3b.py")
 ])
-def test_eam_tabulate_example3_cross_check_LAMMPS_DLPOLY(test_name_A, test_name_B, tmpdir):
+def test_eam_tabulate_example3_cross_check_LAMMPS_DLPOLY(test_name_A, test_name_B, tmp_path : pathlib.Path):
     test_name_A = os.path.join(_getDocsDirectory(), test_name_A)
     test_name_B = os.path.join(_getDocsDirectory(), test_name_B)
 
     exampleModuleA = _loadModule(test_name_A)
     exampleModuleB = _loadModule(test_name_B)
-    _crossCheckLAMMPS_DLPOLY(tmpdir, exampleModuleA, exampleModuleB)
+    _crossCheckLAMMPS_DLPOLY(tmp_path, exampleModuleA, exampleModuleB)
 
 
-def _crossCheckLAMMPS_DLPOLY(tmpdir, exampleModuleA, exampleModuleB):
+def _crossCheckLAMMPS_DLPOLY(tmp_path : pathlib.Path, exampleModuleA, exampleModuleB):
     """Check that models tabulated for LAMMPS and DL_POLY give the same result"""
-    tmpdir = tmpdir.strpath
     oldpwd = os.getcwd()
-    os.chdir(tmpdir)
+    os.chdir(tmp_path)
     try:
         # DL_POLY Tabulation
-        shutil.copyfile(os.path.join(_getDLPolyResourceDirectory(
-        ), "CONTROL_random_Al_Fe"), os.path.join(tmpdir, "CONTROL"))
-        shutil.copyfile(os.path.join(_getDLPolyResourceDirectory(
-        ), "CONFIG_random_Al_Fe"), os.path.join(tmpdir, "CONFIG"))
-        shutil.copyfile(os.path.join(_getDLPolyResourceDirectory(
-        ), "FIELD_random_Al_Fe"), os.path.join(tmpdir, "FIELD"))
+        shutil.copyfile(pathlib.Path(_getDLPolyResourceDirectory( )) / "CONTROL_random_Al_Fe", pathlib.Path(tmp_path)/ "CONTROL")
+        shutil.copyfile(pathlib.Path(_getDLPolyResourceDirectory()) /  "CONFIG_random_Al_Fe", pathlib.Path(tmp_path) / "CONFIG")
+        shutil.copyfile(pathlib.Path(_getDLPolyResourceDirectory()) / "FIELD_random_Al_Fe", pathlib.Path(tmp_path) / "FIELD")
 
         # Create TABEAM
         exampleModuleB.main()
@@ -642,10 +623,14 @@ def _crossCheckLAMMPS_DLPOLY(tmpdir, exampleModuleA, exampleModuleB):
         dlpolyenergy = extractDLPOLYEnergy()
 
         # LAMMPS Tabulation
-        shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(
-        ), "calc_energy.lmpin"), os.path.join(tmpdir, "calc_energy.lmpin"))
-        shutil.copyfile(os.path.join(_getLAMMPSResourceDirectory(
-        ), "random_Al_Fe.lmpstruct"), os.path.join(tmpdir, "structure.lmpstruct"))
+        shutil.copyfile(
+            _getLAMMPSResourceDirectory() /"calc_energy.lmpin", 
+            tmp_path / "calc_energy.lmpin")
+
+        shutil.copyfile(
+            pathlib.Path(_getLAMMPSResourceDirectory()) / "random_Al_Fe.lmpstruct", 
+            pathlib.Path(tmp_path) / "structure.lmpstruct")
+
         with open("potentials.lmpinc", "w") as potfile:
             potfile.write("pair_style eam/fs\n")
             potfile.write("pair_coeff * * Mendelev_Al_Fe.eam.fs Al Fe\n")
@@ -653,7 +638,6 @@ def _crossCheckLAMMPS_DLPOLY(tmpdir, exampleModuleA, exampleModuleB):
         # Create the table files
         exampleModuleA.main()
 
-        # import pdb;pdb.set_trace()
         runLAMMPS()
         lammpsenergy = extractLAMMPSEnergy()
 
@@ -674,7 +658,7 @@ except ImportError:
 
 class zbl_splineTestCase(TempfileTestCase):
     """Test docs/potentials/zbl_spline.py"""
-    test_name = os.path.join(_getDocsDirectory(), "zbl_spline.py")
+    test_name = pathlib.Path(_getDocsDirectory()) / "zbl_spline.py"
 
     @unittest.skipIf(not NUMPY_AVAILABLE, "numpy is not installed")
     def testExample(self):
@@ -685,7 +669,7 @@ class zbl_splineTestCase(TempfileTestCase):
         try:
             exampleModule.main()
 
-            output_path = os.path.join(self.tempdir, "bks_buck.dat")
+            output_path = pathlib.Path(self.tempdir) / "bks_buck.dat"
             assert os.path.exists(output_path)
 
             with open(output_path) as infile:
@@ -703,55 +687,48 @@ class zbl_splineTestCase(TempfileTestCase):
             os.chdir(oldpwd)
 
 
-basak_aspot_files = py.path.local(__file__).dirpath(
-    "..", "docs", "user_guide", "example_files").listdir("basak*.aspot")
+basak_aspot_files = list((pathlib.Path(__file__).parent / ".." / "docs"/ "user_guide"/ "example_files").glob("basak*.aspot"))
 
 
 @needsLAMMPS
 @pytest.mark.parametrize("aspotfile", basak_aspot_files)
-def test_basak_files(tmpdir, aspotfile):
+def test_basak_files(tmp_path : pathlib.Path, aspotfile):
     # Copy files in from example directory
-    srcdir = py.path.local(__file__).dirpath(
-        "..", "docs", "quick_start", "basak_tabulate_lammps")
-    srcdir.join("UO2.lmpstruct").copy(tmpdir.join("UO2.lmpstruct"))
+    srcdir =  pathlib.Path(__file__).parent / ".." / "docs" / "quick_start" / "basak_tabulate_lammps"
+    shutil.copy(srcdir / "UO2.lmpstruct", tmp_path/"UO2.lmpstruct")
 
-    if aspotfile.basename == "basak_table_form.aspot":
-        input_file = py.path.local(_getLAMMPSResourceDirectory()).join(
-            "basak_energy_table_form.lmpin")
+    if aspotfile.name == "basak_table_form.aspot":
+        input_file = pathlib.Path(_getLAMMPSResourceDirectory()) / "basak_energy_table_form.lmpin"
         expect_e = pytest.approx(-172.839, abs=1e-3)
     else:
-        input_file = py.path.local(
-            _getLAMMPSResourceDirectory()).join("basak_energy.lmpin")
+        input_file = pathlib.Path(_getLAMMPSResourceDirectory()) / "basak_energy.lmpin"
         expect_e = pytest.approx(-172.924, abs=1e-3)
 
-    input_file.copy(tmpdir.join("calc_energy.lmpin"))
+    shutil.copy(input_file, tmp_path / "calc_energy.lmpin")
 
     # Generate table file
     config = atsim.potentials.config.Configuration()
     tabulation = config.read(aspotfile.open())
 
-    with tmpdir.join("Basak.lmptab").open("w") as outfile:
+    with (tmp_path / "Basak.lmptab" ).open("w") as outfile:
         tabulation.write(outfile)
 
-    runLAMMPS(cwd=tmpdir.strpath)
-    actual_e = extractLAMMPSEnergy(cwd=tmpdir.strpath)
+    runLAMMPS(cwd=str(tmp_path))
+    actual_e = extractLAMMPSEnergy(cwd=str(tmp_path))
 
     assert expect_e == actual_e
 
 
-morelon_files = py.path.local(__file__).dirpath(
-    "..", "docs", "user_guide", "example_files").listdir("morelon*.aspot")
+morelon_files = list((pathlib.Path(__file__).parent / ".."/ "docs"/ "user_guide"/ "example_files").glob("morelon*.aspot"))
 
 
 @needsGULP
 @pytest.mark.parametrize("charges", [[-1.613626, 3.227252]])
 @pytest.mark.parametrize("aspot", morelon_files)
 def test_morelon_files(aspot, gulp_uo2_energy_fixture):
-    tmpdir = gulp_uo2_energy_fixture
-    # aspot = py.path.local(__file__).dirpath("..", "docs", "user_guide", "example_files").join("morelon.aspot")
+    tmp_path = gulp_uo2_energy_fixture
 
     CPT = atsim.potentials.config.ConfigParserOverrideTuple
-    # overrides = [ CPT("Tabulation", "target", "GULP"), CPT("Tabulation", "cutoff", "10.0"), CPT("Tabulation", "nr", "1001")]
     overrides = [CPT("Tabulation", "target", "GULP")]
 
     # import io
@@ -759,7 +736,7 @@ def test_morelon_files(aspot, gulp_uo2_energy_fixture):
         cp = atsim.potentials.config.ConfigParser(infile, overrides=overrides)
         tabulation = atsim.potentials.config.Configuration().read_from_parser(cp)
 
-    with tmpdir.join("potentials.lib").open("w", encoding='utf-8') as tabfile:
+    with (tmp_path / "potentials.lib").open("w", encoding='utf-8') as tabfile:
         tabulation.write(tabfile)
 
     expect = pytest.approx(-263.60598484)
@@ -785,21 +762,19 @@ def test_morelon_files(aspot, gulp_uo2_energy_fixture):
     ("finnis_sinclair_evaluate.lmpin", "finnis_sinclair_eam.aspot",
         "finnis_sinclair.eam.fs", 24.00 + 209.137, True, True)
 ])
-def test_user_guide_eam(tmpdir, evaluate_lmpin, aspot_filename, tab_filename, expect_e, a_flag, b_flag):
+def test_user_guide_eam(tmp_path, evaluate_lmpin, aspot_filename, tab_filename, expect_e, a_flag, b_flag):
 
     # Copy files in from example directory
-    srcdir = py.path.local(__file__).dirpath(
-        "..", "docs", "user_guide", "example_files")
-    srcdir.join("toy_structure.lmpstruct").copy(
-        tmpdir.join("toy_structure.lmpstruct"))
+    srcdir = pathlib.Path(__file__).parent / ".." / "docs" / "user_guide" / "example_files"
+    shutil.copy(srcdir / "toy_structure.lmpstruct", tmp_path / "toy_structure.lmpstruct")
 
-    input_file = srcdir.join(evaluate_lmpin)
-    input_file.copy(tmpdir.join("calc_energy.lmpin"))
+    input_file = srcdir / evaluate_lmpin
+    shutil.copy(input_file, tmp_path / "calc_energy.lmpin")
 
     # Generate table file
     config = atsim.potentials.config.Configuration()
 
-    aspotfile = srcdir.join(aspot_filename)
+    aspotfile = srcdir / aspot_filename
 
     a_embed = 'as.zero'
     b_embed = 'as.zero'
@@ -822,11 +797,11 @@ def test_user_guide_eam(tmpdir, evaluate_lmpin, aspot_filename, tab_filename, ex
 
     # tabulation = config.read(aspotfile.open())
 
-    with tmpdir.join(tab_filename).open("w") as outfile:
+    with (tmp_path / tab_filename).open("w") as outfile:
         tabulation.write(outfile)
 
     expect_e = pytest.approx(expect_e, abs=1e-3)
-    runLAMMPS(cwd=tmpdir.strpath)
-    actual_e = extractLAMMPSEnergy(cwd=tmpdir.strpath)
+    runLAMMPS(cwd=str(tmp_path))
+    actual_e = extractLAMMPSEnergy(cwd=str(tmp_path))
 
     assert expect_e == actual_e

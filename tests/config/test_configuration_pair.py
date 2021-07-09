@@ -1,7 +1,8 @@
 """Tests for atsim.potential.config.Configuration for pair-potential models"""
 
 import io
-import os
+import pathlib
+import shutil
 
 import pytest
 
@@ -89,7 +90,6 @@ O-O = as.buck 1000.0 0.3 32.0
 
   cfgobj = Configuration()
 
-  # import pdb; pdb.set_trace()
   tabulation = cfgobj.read(io.StringIO(cfg_string))
 
   potfunc = tabulation.potentials[0].potentialFunction
@@ -110,7 +110,6 @@ my_buck(r, A, rho, C) = A*exp(-r/rho) - C/r^6
 
   cfgobj = Configuration()
 
-  # import pdb; pdb.set_trace()
   tabulation = cfgobj.read(io.StringIO(cfg_string))
 
   potfunc = tabulation.potentials[0].potentialFunction
@@ -147,7 +146,7 @@ mypoly(r, A, B, C) = as.polynomial(r, A,B,C) + 10.0"""
 
 @needsLAMMPS
 def test_lammps_pair_configuration_tabulate(lammps_run_fixture):
-  tmpdir = lammps_run_fixture
+  tmp_path = lammps_run_fixture
   cfg_string = u"""[Potential-Form]
 buck(r, A, rho, C) : A*exp(-r/rho) - C/r^6
 morse(r, gamma, r_star, D) : D*(exp(-2.0*gamma*(r-r_star)) - 2.0*exp(-gamma*(r-r_star)))
@@ -161,17 +160,17 @@ O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
   cfgobj = Configuration()
   tabulation = cfgobj.read(io.StringIO(cfg_string))
 
-  with tmpdir.join("table.lmptab").open("w") as outfile:
+  with (tmp_path/ "table.lmptab").open("w") as outfile:
     tabulation.write(outfile)
 
-  with lammps_run_fixture.join("potentials.lmpinc").open('w') as potfile:
+  with (lammps_run_fixture / "potentials.lmpinc").open('w') as potfile:
     potfile.write("pair_style hybrid/overlay zero {0} table linear {1}\n".format(tabulation.cutoff, tabulation.nr))
     potfile.write("pair_coeff * * zero\n")
     potfile.write("pair_coeff 1 2 table table.lmptab O-U\n")
     potfile.write("\n")
 
-  runLAMMPS(cwd = tmpdir.strpath)
-  energy = extractLAMMPSEnergy(cwd = tmpdir.strpath)
+  runLAMMPS(cwd = tmp_path)
+  energy = extractLAMMPSEnergy(cwd = tmp_path)
 
   expect = pf.buck(2.0, 1000.0, 0.1, 32.0) + pf.morse(2.0, 0.3, 2.0, 10.0)
   assert pytest.approx(expect) == energy
@@ -216,7 +215,7 @@ U-O = as.buck 2000.0 0.2 0.0
   assert sorted(expect) == sorted(actual)
 
 @needsDLPOLY
-def test_dlpoly_pair_configuration_tabulate(tmpdir):
+def test_dlpoly_pair_configuration_tabulate(tmp_path):
   cfg_string = u"""[Tabulation]
 target : DLPOLY
 nr : 1000
@@ -231,10 +230,9 @@ buck_morse(r, A, rho, C, gamma, r_star, D) : buck(r,A,rho,C) + morse(r, gamma, r
 O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
 
 """
-  import py.path
 
-  this_dir = py.path.local(py.path.local(__file__).dirname)
-  dlpoly_resource_dir = py.path.local(this_dir.dirname).join("dl_poly_resources")
+  this_dir = pathlib.Path(__file__).parent
+  dlpoly_resource_dir = this_dir.parent /"dl_poly_resources"
 
   templatevars = dict(
     speciesA = "O",
@@ -248,33 +246,33 @@ O-U = buck_morse 1000.0 0.1 32.0 0.3 2.0 10.0
     potDef = "vdw 1\nO U tab\n")
 
   # Write the config file
-  with dlpoly_resource_dir.join("CONFIG_pair.in").open() as config_template:
-    with tmpdir.join("CONFIG").open("w") as outfile:
+  with (dlpoly_resource_dir / "CONFIG_pair.in").open() as config_template:
+    with (tmp_path / "CONFIG").open("w") as outfile:
       outfile.write(config_template.read() % templatevars)
 
   # Write the FIELD file
-  with dlpoly_resource_dir.join("FIELD_pair.in").open() as field_template:
-    with tmpdir.join("FIELD").open("w") as outfile:
+  with (dlpoly_resource_dir / "FIELD_pair.in").open() as field_template:
+    with (tmp_path /"FIELD").open("w") as outfile:
       outfile.write(field_template.read() % templatevars)
 
   # Write the CONTROL file
-  dlpoly_resource_dir.join("CONTROL_pair").copy(tmpdir.join("CONTROL"))
+  shutil.copy(dlpoly_resource_dir / "CONTROL_pair", tmp_path / "CONTROL")
 
   # Finally write the TABLE file
   cfgobj = Configuration()
   tabulation = cfgobj.read(io.StringIO(cfg_string))
 
-  with tmpdir.join("TABLE").open("w") as outfile:
+  with (tmp_path / "TABLE").open("w") as outfile:
     tabulation.write(outfile)
 
-  runDLPoly(cwd = tmpdir.strpath)
-  energy = extractDLPOLYEnergy(cwd = tmpdir.strpath)
+  runDLPoly(cwd = tmp_path)
+  energy = extractDLPOLYEnergy(cwd = tmp_path)
 
   expect = pf.buck(2.0, 1000.0, 0.1, 32.0) + pf.morse(2.0, 0.3, 2.0, 10.0)
   assert pytest.approx(expect) == energy
 
 @needsGULP
-def test_gulp_pair_configuration_tabulate(tmpdir):
+def test_gulp_pair_configuration_tabulate(tmp_path):
   cfg_string = u"""[Tabulation]
 target : GULP
 dr: 0.01
@@ -317,7 +315,7 @@ include potentials.lib
 """
   
   # First calculate the expected energy using GULP's built-in analytical potentials
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path / "potentials.lib").open("w") as potfile:
     potfile.write("buck\n")
     potfile.write("O O 9547.96 0.2192 32.0 15.0\n")
     potfile.write("O U 1761.775 0.35642 0.0 15.0\n")
@@ -326,25 +324,25 @@ include potentials.lib
   gulp_infile.seek(0)
 
   gulp_outfile = io.StringIO()
-  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+  runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
   gulp_outfile.seek(0)
   expect = extractGULPEnergy(gulp_outfile)
 
-  tmpdir.join("potentials.lib").remove()
-  assert not tmpdir.join("potentials.lib").exists()
+  (tmp_path / "potentials.lib").unlink()
+  assert not (tmp_path / "potentials.lib").exists()
 
   # Now build a potential model and tabulate it - then re-run the calculation and check the energies match.
   cfgobj = Configuration()
   tabulation = cfgobj.read(io.StringIO(cfg_string))
 
-  with tmpdir.join("potentials.lib").open("w") as potfile:
+  with (tmp_path / "potentials.lib").open("w") as potfile:
     tabulation.write(potfile)
 
   gulp_infile.seek(0)
 
   gulp_outfile = io.StringIO()
-  runGULP(gulp_infile, gulp_outfile, cwd = tmpdir.strpath)
+  runGULP(gulp_infile, gulp_outfile, cwd = tmp_path)
 
   gulp_outfile.seek(0)
   actual = extractGULPEnergy(gulp_outfile)

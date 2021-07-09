@@ -34,7 +34,7 @@ class _buck(_Potential_Function_Base):
   """Callable object for evaluating the Buckingham potential"""
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, A, rho, C= sympy.symbols("r A rho C")
     return A * sympy.exp(-r/rho) - C/r**6
 
@@ -79,7 +79,7 @@ class _bornmayer(_Potential_Function_Base):
   """Callable object for evaluating Born-Mayer Potential"""
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, A, rho = sympy.symbols("r A rho")
     return A * sympy.exp(-r/rho)
 
@@ -121,7 +121,7 @@ class _coul(_Potential_Function_Base):
   """Callable representing Coulomb potential (including :math:`4\pi \epsilon_0` term)"""
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, qi, qj = sympy.symbols("r q_i q_j")
     return (qi * qj)/(4.0*sympy.pi*0.0055264*r)
     
@@ -201,7 +201,7 @@ class _exponential(_Potential_Function_Base):
   """`exponential` potential type A*r^n"""
   
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, A, n = sympy.symbols("r A n")
     return A*r**n
 
@@ -244,7 +244,7 @@ class _hbnd(_Potential_Function_Base):
   """DL_POLY `hbnd` potential type"""
   
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, A, B = sympy.symbols("r A B")
     return A/r**12 - B/r**10
 
@@ -288,7 +288,7 @@ class _lj(_Potential_Function_Base):
   """Callable for Lennard-Jones 12-6 potential"""
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, epsilon, sigma = sympy.symbols("r epsilon sigma")
     return 4.0*epsilon*( (sigma**12/r**12) - (sigma**6/r**6))
 
@@ -330,7 +330,7 @@ class _morse(_Potential_Function_Base):
   """Callable representing the Morse potential"""
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     D, gamma, r_star, r = sympy.symbols("D gamma r_star r")
     return D*(sympy.exp(-2.0*gamma*(r-r_star)) - 2.0*sympy.exp(-gamma*(r-r_star)))
 
@@ -424,7 +424,7 @@ class _sqrt(_Potential_Function_Base):
   """Callable representing a square root potential form"""
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, G = sympy.symbols("r, G")
     return G * r**(1/2)
 
@@ -470,7 +470,7 @@ class _tang_toennies(_Potential_Function_Base):
   """Callable for Tang-Toennies potential form"""
 
   def _f2n(self, x, n):
-    import sympy 
+    import sympy # pylint: disable=import-error
     v = None
     for k in range(2*n+1):
       j = x**k / sympy.factorial(k)
@@ -487,7 +487,7 @@ class _tang_toennies(_Potential_Function_Base):
     return n_3 + n_4 + n_5
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
 
     A,b,C_6,C_8,C_10,r = sympy.symbols("A,b,C_6,C_8,C_10,r")
 
@@ -614,7 +614,7 @@ class _zbl(_Potential_Function_Base):
   Bk4=0.2016
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     Ck1, Ck2, Ck3, Ck4, Bk1, Bk2, Bk3, Bk4 = sympy.symbols("Ck1:5,Bk1:5")
     z1, z2, r = sympy.symbols("z1, z2, r")
 
@@ -714,7 +714,7 @@ class _exp_spline(_Potential_Function_Base):
   """Callable representing exponential spline"""
 
   def _as_sympy(self):
-    import sympy
+    import sympy # pylint: disable=import-error
     r, B0, B1, B2, B3, B4, B5, C = sympy.symbols("r, B0, B1, B2, B3, B4, B5, C")
     return sympy.exp(B0 + B1*r + B2*r**2 + B3*r**3 + B4*r**4 + B5*r**5) + C
 

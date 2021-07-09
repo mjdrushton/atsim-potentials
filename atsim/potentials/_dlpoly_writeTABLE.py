@@ -36,7 +36,7 @@ def _writePotential(potential, cutoff, gridPoints, meshResolution, out ):
   #First, do the energies
   l = []
   r=0.0
-  for i in range(gridPoints):
+  for _ in range(gridPoints):
     r += meshResolution
     l.append(potential.energy(r))
 
@@ -49,7 +49,7 @@ def _writePotential(potential, cutoff, gridPoints, meshResolution, out ):
   #Now, do the forces
   l = []
   r = 0.0
-  for i in range(gridPoints):
+  for _ in range(gridPoints):
     r += meshResolution
     l.append(_calculateForce(potential, r))
 

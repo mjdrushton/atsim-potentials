@@ -193,7 +193,7 @@ def test_parsed_sections():
   expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density', 'pair']
   expect.sort()
 
-  with _get_dlpoly_resource_dir().join("CRG_Ce.aspot").open() as infile:
+  with (_get_dlpoly_resource_dir() / "CRG_Ce.aspot").open() as infile:
     cp = ConfigParser(infile)
     actual = cp.parsed_sections
     actual.sort()
@@ -202,7 +202,7 @@ def test_parsed_sections():
   expect = ['tabulation', 'potential_form', 'pair']
   expect.sort()
 
-  with _get_lammps_resource_dir().join("zbl_spline.aspot").open() as infile:
+  with (_get_lammps_resource_dir() / "zbl_spline.aspot").open() as infile:
     cp = ConfigParser(infile)
     actual = cp.parsed_sections
     actual.sort()
@@ -211,14 +211,14 @@ def test_parsed_sections():
   expect = ['tabulation', 'potential_form', 'eam_embed', 'eam_density_fs', 'pair']
   expect.sort()
 
-  with _get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").open() as infile:
+  with (_get_lammps_resource_dir() / "AlFe_setfl_fs.aspot").open() as infile:
     cp = ConfigParser(infile)
     actual = cp.parsed_sections
     actual.sort()
   assert expect == actual
 
 def test_orphan_sections():
-  with io.open(_get_lammps_resource_dir().join("AlFe_setfl_fs.aspot").strpath, encoding="utf8") as infile:
+  with io.open(_get_lammps_resource_dir() / "AlFe_setfl_fs.aspot", encoding="utf8") as infile:
     sio = io.StringIO(infile.read())
 
   sio.seek(0,os.SEEK_END)
@@ -245,7 +245,7 @@ def test_orphan_sections():
 
 def test_overrides():
   # Test changing a values
-  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+  with io.open(_get_lammps_resource_dir() / "zbl_spline.aspot", encoding = "utf8") as infile:
     cp = ConfigParser(infile, [
       ConfigParserOverrideTuple(u"Tabulation", u"target", u"DLPOLY"),
       ConfigParserOverrideTuple(u"Potential-Form", u"bks(r,qi,qj,A,rho,C)", u"as.buck(r, A, rho, C)")
@@ -263,14 +263,14 @@ def test_overrides():
   assert v == u"as.buck(r, A, rho, C)"
   
   # Make sure an error is thrown when attempting to change a value that doesn't exist
-  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+  with io.open(_get_lammps_resource_dir() /"zbl_spline.aspot", encoding = "utf8") as infile:
     with pytest.raises(ConfigOverrideException):
       cp = ConfigParser(infile, overrides = [
         ConfigParserOverrideTuple(u"Tabulation", u"targe", u"DLPOLY"),
       ])
 
   # Test adding extra value to a section
-  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+  with io.open(_get_lammps_resource_dir() / "zbl_spline.aspot", encoding = "utf8") as infile:
       cp = ConfigParser(infile, additional = [
         ConfigParserOverrideTuple(u"Tabulation", u"blah", u"blah"),
       ])
@@ -281,19 +281,19 @@ def test_overrides():
   assert 'blah' == cp.raw_config_parser[u'Tabulation'][u'blah']
 
   # Make sure an error is thrown if trying to add when item already exists
-  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+  with io.open(_get_lammps_resource_dir() / "zbl_spline.aspot", encoding = "utf8") as infile:
     with pytest.raises(ConfigOverrideException):
       cp = ConfigParser(infile, additional = [
         ConfigParserOverrideTuple(u"Tabulation", u"nr", u"blah"),
       ])
 
   # test removing a value from a section
-  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+  with io.open(_get_lammps_resource_dir() / "zbl_spline.aspot", encoding = "utf8") as infile:
       cp = ConfigParser(infile, overrides = [
         ConfigParserOverrideTuple(u"Tabulation", u"nr", None),
       ])
       
-  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+  with io.open(_get_lammps_resource_dir() / "zbl_spline.aspot", encoding = "utf8") as infile:
     with pytest.raises(ConfigOverrideException):
       cp = ConfigParser(infile, overrides = [
         ConfigParserOverrideTuple(u"Tabulation", u"no-exist", None),
@@ -304,7 +304,7 @@ def test_overrides():
   assert expect == actual
 
   # test removing the last item from a section
-  with io.open(_get_lammps_resource_dir().join("zbl_spline.aspot").strpath, encoding = "utf8") as infile:
+  with io.open(_get_lammps_resource_dir() / "zbl_spline.aspot", encoding = "utf8") as infile:
       cp = ConfigParser(infile, overrides = [
         ConfigParserOverrideTuple(u"Tabulation", u"nr", None),
         ConfigParserOverrideTuple(u"Tabulation", u"target", None),
@@ -351,7 +351,7 @@ def u_th_filtered_test(orig_cp, filtered_cp):
 
 def test_filtered_config_parser():
   lmpdir = _get_lammps_resource_dir()
-  with lmpdir.join("CRG_U_Th.aspot").open() as infile:
+  with (lmpdir / "CRG_U_Th.aspot").open() as infile:
     orig_cp = ConfigParser(infile)
 
   filtered_cp = FilteredConfigParser(orig_cp, exclude = ["Th"])
@@ -366,7 +366,7 @@ def test_filtered_config_parser():
 
 def test_filtered_config_parser_finnis_sinclair():
   lmpdir = _get_lammps_resource_dir()
-  with lmpdir.join("AlFe_setfl_fs.aspot").open() as infile:
+  with (lmpdir / "AlFe_setfl_fs.aspot").open() as infile:
     orig_cp = ConfigParser(infile)
 
   filtered_cp = FilteredConfigParser(orig_cp, exclude = ["Fe"])

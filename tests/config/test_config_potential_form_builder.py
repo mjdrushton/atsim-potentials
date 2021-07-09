@@ -23,7 +23,6 @@ def test_potential_form_builder():
   pfb = Potential_Form_Builder(pfr, Modifier_Registry())
 
   in_tuple = PotentialFormInstanceTuple("as.buck", [1000.0, 0.3, 32.0], None, None)
-  # import pdb; pdb.set_trace()
   potential_func = pfb.create_potential_function(in_tuple)
   assert pytest.approx(pforms.buck(2.0, 1000.0, 0.3, 32.0)) == potential_func(2.0)
 
