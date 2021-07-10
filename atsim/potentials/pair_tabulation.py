@@ -1,6 +1,10 @@
 from ._lammps_writeTABLE import writePotentials as lmp_writePotentials
 from ._dlpoly_writeTABLE import writePotentials as dlpoly_writePotentials
 
+from ._potential import Potential
+
+import typing
+
 def _r_value_iterator(tabulation):
   #for n in range(tabulation.nr+1):
   for n in range(tabulation.nr):
@@ -179,19 +183,21 @@ class Excel_PairTabulation(PairTabulation_AbstractBase):
         pot = column_dict[label]
         col[0].value = pot(r)
 
+  def _add_pair_like_worksheet(self, wb, sheet_name : str, potentials : typing.Sequence[Potential]):
+      ws = wb.create_sheet(sheet_name)
+
+      # Get sorted list of potentials
+      pot_dict = {}
+      for p in potentials:
+        k = "{}-{}".format(*sorted([p.speciesA, p.speciesB]))
+        v = p.potentialFunction
+        pot_dict[k] = v
+      column_heads = sorted(pot_dict.keys())
+      self._populate_worksheet(ws, "r", _r_value_iterator(self), column_heads, pot_dict )
+
 
   def _add_pair_worksheet(self, wb):
-    ws = wb.create_sheet("Pair")
-
-    # Get sorted list of potentials
-    pot_dict = {}
-    for p in self.potentials:
-      k = "{}-{}".format(*sorted([p.speciesA, p.speciesB]))
-      v = p.potentialFunction
-      pot_dict[k] = v
-    column_heads = sorted(pot_dict.keys())
-    self._populate_worksheet(ws, "r", _r_value_iterator(self), column_heads, pot_dict )
-
+    self._add_pair_like_worksheet(wb, "Pair", self.potentials)
 
   def _add_worksheets(self, wb):
     self._add_pair_worksheet(wb)

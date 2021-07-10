@@ -26,6 +26,8 @@ from ._multi_range_potential_form import create_Multi_Range_Potential_Form, Mult
 import sys
 import math
 
+from ._version import __version__
+
 def plus(a,b):
   """Takes two functions and returns a third which when evaluated returns the result of a(r) + b(r)
 

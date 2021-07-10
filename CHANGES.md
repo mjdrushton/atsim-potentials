@@ -2,6 +2,11 @@
 
 ## 0.5.0
 
+#### New Features
+
+* Added `excel_eam_adp` tabulation target for debugging the `eam_adp` tabulation target.
+* Potable tool now displays atsim.potentials version at end of --help message.
+
 ## 0.4.0 (2021-5-20)
 
 #### New Features

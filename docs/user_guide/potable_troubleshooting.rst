@@ -11,6 +11,7 @@ Sometimes you will want to check if the tabulated functions defining your potent
     * **excel:** dumps pair potential models into an Excel spreadsheet file,
     * **excel_eam:** as above but for EAM potentials,
     * **excel_eam_fs:** for Finnis-Sinclair EAM potential models.
+    * **excel_eam_adp:** for ADP EAM potential models.
 
 If given as the value of the ``target`` field in a potable input file's ``[Tabulation]`` section each one will dump the model into an Excel ``.xlsx`` formatted spreadsheet. 
 

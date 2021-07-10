@@ -1,6 +1,18 @@
 
 from setuptools import setup, find_packages
 
+def get_version():
+  import importlib.util
+  import pathlib
+
+  p = pathlib.Path(__file__).parent
+  p = p / "atsim" / "potentials" / "_version.py"
+  spec = importlib.util.spec_from_file_location("version", p)
+  vmod = importlib.util.module_from_spec(spec)
+  spec.loader.exec_module(vmod)
+  return vmod.__version__
+
+
 setup(name="atsim.potentials",
   packages = find_packages(exclude=["tests"]),
   namespace_packages = ["atsim"],
@@ -15,7 +27,7 @@ setup(name="atsim.potentials",
     "wrapt>=1.12.1",
     ],
 
-  version = '0.5.0dev',
+  version = get_version(),
 
   entry_points = {
         'console_scripts' : [

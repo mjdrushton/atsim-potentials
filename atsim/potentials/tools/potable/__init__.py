@@ -6,6 +6,7 @@ import logging
 import sys
 import collections
 import itertools
+from typing import Tuple
 
 from . import _query_actions
 from . import _actions
@@ -13,9 +14,11 @@ from . import _actions
 from ...config import ConfigParserOverrideTuple, ConfigParser, FilteredConfigParser
 from ...config._common import ConfigurationException
 
-def _parse_command_line(cli_args = None):
-  p = argparse.ArgumentParser(description = "Tabulate potential models for common atomistic simulation codes. This is part of the atsim.potentials package.")
+from atsim.potentials._version import __version__ as version
 
+def _parse_command_line(cli_args = None) -> Tuple[argparse.ArgumentParser, argparse.Namespace]:
+  p = argparse.ArgumentParser(description = "Tabulate potential models for common atomistic simulation codes. This is part of the atsim.potentials package.")
+  p.epilog = "atsim.potentials version: {}".format(version)
   p.add_argument("config_file", metavar = "POTENTIAL_DEFN_FILE", type=argparse.FileType('r'), help = "File containing definition of potential model.")
   p.add_argument("out_filename", nargs = '?', metavar = "OUTPUT_FILE", help = "File into which data will be tabulated.")
 

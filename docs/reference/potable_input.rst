@@ -271,6 +271,7 @@ target
     ``eam_adp``,
     ``excel``,
     ``excel_eam``,
+    ``excel_eam_adp``,
     ``excel_eam_fs``,
     ``GULP``, 
     ``LAMMPS_eam_alloy|setfl``,
