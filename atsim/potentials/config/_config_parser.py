@@ -409,7 +409,6 @@ class ConfigParser(object):
 
 
   def _descend_potential_modifier(self, modifier_node, sibling_iterator, range_defn):
-
     # ... extract modifier name
     modifier_label = modifier_node['modifier_label']
 
@@ -508,17 +507,11 @@ class ConfigParser(object):
     return  SpeciesTuple(species_a, species_b)
 
 
-  def _parse_pair_line(self, k, value):
-    try:
+  def _parse_pair_line(self, k:str, value:str):
       return self._parse_label_type_params_line(k, value, self._pair_species_func, PairPotentialTuple)
-    except ConfigParserException:
-      raise ConfigParserException("[Pair] potential parameter lines should be of the form 'SPECIES_A-SPECIES_B : POTENTIAL_FORM PARAMS...'")
 
   def _parse_eam_line(self, k, value, section_name, tuple_type):
-    try:
-      return self._parse_label_type_params_line(k, value, None, tuple_type)
-    except ConfigParserException:
-      raise ConfigParserException("[{section_name}] parameter lines should be of the form 'SPECIES : POTENTIAL_FORM PARAMS...'".format(section_name = section_name))
+    return self._parse_label_type_params_line(k, value, None, tuple_type)
 
   def _parse_embed_line(self, k, value):
     return self._parse_eam_line(k, value, "EAM-Embed", EAMEmbedTuple)
@@ -557,9 +550,12 @@ class ConfigParser(object):
       raise ConfigParserException("Configuration file does not contain [{section_name}] section.".format(section_name = section_name))
     params = []
     for k in self._config_parser[section_name]:
-      v = self._config_parser[section_name][k]
-      pair_tuple = parse_line_func(k,v)
-      params.append(pair_tuple)
+      try:
+        v = self._config_parser[section_name][k]
+        pair_tuple = parse_line_func(k,v)
+        params.append(pair_tuple)
+      except ConfigParserException as exc:
+        raise ConfigParserException("Error parsing '{key}' entry in section [{section_name}]: {msg}".format(section_name = section_name, msg = str(exc), key=k))
     return params
 
   def parse_pair_like(self, section_name):

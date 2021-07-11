@@ -3,7 +3,17 @@ import sys
 
 from inspect import signature, Parameter
 
-SpeciesTuple = collections.namedtuple("SpeciesTuple", ["species_a", "species_b"])
+from typing import NamedTuple
+
+class SpeciesTuple(NamedTuple):
+
+  species_a : str
+  species_b : str
+
+  def __str__(self):
+    return "{}-{}".format(self.species_a, self.species_b)
+
+# SpeciesTuple = collections.namedtuple("SpeciesTuple", ["species_a", "species_b"])
 EAMFSDensitySpeciesTuple = collections.namedtuple("EAMFSDensitySpeciesTuple", ["from_species", "to_species"])
 
 _tuple_args = ["species", 'potential_form_instance']

@@ -43,7 +43,7 @@ class _buck(_Potential_Function_Base):
 
     .. math ::
 
-      U(r_{ij}) = A \exp \left( \\frac{-r_{ij}}{\\rho} \\right) - \\frac{C}{r_{ij}^6}
+      U(r_{ij}) = A \\exp \\left( \\frac{-r_{ij}}{\\rho} \\right) - \\frac{C}{r_{ij}^6}
 
     :param r: Atomic separation.
     :param A: Buckingham A parameter
@@ -88,7 +88,7 @@ class _bornmayer(_Potential_Function_Base):
 
     .. math ::
 
-      V(r_{ij}) = A \exp \left( \\frac{-r_{ij}}{\\rho} \\right)
+      V(r_{ij}) = A \\exp \\left( \\frac{-r_{ij}}{\\rho} \\right)
 
     :param r: Atomic separation.
     :param A: Potential parameter
@@ -118,7 +118,7 @@ bornmayer = _bornmayer()
 
 
 class _coul(_Potential_Function_Base):
-  """Callable representing Coulomb potential (including :math:`4\pi \epsilon_0` term)"""
+  """Callable representing Coulomb potential (including :math:`4\\pi \\epsilon_0` term)"""
 
   def _as_sympy(self):
     import sympy # pylint: disable=import-error
@@ -127,11 +127,11 @@ class _coul(_Potential_Function_Base):
     
 
   def __call__(self,r, qi, qj):
-    """Coulomb potential (including :math:`4\pi \epsilon_0` term).
+    """Coulomb potential (including :math:`4\\pi \\epsilon_0` term).
 
     .. math ::
 
-      V(r_{ij}) = \\frac{ q_i q_j }{4 \pi \epsilon_0 r_{ij} }
+      V(r_{ij}) = \\frac{ q_i q_j }{4 \\pi \\epsilon_0 r_{ij} }
 
     .. note:: Constant value appropriate for :math:`r_{ij}` in angstroms and energy in eV.
 
@@ -297,11 +297,11 @@ class _lj(_Potential_Function_Base):
 
     .. math ::
 
-      V(r_{ij}) = 4 \epsilon \left( \\frac{\sigma^{12}}{r_{ij}^{12}} - \\frac{\sigma^6}{r_{ij}^6} \\right)
+      V(r_{ij}) = 4 \\epsilon \\left( \\frac{\\sigma^{12}}{r_{ij}^{12}} - \\frac{\\sigma^6}{r_{ij}^6} \\right)
 
     :param r: Atomic separation.
-    :param epsilon: Epsilon parameter :math:`\epsilon`
-    :param sigma: Sigma parameter :math:`\sigma`
+    :param epsilon: Epsilon parameter :math:`\\epsilon`
+    :param sigma: Sigma parameter :math:`\\sigma`
     :return: Potential energy"""
     return 4.0*epsilon*( (sigma**12/r**12) - (sigma**6/r**6))
 
@@ -309,8 +309,8 @@ class _lj(_Potential_Function_Base):
     """Derivative of Lennard-Jones 12-6 potential at `r`
 
     :param r: Atomic separation.
-    :param epsilon: Epsilon parameter :math:`\epsilon`
-    :param sigma: Sigma parameter :math:`\sigma`
+    :param epsilon: Epsilon parameter :math:`\\epsilon`
+    :param sigma: Sigma parameter :math:`\\sigma`
     :return: Derivative of potential at `r`"""
     return (24.0*epsilon*sigma**6)/r**7 - (48.0*epsilon*sigma**12)/r**13
 
@@ -318,8 +318,8 @@ class _lj(_Potential_Function_Base):
     """Second derivative of Lennard-Jones 12-6 potential at `r`
 
     :param r: Atomic separation.
-    :param epsilon: Epsilon parameter :math:`\epsilon`
-    :param sigma: Sigma parameter :math:`\sigma`
+    :param epsilon: Epsilon parameter :math:`\\epsilon`
+    :param sigma: Sigma parameter :math:`\\sigma`
     :return: 2nd derivative of potential at `r`"""
     return -168.0*epsilon*sigma**6/r**8 + 624.0*epsilon*sigma**12/r**14
 
@@ -341,10 +341,10 @@ class _morse(_Potential_Function_Base):
 
     .. math ::
 
-      V(r_{ij}) = D  \left[ \exp \left( -2 \gamma (r_{ij} - r_*) \\right) - 2 \\exp \left( -\gamma (r - r_*) \\right) \\right]
+      V(r_{ij}) = D  \\left[ \\exp \\left( -2 \\gamma (r_{ij} - r_*) \\right) - 2 \\exp \\left( -\\gamma (r - r_*) \\right) \\right]
 
     :param r: Atomic separation.
-    :param gamma: Potential parameter :math:`\gamma`
+    :param gamma: Potential parameter :math:`\\gamma`
     :param r_star: Potential parameter :math:`r_*`
     :param D: Potential parameter
     :return: Potential energy"""
@@ -353,7 +353,7 @@ class _morse(_Potential_Function_Base):
   def deriv(self, r, gamma, r_star, D):
     """Evaluate derivative of Morse potential at `r`.
     :param r: Atomic separation.
-    :param gamma: Potential parameter :math:`\gamma`
+    :param gamma: Potential parameter :math:`\\gamma`
     :param r_star: Potential parameter :math:`r_*`
     :param D: Potential parameter
 
@@ -363,7 +363,7 @@ class _morse(_Potential_Function_Base):
   def deriv2(self, r, gamma, r_star, D):
     """Evaluate derivative of Morse potential at `r`.
     :param r: Atomic separation.
-    :param gamma: Potential parameter :math:`\gamma`
+    :param gamma: Potential parameter :math:`\\gamma`
     :param r_star: Potential parameter :math:`r_*`
     :param D: Potential parameter
 
@@ -384,10 +384,10 @@ class _polynomial(_Potential_Function_Base):
 
     .. math::
 
-      V(r_{ij}) = C_0 + C_1 r_{ij} + C_2 r_{ij}^2 + \dots + C_n r_{ij}^n
+      V(r_{ij}) = C_0 + C_1 r_{ij} + C_2 r_{ij}^2 + \\dots + C_n r_{ij}^n
 
     This function accepts a variable number of arguments - the first is :math:`r_{ij}`
-    and with the remainder being :math:`C_0, C_1, \dots, C_n` respectively.
+    and with the remainder being :math:`C_0, C_1, \\dots, C_n` respectively.
 
     :return: Potential energy for given polynomial"""
 
@@ -399,7 +399,7 @@ class _polynomial(_Potential_Function_Base):
     """Evaluate polynomial derivative.
 
     This function accepts a variable number of arguments - the first is :math:`r_{ij}`
-    and with the remainder being the polynomial coefficients :math:`C_0, C_1, \dots, C_n` respectively.
+    and with the remainder being the polynomial coefficients :math:`C_0, C_1, \\dots, C_n` respectively.
 
     :return: derivative of polynomial at `r` """
     r, coefs = self._split_args(args)
@@ -410,7 +410,7 @@ class _polynomial(_Potential_Function_Base):
     """Evaluate polynomial second derivative.
 
     This function accepts a variable number of arguments - the first is :math:`r_{ij}`
-    and with the remainder being the polynomial coefficients :math:`C_0, C_1, \dots, C_n` respectively.
+    and with the remainder being the polynomial coefficients :math:`C_0, C_1, \\dots, C_n` respectively.
 
     :return: 2nd derivative of polynomial at `r` """
     r, coefs = self._split_args(args)
@@ -435,7 +435,7 @@ class _sqrt(_Potential_Function_Base):
 
     .. math ::
 
-      U(r_{ij}) = G\sqrt{r_{ij}}
+      U(r_{ij}) = G\\sqrt{r_{ij}}
 
     :param r: Atomic separation.
     :param r: Variable
@@ -504,7 +504,7 @@ class _tang_toennies(_Potential_Function_Base):
 
     This potential form describes the Van der Waal's interactions between the noble gases (He to Rn) and is described in:
 
-      * K.T. Tang and J.P. Toennies, “The van der Waals potentials between all the rare gas atoms from He to Rn”, *J. Chem. Phys.*\ , **118** (2003) 4976.
+      * K.T. Tang and J.P. Toennies, “The van der Waals potentials between all the rare gas atoms from He to Rn”, *J. Chem. Phys.*\\ , **118** (2003) 4976.
 
     The potential has the following form:
 
@@ -723,7 +723,7 @@ class _exp_spline(_Potential_Function_Base):
 
       .. math::
 
-              U(r_{ij}) = \exp \left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \\right) + C
+              U(r_{ij}) = \\exp \\left( B_0 + B_1 r_{ij} + B_2 r_{ij}^2 + B_3 r_{ij}^3 + B_4 r_{ij}^4 + B_5 r_{ij}^5 \\right) + C
 
     :param r: Atomic separation
     :param B0: Spline coefficient

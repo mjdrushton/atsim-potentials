@@ -24,7 +24,6 @@ def gulp_uo2_energy_fixture(tmp_path, charges):
   class Gulp_Directory(pathlib.Path):
 
     def __new__(cls, p: pathlib.Path, charges):
-      import pdb;pdb.set_trace()
       self = pathlib.Path.__new__(cls, p)
       self.charges = charges
       return self
