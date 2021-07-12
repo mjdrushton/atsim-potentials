@@ -1,6 +1,6 @@
 import cexprtk
 
-from ._common import Potential_Form_Exception
+from ._common import Potential_Form_Exception, Potential_Form_Argument_Exception
 
 
 class _Cexptrk_Potential_Function(object):
@@ -35,7 +35,15 @@ class _Cexptrk_Potential_Function(object):
 
   def __call__(self, *args):
     parameter_names = self._potential_form_tuple.signature.parameter_names
-    assert len(args) == len(parameter_names)
+
+    if len(args) != len(parameter_names):
+      msg = "Wrong number of arguments provided for potential form '{label}'. Expected {expect_args} arguments, got {actual_args}".format(
+        label = self._potential_form_tuple.signature.label,
+        expect_args = len(parameter_names),
+        actual_args = len(args)
+      )
+      raise Potential_Form_Argument_Exception(msg)
+
     for (pn, v) in zip(parameter_names, args):
       self._local_symbol_table.variables[pn] = v
 

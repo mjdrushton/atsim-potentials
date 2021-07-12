@@ -49,6 +49,9 @@ class Potential_Form_Registry_Exception(ConfigurationException):
 class Potential_Form_Exception(ConfigurationException):
   pass
 
+class Potential_Form_Argument_Exception(Potential_Form_Exception):
+  pass
+
 class Table_Form_Exception(ConfigurationException):
   pass
 
