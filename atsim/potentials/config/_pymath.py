@@ -97,7 +97,7 @@ def tanh(x):
   return math.tanh(x)
 
 def factorial(x):
-  return math.factorial(x)
+  return math.factorial(int(x))
 
 if hasattr(math, "gcd"):
   _gcd = math.gcd

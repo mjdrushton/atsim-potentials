@@ -2,9 +2,19 @@
 Changes
 *******
 
+0.4.1 (2022-12-22)
+==================
 
-0.4.0
-=====
+Bug-Fixes
+---------
+
+- Fixes to ``setup.py`` to allow atsim.potentials to install under python 3.10
+- Test for factorial function in maths expressions was failing under python 3.10. This is now fixed.
+
+
+
+0.4.0 (2021-5-20)
+=================
 
 New Features
 ------------

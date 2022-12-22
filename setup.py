@@ -7,7 +7,7 @@ setup(name="atsim.potentials",
   test_suite = "tests",
   install_requires = [
     'funcsigs==1.0.2;python_version<"3.5"',
-    'openpyxl==2.6.4;python_version<="3.5.*"',
+    'openpyxl==2.6.4;python_version=="3.5.*"',
     'openpyxl>=3.0.0;python_version>="3.6"',
     "cexprtk>=0.3.4",
     "pyparsing>=2.2.0",
@@ -16,7 +16,7 @@ setup(name="atsim.potentials",
     "wrapt>=1.12.1",
     ],
 
-  version = '0.4.0',
+  version = '0.4.1',
 
   entry_points = {
         'console_scripts' : [
@@ -50,4 +50,5 @@ setup(name="atsim.potentials",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering"])
